@@ -14,22 +14,26 @@ var slider_tween: Tween
 
 
 func focus_input(event: InputEvent) -> void:
-	print(event.as_text(), "  D_held=", Input.is_key_pressed(KEY_D), "  A_held=", Input.is_key_pressed(KEY_A))
+	print(Frequency_Slider_Housing.global_position)
 	if Input.is_key_pressed(KEY_D) and Input.is_key_pressed(KEY_A):
-		return
+		slider_tween.kill()
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_D:
-		Radio_TuningKnob.rotate_object_local(Vector3.UP,deg_to_rad(-60))
-
-		slider_tween = create_tween()
-		slider_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT).tween_property(Frequency_Slider_Housing, "global_position:z", Frequency_Slider_Housing.global_position.z + 0.00558, 0.1)
-		slider_tween.parallel().tween_property(Frequency_Slider_Marker, "global_position:z", Frequency_Slider_Marker.global_position.z + 0.00558, 0.1)
-		return
+		if (Frequency_Slider_Housing.global_position.z<-5.318658):
+			var target_transform: Transform3D = Radio_TuningKnob.transform.rotated_local(Vector3.UP, deg_to_rad(-60))
+			slider_tween = create_tween()
+			slider_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT).tween_property(Frequency_Slider_Housing, "global_position:z", Frequency_Slider_Housing.global_position.z + 0.00558, 0.1)
+			slider_tween.parallel().tween_property(Frequency_Slider_Marker, "global_position:z", Frequency_Slider_Marker.global_position.z + 0.00558, 0.1)
+			slider_tween.parallel().tween_property(Radio_TuningKnob, "transform", target_transform, 0.3)
+			return
+		else:
+			return
 		
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_A:
-		Radio_TuningKnob.rotate_object_local(Vector3.UP,deg_to_rad(60))
+		var target_transform: Transform3D = Radio_TuningKnob.transform.rotated_local(Vector3.UP, deg_to_rad(60))
 		slider_tween = create_tween()
 		slider_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT).tween_property(Frequency_Slider_Housing, "global_position:z", Frequency_Slider_Housing.global_position.z - 0.00558, 0.1)
 		slider_tween.parallel().tween_property(Frequency_Slider_Marker, "global_position:z", Frequency_Slider_Marker.global_position.z - 0.00558, 0.1)
+		slider_tween.parallel().tween_property(Radio_TuningKnob, "transform", target_transform, 0.3)
 		return
 
 
