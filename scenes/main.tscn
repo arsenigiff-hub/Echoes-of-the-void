@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://dqqbblk6vnnqr"]
+
+[ext_resource type="PackedScene" uid="uid://cgjj2bmatef67" path="res://scenes/player.tscn" id="1_player_scene"]
+[ext_resource type="PackedScene" uid="uid://bokgju2g6vn6d" path="res://assetss/radio_v03.glb" id="3_jyhfs"]
+[ext_resource type="PackedScene" uid="uid://14y2qdh41q1d" path="res://assetss/Без имени.glb" id="3_sugp2"]
+[ext_resource type="Script" uid="uid://cr328nlnt4lhh" path="res://scripts/radio.gd" id="4_tbgi4"]
+
+[sub_resource type="Environment" id="Environment_rrmyu"]
+background_mode = 1
+background_color = Color(0.003, 0.006, 0.014, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.025, 0.045, 0.105, 1)
+ambient_light_energy = 0.22
+tonemap_mode = 3
+tonemap_exposure = 0.82
+glow_enabled = true
+glow_intensity = 0.55
+glow_bloom = 0.18
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rrmyu"]
+
+[node name="main" type="Node3D" unique_id=251093681]
+
+[node name="Player" parent="." unique_id=502170894 instance=ExtResource("1_player_scene")]
+transform = Transform3D(-0.034183204, 0, -0.9994156, 0, 1, 0, 0.9994156, 0, -0.034183204, 26.122066, 3.6158824, -5.49512)
+speed = 3.0
+gravity = 9.8
+mouse_sensetivity = 0.003
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1658428371]
+environment = SubResource("Environment_rrmyu")
+
+[node name="Level" type="Node3D" parent="." unique_id=1186078414]
+
+[node name="CeilingLamp_Cool" type="OmniLight3D" parent="Level" unique_id=1202004188]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.657188, 4.8184924, -3.6540704)
+light_color = Color(0.31, 0.48, 1, 1)
+light_energy = 2.4
+shadow_enabled = true
+omni_range = 6.0
+
+[node name="Без имени" parent="Level" unique_id=1053881562 instance=ExtResource("3_sugp2")]
+transform = Transform3D(0.0007881463, 0, 1.4999998, 0, 1.5, 0, -1.4999998, 0, 0.0007881463, 26.655256, 0, -5.8057346)
+
+[node name="ConsoleLamp_Amber" type="OmniLight3D" parent="Level" unique_id=1739422142]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.568779, 4.852949, -9.417564)
+light_color = Color(1, 0.24, 0.055, 1)
+light_energy = 1.55
+shadow_enabled = true
+omni_range = 4.5
+
+[node name="RadioLamp_Cyan" type="OmniLight3D" parent="Level" unique_id=1378978383]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.55, 4.55, -6.45)
+light_color = Color(0.05, 0.55, 0.95, 1)
+light_energy = 7.384
+light_indirect_energy = 2.301
+omni_range = 2.5
+
+[node name="AirlockEmergency_Red" type="OmniLight3D" parent="Level" unique_id=988453784]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.62, 4.55, -11.45)
+light_color = Color(1, 0.015, 0.02, 1)
+light_energy = 1.1
+shadow_enabled = true
+omni_range = 3.2
+
+[node name="PilotNavigationLamp" type="SpotLight3D" parent="Level" unique_id=1058207634]
+transform = Transform3D(1, 0, 0, 0, -0.5692547, 0.82216126, 0, -0.82216126, -0.5692547, 26.704636, 4.7404056, -0.43126452)
+light_color = Color(0.050980393, 0.54901963, 0.87058824, 1)
+light_energy = 10.785
+light_indirect_energy = 0.862
+shadow_enabled = true
+spot_range = 6.673
+
+[node name="radio_v03" parent="Level" unique_id=2074945346 instance=ExtResource("3_jyhfs")]
+transform = Transform3D(0.0056547816, 0, -0.09983999, 0, 0.1, 0, 0.09983999, 0, 0.0056547816, 28.364971, 3.2908094, -5.2501903)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Level/radio_v03" unique_id=1102499517]
+script = ExtResource("4_tbgi4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/radio_v03/StaticBody3D" unique_id=1885463891]
+transform = Transform3D(7.0522738, 0, 5.9604645e-08, 0, 5.3357434, 0, -2.9802322e-08, 0, 3.6538517, -1.428772, 3.5760727, -4.854431)
+shape = SubResource("BoxShape3D_rrmyu")
+
+[node name="CameraTarget" type="Camera3D" parent="Level/radio_v03" unique_id=542571916]
+transform = Transform3D(9.999905, -0.0062609985, 0.04318136, 0, 9.896513, 1.4349262, -0.043632865, -1.4349124, 9.89642, -1.597084, 4.0445786, -0.009307861)
+
+[editable path="Level/radio_v03"]

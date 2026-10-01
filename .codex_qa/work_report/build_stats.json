@@ -1,0 +1,65 @@
+{
+  "output": "D:\\godot\\GodotGame-main\\Отчет о проделанной работе ECHOES OF THE VOID.docx",
+  "screenshots_embedded": 0,
+  "screenshot_slots": 9,
+  "listings": [
+    {
+      "file": "scripts/player.gd",
+      "lines": 94
+    },
+    {
+      "file": "scripts/interactable.gd",
+      "lines": 8
+    },
+    {
+      "file": "scripts/radio.gd",
+      "lines": 69
+    },
+    {
+      "file": "scripts/main_menu.gd",
+      "lines": 15
+    },
+    {
+      "file": "scripts/intro_cutscene.gd",
+      "lines": 9
+    },
+    {
+      "file": "scripts/earthrotating.gd",
+      "lines": 5
+    },
+    {
+      "file": "shaders/dither.gdshader.gdshader",
+      "lines": 33
+    },
+    {
+      "file": "project.godot",
+      "lines": 41
+    },
+    {
+      "file": "scenes/player.tscn",
+      "lines": 27
+    },
+    {
+      "file": "scenes/main.tscn",
+      "lines": 87
+    },
+    {
+      "file": "scenes/main_menu.tscn",
+      "lines": 143
+    },
+    {
+      "file": "scenes/intro_cutscene.tscn",
+      "lines": 123
+    },
+    {
+      "file": "scenes/test_scene.tscn",
+      "lines": 14
+    },
+    {
+      "file": "assetss/default_bus_layout.tres",
+      "lines": 9
+    }
+  ],
+  "paragraphs": 1014,
+  "tables": 10
+}

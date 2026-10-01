@@ -1,0 +1,123 @@
+[gd_scene format=3 uid="uid://byjj8bvykid88"]
+
+[ext_resource type="Script" uid="uid://dsqrkn30mjlnp" path="res://scripts/intro_cutscene.gd" id="1_dw6o5"]
+[ext_resource type="Shader" uid="uid://bii4geh356ypj" path="res://shaders/dither.gdshader.gdshader" id="2_3438a"]
+[ext_resource type="AudioStream" uid="uid://dw3j2xxhfdewg" path="res://assetss/the-sound-of-a-spaceship-taking-off-a-rocket.mp3" id="3_3438a"]
+[ext_resource type="AudioStream" uid="uid://wnbfau8sfilq" path="res://assetss/vinilovoe-tploe-poskripyivanie-ts100065.mp3" id="4_wifpd"]
+[ext_resource type="PackedScene" uid="uid://14y2qdh41q1d" path="res://assetss/Без имени.glb" id="6_jusdg"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wifpd"]
+shader = ExtResource("2_3438a")
+shader_parameter/dither_size = 5.0
+shader_parameter/color_depth = 12.0
+
+[sub_resource type="Animation" id="Animation_dw6o5"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(26.774445, 3.8127213, 0.11605072)]
+}
+
+[sub_resource type="Animation" id="Animation_xeku4"]
+resource_name = "new_animation"
+length = 8.366667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(26.774445, 3.8127213, 0.11605072), Vector3(26.774445, 3.8127213, 0.11605072)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xeku4"]
+_data = {
+&"RESET": SubResource("Animation_dw6o5"),
+&"new_animation": SubResource("Animation_xeku4")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dcu1r"]
+
+[node name="Node3D" type="Node3D" unique_id=894468114]
+script = ExtResource("1_dw6o5")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=191105281]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=451619795]
+material = SubResource("ShaderMaterial_wifpd")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1848551459]
+libraries/ = SubResource("AnimationLibrary_xeku4")
+
+[node name="EngineSound" type="AudioStreamPlayer" parent="." unique_id=1108775630]
+stream = ExtResource("3_3438a")
+volume_db = 3.902
+
+[node name="Tick" type="AudioStreamPlayer" parent="." unique_id=2021756126]
+stream = ExtResource("4_wifpd")
+
+[node name="CeilingLamp_Cool" type="OmniLight3D" parent="." unique_id=710402292]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.657188, 4.8184924, -3.6540704)
+light_color = Color(0.31, 0.48, 1, 1)
+light_energy = 2.4
+shadow_enabled = true
+omni_range = 6.0
+
+[node name="Без имени" parent="." unique_id=1622101041 instance=ExtResource("6_jusdg")]
+transform = Transform3D(0.0007881463, 0, 1.4999998, 0, 1.5, 0, -1.4999998, 0, 0.0007881463, 26.655256, 0, -5.8057346)
+
+[node name="ConsoleLamp_Amber" type="OmniLight3D" parent="." unique_id=423278322]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.568779, 4.852949, -9.417564)
+light_color = Color(1, 0.24, 0.055, 1)
+light_energy = 1.55
+shadow_enabled = true
+omni_range = 4.5
+
+[node name="RadioLamp_Cyan" type="OmniLight3D" parent="." unique_id=62839412]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.55, 4.55, -6.45)
+light_color = Color(0.05, 0.55, 0.95, 1)
+light_energy = 7.384
+light_indirect_energy = 2.301
+omni_range = 2.5
+
+[node name="AirlockEmergency_Red" type="OmniLight3D" parent="." unique_id=1041222623]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.62, 4.55, -11.45)
+light_color = Color(1, 0.015, 0.02, 1)
+light_energy = 1.1
+shadow_enabled = true
+omni_range = 3.2
+
+[node name="PilotNavigationLamp" type="SpotLight3D" parent="." unique_id=227444900]
+transform = Transform3D(1, 0, 0, 0, -0.5692547, 0.82216126, 0, -0.82216126, -0.5692547, 26.704636, 4.7404056, -0.43126452)
+light_color = Color(0.050980393, 0.54901963, 0.87058824, 1)
+light_energy = 10.785
+light_indirect_energy = 0.862
+shadow_enabled = true
+spot_range = 6.673
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1236479412]
+transform = Transform3D(7.0522738, 0, 5.9604645e-08, 0, 5.3357434, 0, -2.9802322e-08, 0, 3.6538517, -1.428772, 3.5760727, -4.854431)
+shape = SubResource("BoxShape3D_dcu1r")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=427236518]
+transform = Transform3D(-0.9799248, 0.18452266, 0.07549014, 0, 0.3786483, -0.9255406, -0.19936743, -0.9069602, -0.37104687, 26.774445, 3.8127213, 0.11605072)
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

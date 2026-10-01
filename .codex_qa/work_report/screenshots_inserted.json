@@ -1,0 +1,57 @@
+[
+  {
+    "figure": 1,
+    "file": "10_corridor_overview.png",
+    "sha256": "7355a9ef1880fe053cea699377fa452ed50a29c6fde81d94d11a1dc4d90d318a"
+  },
+  {
+    "figure": 2,
+    "file": "11_corridor_reverse.png",
+    "sha256": "bc042bb83b16d708c5bb8de48c7af879a89df17b99e8e486d66969d074be8b6b"
+  },
+  {
+    "figure": 3,
+    "file": "01_menu.png",
+    "sha256": "771d59cd1f853a1968fa25d7f0212198c1b93f0f55c4bc9dcf13c1a4c2ce9ebf"
+  },
+  {
+    "figure": 4,
+    "file": "03_intro.png",
+    "sha256": "c2ce0e994f50c2fc36d10147c234f949b0e780aaa41abc01eca7f9e898977e63"
+  },
+  {
+    "figure": 5,
+    "file": "09_main_after_landing.png",
+    "sha256": "5f44cacd0be36ef6fcc3b59e22ab0c64639f548d12f50cb61740112121f8e81e"
+  },
+  {
+    "figure": 6,
+    "file": "07_radio_focus.png",
+    "sha256": "ceb4ae0948c1dacbac503f4e7ade5ce609d41c18711d6096124de02597e1dafb"
+  },
+  {
+    "figure": 7,
+    "file": "08_radio_knob.png",
+    "sha256": "43a11ef1bf21e04e5b68c271d51026366fd0a4d5fb9671b58e59957e4cc57972"
+  },
+  {
+    "figure": 8,
+    "file": "14_flashlight_off.png",
+    "sha256": "be05dfaa758fb4fd9b4ea49f40c4b506bd2c6a3836bf2f713462979e131bcd27"
+  },
+  {
+    "figure": 8,
+    "file": "15_flashlight_on.png",
+    "sha256": "0380a12fa858c74c9f3359e3fce95780f47ca2914d901d1b83f6cda7678bfbf4"
+  },
+  {
+    "figure": 9,
+    "file": "12_menu_dither_on.png",
+    "sha256": "d4ce809f73db3bac352b023f89d0c077bee773ba9b9a9f90b5bc1e81eeab91b8"
+  },
+  {
+    "figure": 9,
+    "file": "13_menu_dither_off.png",
+    "sha256": "9e8f2ec4dc00e69cefb35dbb035d0ae42379344d9588176cdb2d48455e2033e3"
+  }
+]

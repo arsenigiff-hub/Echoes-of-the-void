@@ -1,0 +1,9 @@
+[gd_resource type="AudioBusLayout" format=3 uid="uid://doeotxymw54lm"]
+
+[sub_resource type="AudioEffectFilter" id="AudioEffectFilter_ba1sp"]
+resource_name = "Filter"
+
+[resource]
+bus/0/volume_db = -2.312501
+bus/0/effect/0/effect = SubResource("AudioEffectFilter_ba1sp")
+bus/0/effect/0/enabled = true

@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 - Build 32.0.101.7088 - Compatibility - Using Device: Intel - Intel(R) Iris(R) Xe Graphics
+
+ERROR: Animation not found: "takeoff".
+   at: get_animation (scene/animation/animation_mixer.cpp:411)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://scripts/intro_cutscene.gd:5)
+       [1] open_scene (res://.codex_qa/work_report/capture_report.gd:21)
+       [2] run (res://.codex_qa/work_report/capture_report.gd:47)
+       [3] close_scene (res://.codex_qa/work_report/capture_report.gd:27)
+ERROR: Animation not found: takeoff.
+   at: play_section_with_markers (scene/animation/animation_player.cpp:436)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://scripts/intro_cutscene.gd:5)
+       [1] open_scene (res://.codex_qa/work_report/capture_report.gd:21)
+       [2] run (res://.codex_qa/work_report/capture_report.gd:47)
+       [3] close_scene (res://.codex_qa/work_report/capture_report.gd:27)
+Я нажал E
+Я нажал E
+Луч что то нашел
+StaticBody3D:<StaticBody3D#62109255820>
+Это Interactabletrue
+Я нажал E
+Луч что то нашел
+StaticBody3D:<StaticBody3D#62109255820>
+Это Interactabletrue

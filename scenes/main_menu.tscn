@@ -1,0 +1,143 @@
+[gd_scene format=3 uid="uid://chp56y0i0a2wj"]
+
+[ext_resource type="PackedScene" uid="uid://cw6kf0fd2kjqu" path="res://assetss/earth.glb" id="1_bqqt6"]
+[ext_resource type="Script" uid="uid://bsgsk2juvsh5y" path="res://scripts/main_menu.gd" id="1_rtw2f"]
+[ext_resource type="Texture2D" uid="uid://f5lqt5kg5qws" path="res://assetss/earth_8081_earthmap10k.jpg" id="2_wu84c"]
+[ext_resource type="Texture2D" uid="uid://g6r2jpn3d413" path="res://assetss/earth_8081_earthspec10k.jpg" id="3_8ln24"]
+[ext_resource type="Script" uid="uid://nyqymlm2i5l5" path="res://scripts/earthrotating.gd" id="4_wu84c"]
+[ext_resource type="Shader" uid="uid://bii4geh356ypj" path="res://shaders/dither.gdshader.gdshader" id="5_8ln24"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vue75"]
+albedo_texture = ExtResource("2_wu84c")
+roughness_texture = ExtResource("3_8ln24")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rrmyu"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Environment" id="Environment_rrmyu"]
+tonemap_mode = 3
+glow_enabled = true
+glow_intensity = 1.2
+glow_bloom = 0.2
+adjustment_enabled = true
+adjustment_contrast = 1.2
+adjustment_saturation = 1.3
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_oa1go"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rrmyu"]
+shader = ExtResource("5_8ln24")
+shader_parameter/dither_size = 4.0
+shader_parameter/color_depth = 12.0
+
+[sub_resource type="Animation" id="Animation_rtw2f"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-0.20875561, -0.6954788, -0.51501644)]
+}
+
+[sub_resource type="Animation" id="Animation_oa1go"]
+resource_name = "new_animation"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-0.20875561, -0.6954788, -0.51501644), Vector3(-22.693539, 0.19174302, 1.5799751)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_oa1go"]
+_data = {
+&"RESET": SubResource("Animation_rtw2f"),
+&"new_animation": SubResource("Animation_oa1go")
+}
+
+[node name="MainMenu" type="Node3D" unique_id=1004074282]
+script = ExtResource("1_rtw2f")
+
+[node name="earth" parent="." unique_id=906724121 instance=ExtResource("1_bqqt6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13354063, 0, -0.24444485)
+
+[node name="Atmosphere" parent="earth" index="0" unique_id=455080335]
+transform = Transform3D(0.97759277, 0, 0, 0, 0.9775927, 0, 0, 0, 0.97759277, -6.0492005, -0.33012927, -0.99645257)
+material_override = SubResource("StandardMaterial3D_vue75")
+script = ExtResource("4_wu84c")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1029735681]
+transform = Transform3D(1, 0, 0, 0, 20.928196, 0, 0, 0, 44.44181, -23.62286, 0, 0)
+material_override = SubResource("StandardMaterial3D_rrmyu")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=780494979]
+transform = Transform3D(-0.09277185, 0.039088972, 0.9949198, 0, 0.9992291, -0.03925828, -0.99568737, -0.0036420631, -0.09270033, -0.20875561, -0.6954788, -0.51501644)
+fov = 31.3
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1800124558]
+transform = Transform3D(1, 0, 0, 0, 0.93503475, 0.35455602, 0, -0.35455602, 0.93503475, -1.7809925, 2.8909163, 4.3157034)
+light_energy = 0.5
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1403606107]
+environment = SubResource("Environment_rrmyu")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1230015142]
+
+[node name="MenuButtons" type="VBoxContainer" parent="CanvasLayer" unique_id=1604858925]
+modulate = Color(0.84325075, 0.91676646, 0.9218222, 1)
+self_modulate = Color(0.1681245, 0.4507441, 0.32387736, 1)
+material = SubResource("ShaderMaterial_oa1go")
+offset_left = 42.0
+offset_top = 95.00001
+offset_right = 95.0
+offset_bottom = 183.0
+scale = Vector2(2.7558079, 2.6427143)
+
+[node name="PlayButton" type="Button" parent="CanvasLayer/MenuButtons" unique_id=2111833331]
+layout_mode = 2
+theme_override_font_sizes/font_size = 7
+text = "Новая игра"
+
+[node name="Continue" type="Button" parent="CanvasLayer/MenuButtons" unique_id=782179366]
+layout_mode = 2
+theme_override_font_sizes/font_size = 7
+text = "Продолжить"
+
+[node name="Settings" type="Button" parent="CanvasLayer/MenuButtons" unique_id=344159659]
+layout_mode = 2
+theme_override_font_sizes/font_size = 7
+text = "Настройки"
+
+[node name="QuitButton" type="Button" parent="CanvasLayer/MenuButtons" unique_id=783514260]
+layout_mode = 2
+theme_override_font_sizes/font_size = 7
+text = "Выйти"
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=561313235]
+material = SubResource("ShaderMaterial_rrmyu")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=605507256]
+libraries/ = SubResource("AnimationLibrary_oa1go")
+
+[connection signal="pressed" from="CanvasLayer/MenuButtons/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MenuButtons/QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
+
+[editable path="earth"]

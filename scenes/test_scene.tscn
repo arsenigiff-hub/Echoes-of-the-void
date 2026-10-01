@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://40bv6wql7egk"]
+
+[ext_resource type="Script" uid="uid://d3cpik1ayfhsl" path="res://scripts/player.gd" id="1_g7g4h"]
+
+[node name="Node3D" type="Node3D" unique_id=1056321706]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1281116086]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1407268, 0)
+size = Vector3(1, 0.2944336, 1)
+
+[node name="Player" type="CharacterBody3D" parent="." unique_id=1859687673]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.30362457, 0, 0)
+script = ExtResource("1_g7g4h")
+metadata/_custom_type_script = "uid://d3cpik1ayfhsl"
