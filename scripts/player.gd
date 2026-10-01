@@ -33,6 +33,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_D:
 			interacting_object.focus_input(event)
 			return
+		if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_A:
+			interacting_object.focus_input(event)
 		
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		head.rotate_y(-event.relative.x * mouse_sensetivity)

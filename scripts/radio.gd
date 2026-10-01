@@ -2,17 +2,35 @@ extends Interactable
 
 @onready var camera_target: Camera3D = $"../CameraTarget"
 @onready var Radio_TuningKnob: Node3D = $"../Radio_TuningKnob_001"
+@onready var Frequency_Slider_Housing: Node3D = $"../Frequency_Slider/Frequency_Slider_Housing"
+@onready var Frequency_Slider_Marker: Node3D = $"../Frequency_Slider/Frequency_Slider_Marker"
 	
 var knob_angle: float = 0.0
 var original_camera_transform: Transform3D
 var original_speed: float
 var is_at_radio := false
 var is_moving := false
+var slider_tween: Tween
 
 
 func focus_input(event: InputEvent) -> void:
-	Radio_TuningKnob.rotate_object_local(Vector3.UP,deg_to_rad(60))
+	print(event.as_text(), "  D_held=", Input.is_key_pressed(KEY_D), "  A_held=", Input.is_key_pressed(KEY_A))
+	if Input.is_key_pressed(KEY_D) and Input.is_key_pressed(KEY_A):
+		return
+	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_D:
+		Radio_TuningKnob.rotate_object_local(Vector3.UP,deg_to_rad(-60))
+
+		slider_tween = create_tween()
+		slider_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT).tween_property(Frequency_Slider_Housing, "global_position:z", Frequency_Slider_Housing.global_position.z + 0.00558, 0.1)
+		slider_tween.parallel().tween_property(Frequency_Slider_Marker, "global_position:z", Frequency_Slider_Marker.global_position.z + 0.00558, 0.1)
+		return
 		
+	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_A:
+		Radio_TuningKnob.rotate_object_local(Vector3.UP,deg_to_rad(60))
+		slider_tween = create_tween()
+		slider_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT).tween_property(Frequency_Slider_Housing, "global_position:z", Frequency_Slider_Housing.global_position.z - 0.00558, 0.1)
+		slider_tween.parallel().tween_property(Frequency_Slider_Marker, "global_position:z", Frequency_Slider_Marker.global_position.z - 0.00558, 0.1)
+		return
 
 
 func interact(player: CharacterBody3D) -> void:
@@ -35,9 +53,6 @@ func interact(player: CharacterBody3D) -> void:
 		is_at_radio = true
 
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		
-		if Input.is_key_pressed(KEY_D):
-			Radio_TuningKnob
 			
 		
 	else:
