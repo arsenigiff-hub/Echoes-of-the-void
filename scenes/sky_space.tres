@@ -1,0 +1,10 @@
+[gd_resource type="Sky" format=3]
+
+[ext_resource type="Texture2D" path="res://assetss/space/starfield_pano.png" id="1_eub4r"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_hu2fx"]
+panorama = ExtResource("1_eub4r")
+energy_multiplier = 1.1
+
+[resource]
+sky_material = SubResource("PanoramaSkyMaterial_hu2fx")

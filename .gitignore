@@ -1,3 +1,8 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# QA-артефакты, тестовые скрипты, кадры, отчёты и локальные бэкапы (не часть игры)
+.codex_qa/
+.backup_fix/
+*.tmp

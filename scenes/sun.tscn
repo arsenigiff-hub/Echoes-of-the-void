@@ -1,0 +1,114 @@
+[gd_scene format=3 uid="uid://v0k7xp"]
+
+[ext_resource type="PackedScene" uid="uid://dkfq08wc88bac" path="res://assetss/sun/sun.glb" id="1_model"]
+[ext_resource type="Texture2D" uid="uid://dte0vn3k4yjyu" path="res://assetss/sun/sun.png" id="2_atlas"]
+[ext_resource type="Texture2D" uid="uid://boov3marnekys" path="res://assetss/sun/sun_halo.png" id="3_halo"]
+[ext_resource type="Texture2D" uid="uid://cwddqv3ukyapg" path="res://assetss/sun/sun_rays.png" id="4_rays"]
+[ext_resource type="Texture2D" path="res://assetss/sun/sun_corona.png" id="5_corona"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sun"]
+resource_name = "sun_emissive"
+albedo_color = Color(0, 0, 0, 1)
+metallic = 0.0
+roughness = 1.0
+emission_enabled = true
+emission_texture = ExtResource("2_atlas")
+emission_energy_multiplier = 1.35
+texture_filter = 0
+disable_receive_shadows = true
+disable_fog = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_corona"]
+size = Vector2(38.4, 38.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_corona"]
+resource_name = "sun_corona_add"
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_texture = ExtResource("5_corona")
+albedo_color = Color(1, 0.9, 0.72, 0.95)
+billboard_mode = 1
+billboard_keep_scale = true
+texture_filter = 0
+disable_receive_shadows = true
+disable_fog = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_glow"]
+size = Vector2(30, 30)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glow"]
+resource_name = "sun_glow_add"
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_texture = ExtResource("3_halo")
+albedo_color = Color(1, 0.91, 0.75, 0.2)
+billboard_mode = 1
+billboard_keep_scale = true
+texture_filter = 0
+disable_receive_shadows = true
+disable_fog = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_halo_outer"]
+size = Vector2(110, 110)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_halo_outer"]
+resource_name = "sun_halo_outer_add"
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_texture = ExtResource("3_halo")
+albedo_color = Color(1, 0.87, 0.68, 0.12)
+billboard_mode = 1
+billboard_keep_scale = true
+texture_filter = 0
+disable_receive_shadows = true
+disable_fog = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_rays"]
+size = Vector2(86, 86)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rays"]
+resource_name = "sun_rays_add"
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_texture = ExtResource("4_rays")
+albedo_color = Color(1, 0.94, 0.84, 0.8)
+billboard_mode = 1
+billboard_keep_scale = true
+texture_filter = 0
+disable_receive_shadows = true
+disable_fog = true
+
+[node name="Sun" type="Node3D"]
+
+[node name="Disc" parent="." instance=ExtResource("1_model")]
+
+[node name="sun" parent="Disc" index="0"]
+material_override = SubResource("StandardMaterial3D_sun")
+
+[node name="Corona" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_corona")
+material_override = SubResource("StandardMaterial3D_corona")
+
+[node name="Glow" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.3, 0, 0)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_glow")
+material_override = SubResource("StandardMaterial3D_glow")
+
+[node name="HaloOuter" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.6, 0, 0)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_halo_outer")
+material_override = SubResource("StandardMaterial3D_halo_outer")
+
+[node name="Rays" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.2, 0, 0)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_rays")
+material_override = SubResource("StandardMaterial3D_rays")

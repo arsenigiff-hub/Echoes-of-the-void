@@ -6,9 +6,9 @@
 
 [node name="Player" type="CharacterBody3D" unique_id=502170894]
 script = ExtResource("1_3vyb7")
-speed = null
-gravity = null
-mouse_sensetivity = null
+speed = 3.0
+gravity = 9.8
+mouse_sensetivity = 0.003
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1017400892]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
@@ -23,5 +23,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 target_position = Vector3(0, 0, -2.5)
 
 [node name="SpotLight3D" type="SpotLight3D" parent="Head/Camera3D" unique_id=1967316689]
+transform = Transform3D(1, 0, 0, 0, 0.990268, 0.139173, 0, -0.139173, 0.990268, 0, 0, 0)
+light_energy = 1.6
+light_color = Color(1, 0.96, 0.88, 1)
+shadow_enabled = true
+spot_range = 12.0
+spot_angle = 40.0
 
 [node name="Node3D" type="Node3D" parent="." unique_id=1005335123]

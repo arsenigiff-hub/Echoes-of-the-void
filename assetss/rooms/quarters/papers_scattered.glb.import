@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://c5v1anfasjq52"
-path="res://.godot/imported/space_shuttle.glb-8a87022b681a85369fb7a7eb483d0b28.scn"
+uid="uid://dglay5dl6q36y"
+path="res://.godot/imported/papers_scattered.glb-14c29670401a32e3e67b30916857836a.scn"
 
 [deps]
 
-source_file="res://assetss/space_shuttle.glb"
-dest_files=["res://.godot/imported/space_shuttle.glb-8a87022b681a85369fb7a7eb483d0b28.scn"]
+source_file="res://assetss/rooms/quarters/papers_scattered.glb"
+dest_files=["res://.godot/imported/papers_scattered.glb-14c29670401a32e3e67b30916857836a.scn"]
 
 [params]
 
