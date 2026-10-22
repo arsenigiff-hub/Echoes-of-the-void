@@ -60,7 +60,7 @@ const DECALS := [
 	{"tex": "stencil_deckb", "pos": Vector3(2.0, 4.12, 10.536),
 			"rot": Vector3(0, 0, 0), "size": Vector2(1.3, 0.5)},
 	{"tex": "poster_keepcalm", "pos": Vector3(1.0, 3.36, 13.264),
-			"rot": Vector3(0, 0, 0), "size": Vector2(0.5, 0.7)},
+			"rot": Vector3(0, 180, 0), "size": Vector2(0.5, 0.7)},
 	{"tex": "poster_rec", "pos": Vector3(1.55, 3.6486, 13.264),
 			"rot": Vector3(0, 180, 0), "size": Vector2(0.45, 0.62)},
 	{"tex": "sign_warning", "pos": Vector3(7.4, 3.55, 10.536),
@@ -86,6 +86,13 @@ const DECALS := [
 			"rot": Vector3(0, 90, 0), "size": Vector2(0.3, 0.4)},
 	{"tex": "sign_warning", "pos": Vector3(4.2, 3.9, 7.236),
 			"rot": Vector3(0, 0, 0), "size": Vector2(0.4, 0.4)},
+	# полировка 2026-10-22: новые декали на пустые панели (вне проёмов)
+	{"tex": "stencil_deckb", "pos": Vector3(8.9, 3.95, 13.264),
+			"rot": Vector3(0, 180, 0), "size": Vector2(1.1, 0.42)},
+	{"tex": "sign_warning", "pos": Vector3(3.1, 3.55, 10.536),
+			"rot": Vector3(0, 0, 0), "size": Vector2(0.45, 0.45)},
+	{"tex": "hazard_labels", "pos": Vector3(-3.1, 3.45, 13.264),
+			"rot": Vector3(0, 180, 0), "size": Vector2(0.5, 0.5)},
 ]
 
 var _cache: Dictionary = {}
@@ -308,7 +315,7 @@ func _add_decal(host: Node3D, data: Dictionary) -> void:
 	var mat := StandardMaterial3D.new()
 	mat.resource_name = "decal_" + tex_name
 	mat.albedo_texture = tex
-	mat.albedo_color = Color(0.68, 0.68, 0.68)
+	mat.albedo_color = Color(0.58, 0.58, 0.58)
 	mat.roughness = 0.9
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC

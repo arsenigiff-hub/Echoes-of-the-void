@@ -25,7 +25,7 @@ func _apply(node: Node) -> void:
 				continue
 			var mat: Material = null
 			if String(mi.name).begins_with("Screen"):
-				mat = _screen_material()
+				mat = _radio_screen_material()
 			else:
 				mat = _kit_material(src.resource_name)
 			if mat != null:
@@ -86,6 +86,27 @@ func _screen_material() -> StandardMaterial3D:
 	m.emission_energy_multiplier = 0.55
 	m.roughness = 0.5
 	_cache["screen"] = m
+	return m
+
+
+# Экран радио: unshaded CRT в зелёной гамме. Раньше был shaded-материал с белым
+# albedo, и тёплая лампа верстака выбивала экран в белое пятно (final_05_radio).
+func _radio_screen_material() -> StandardMaterial3D:
+	if _cache.has("radio_screen"):
+		return _cache["radio_screen"]
+	var m := StandardMaterial3D.new()
+	var path := GEM + "crt/crt_telemetry.png"
+	if ResourceLoader.exists(path):
+		var tex := load(path) as Texture2D
+		m.albedo_texture = tex
+		m.emission_texture = tex
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.albedo_color = Color(0.50, 0.85, 0.58)
+	m.emission_enabled = true
+	m.emission = Color(0.25, 0.90, 0.45)
+	m.emission_energy_multiplier = 0.45
+	m.disable_fog = true
+	_cache["radio_screen"] = m
 	return m
 
 
