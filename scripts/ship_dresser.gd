@@ -66,7 +66,7 @@ const DECALS := [
 	{"tex": "sign_warning", "pos": Vector3(7.4, 3.55, 10.536),
 			"rot": Vector3(0, 0, 0), "size": Vector2(0.5, 0.5)},
 	# записка лежит на столешнице верстака (её верх — 3.1086)
-	{"tex": "note_handwritten", "pos": Vector3(4.25, 3.11, 12.45),
+	{"tex": "note_handwritten", "pos": Vector3(4.42, 3.012, 12.93),
 			"rot": Vector3(-90, 0, 0), "size": Vector2(0.32, 0.42)},
 	{"tex": "poster_mng", "pos": Vector3(-5.4, 3.6986, 10.536),
 			"rot": Vector3(0, 0, 0), "size": Vector2(0.5, 0.7)},
@@ -79,6 +79,13 @@ const DECALS := [
 	# номер на двери B-3 (геометрия модели затекстурена, надпись — декаль)
 	{"tex": "b3_number", "pos": Vector3(-3.724, 3.62, 11.9),
 			"rot": Vector3(0, 90, 0), "size": Vector2(0.62, 0.46)},
+	# шлюз
+	{"tex": "airlock_stencils", "pos": Vector3(-5.15, 3.62, 10.695),
+			"rot": Vector3(0, 0, 0), "size": Vector2(1.25, 0.70)},
+	{"tex": "airlock_labels", "pos": Vector3(-5.0, 3.02, 10.695),
+			"rot": Vector3(0, 0, 0), "size": Vector2(0.62, 0.35)},
+	{"tex": "airlock_frost", "pos": Vector3(-7.55, 3.5, 12.85),
+			"rot": Vector3(0, 90, 0), "size": Vector2(0.9, 0.9)},
 	# каюта экипажа
 	{"tex": "poster_keepcalm", "pos": Vector3(6.564, 3.85, 8.4),
 			"rot": Vector3(0, -90, 0), "size": Vector2(0.45, 0.62)},
@@ -136,7 +143,11 @@ func _dress_mesh(mi: MeshInstance3D) -> void:
 			continue
 		var keep_default := key in ["hazard_y", "hazard_k", "crt_green", "red_lamp", "glass_grime"]
 		var mat: Material = null
-		if _has_ancestor(mi, "door_b3") and not keep_default:
+		if _has_ancestor(mi, "airlock"):
+			mat = _airlock_material(mi, key)
+		elif _has_ancestor(mi, "radio_cabinet"):
+			mat = _cabinet_material(key)
+		elif _has_ancestor(mi, "door_b3") and not keep_default:
 			mat = _door_material()
 		else:
 			mat = _material_for(key)
@@ -239,6 +250,128 @@ func _door_material() -> StandardMaterial3D:
 	return m
 
 
+const RADIO_TEX := "res://assetss/tex_gemini/radio/"
+
+
+func _cabinet_material(key: String) -> Material:
+	if _cache.has("cab_" + key):
+		return _cache["cab_" + key]
+	var m: StandardMaterial3D = null
+	match key:
+		"metal_panel":
+			m = _radio_tex("cabinet_body.png", Color(1, 1, 1), 1.05, 0.8, 0.35)
+		"metal_dark":
+			m = _radio_tex("radio_panel.png", Color(0.6, 0.6, 0.6), 1.5, 0.8, 0.35)
+		"paint_worn":
+			m = _radio_tex("radio_metal.png", Color(1, 1, 1), 1.9, 0.6, 0.6)
+		"rust":
+			m = _radio_tex("rust_heavy.png", Color(1, 1, 1), 1.4, 0.9, 0.2)
+		"hazard_y":
+			m = _radio_tex("hazard_stripes_worn.png", Color(1, 1, 1), 1.5, 0.85, 0.2)
+		"hazard_k":
+			m = _radio_tex("metal_wall_dark.png", Color(0.4, 0.4, 0.4), 1.2, 0.85, 0.3)
+		"glass_grime":
+			m = _glass_material()
+	_cache["cab_" + key] = m
+	return m
+
+
+func _radio_tex(name: String, tint: Color, scale: float, rough: float, metal: float) -> StandardMaterial3D:
+	var path := RADIO_TEX + name
+	if not ResourceLoader.exists(path):
+		path = TILE_DIR + name
+	var tex := load(path) as Texture2D
+	var m := StandardMaterial3D.new()
+	m.resource_name = "cab_" + name.get_file().get_basename()
+	if tex != null:
+		m.albedo_texture = tex
+	m.albedo_color = tint
+	m.uv1_triplanar = true
+	m.uv1_scale = Vector3(scale, scale, scale)
+	m.roughness = rough
+	m.metallic = metal
+	return m
+
+
+const AIRLOCK_TEX := "res://assetss/tex_gemini/airlock/"
+const SHIP_TEX := "res://assetss/tex_gemini/ship/"
+
+
+func _airlock_material(node: Node, key: String) -> Material:
+	# створка круглого люка — тяжёлый металл с потёртостями, без «обойного» узора
+	if _has_ancestor(node, "airlock_door"):
+		match key:
+			"metal_panel":
+				return _airlock_tex("hull_dark.png", Color(0.9, 0.9, 0.9), 0.7, 0.85, 0.4)
+			"metal_dark":
+				return _airlock_tex("hull_dark.png", Color(0.55, 0.55, 0.55), 0.7, 0.85, 0.4)
+			"paint_worn":
+				return _airlock_tex("hull_white.png", Color(0.9, 0.9, 0.9), 0.8, 0.8, 0.3)
+	var suffix := "wall"
+	if _has_ancestor(node, "airlock_floor"):
+		suffix = "floor"
+	var cache_key := "air_" + suffix + "_" + key
+	if _cache.has(cache_key):
+		return _cache[cache_key]
+	var m: StandardMaterial3D = null
+	match key:
+		"metal_panel":
+			m = _airlock_tex("airlock_" + suffix + ".png", Color(1, 1, 1), 0.55, 0.8, 0.35)
+		"metal_dark":
+			m = _airlock_tex("airlock_" + suffix + ".png", Color(0.55, 0.55, 0.55), 0.6, 0.85, 0.35)
+		"paint_worn":
+			m = _airlock_tex("airlock_wall.png", Color(1.05, 1.05, 1.05), 0.5, 0.8, 0.3)
+		"rust":
+			m = _airlock_tex("airlock_frost.png", Color(0.75, 0.75, 0.75), 0.4, 0.9, 0.15)
+		"hazard_y":
+			m = _airlock_tex("hazard_stripes2.png", Color(1, 1, 1), 0.6, 0.85, 0.2)
+		"hazard_k":
+			m = _airlock_tex("hull_dark.png", Color(0.5, 0.5, 0.5), 0.5, 0.85, 0.3)
+		"fabric_suit":
+			m = _airlock_tex("suit_fabric.png", Color(0.8, 0.8, 0.8), 1.1, 1.0, 0.0)
+		"rubber_black":
+			m = _solid(Color(0.04, 0.045, 0.05), 0.9, 0.0)
+		"paper_old":
+			m = _solid(Color(0.62, 0.6, 0.52), 0.95, 0.0)
+		"glass_grime":
+			m = _glass_material()
+		"crt_green":
+			m = _emissive_material("crt_green")
+		"red_lamp":
+			m = _emissive_material("red_lamp")
+		"lamp_cold":
+			m = _emissive_material("lamp_cold")
+	_cache[cache_key] = m
+	return m
+
+
+func _airlock_tex(name: String, tint: Color, scale: float, rough: float, metal: float) -> StandardMaterial3D:
+	var path := AIRLOCK_TEX + name
+	if not ResourceLoader.exists(path):
+		path = SHIP_TEX + name
+	if not ResourceLoader.exists(path):
+		path = TILE_DIR + name
+	var tex := load(path) as Texture2D
+	var m := StandardMaterial3D.new()
+	m.resource_name = "air_" + name.get_file().get_basename()
+	if tex != null:
+		m.albedo_texture = tex
+	m.albedo_color = tint
+	m.uv1_triplanar = true
+	m.uv1_scale = Vector3(scale, scale, scale)
+	m.roughness = rough
+	m.metallic = metal
+	return m
+
+
+func _solid(color: Color, rough: float, metal: float) -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = color
+	m.roughness = rough
+	m.metallic = metal
+	return m
+
+
 func _is_ceiling(node: Node) -> bool:
 	var cur := node
 	while cur != null:
@@ -303,7 +436,12 @@ func _place_decals(host: Node3D) -> void:
 
 func _add_decal(host: Node3D, data: Dictionary) -> void:
 	var tex_name := String(data["tex"])
-	var tex := load(DECAL_DIR + tex_name + ".png") as Texture2D
+	var path := DECAL_DIR + tex_name + ".png"
+	if not ResourceLoader.exists(path):
+		path = AIRLOCK_TEX + tex_name + ".png"
+	if not ResourceLoader.exists(path):
+		path = SHIP_TEX + tex_name + ".png"
+	var tex := load(path) as Texture2D
 	if tex == null:
 		push_warning("ShipDresser: нет декали " + tex_name)
 		return

@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://14y2qdh41q1d"
-path="res://.godot/imported/Без имени.glb-62af62f55b134036fff7351955b11ab6.scn"
+uid="uid://ccoq5d3lsc4l8"
+path="res://.godot/imported/airlock_console.glb-2f3f81b4e620019bf488c1c735942758.scn"
 
 [deps]
 
-source_file="res://assetss/Без имени.glb"
-dest_files=["res://.godot/imported/Без имени.glb-62af62f55b134036fff7351955b11ab6.scn"]
+source_file="res://assetss/rooms/airlock/airlock_console.glb"
+dest_files=["res://.godot/imported/airlock_console.glb-2f3f81b4e620019bf488c1c735942758.scn"]
 
 [params]
 

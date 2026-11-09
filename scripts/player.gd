@@ -14,6 +14,17 @@ extends CharacterBody3D
 @export var gravity: float = 9.8
 @export var mouse_sensetivity: float = 0.003
 
+@export_group("EVA (невесомость)")
+## Тяга скафандра, м/с².
+@export var eva_thrust: float = 7.0
+## Торможение (вязкость среды), 1/с.
+@export var eva_damping: float = 1.1
+## Максимальная скорость в невесомости, м/с.
+@export var eva_max_speed: float = 7.5
+
+## Режим свободного полёта в космосе (гравитация и пол отключены).
+var eva_mode: bool = false
+
 @export_group("Камера: дыхание и шаг")
 ## Включить покачивание/дыхание камеры (атмосфера, «живой» игрок).
 @export var bob_enabled: bool = true
@@ -45,7 +56,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	# Камера «дышит» и покачивается при ходьбе. Меняем только локальную
 	# позицию камеры: вращение (мышь) и фокус на предметах не затрагиваются.
-	if not bob_enabled or is_interacting:
+	if not bob_enabled or is_interacting or eva_mode:
 		camera.position = Vector3.ZERO
 		_bob_time = 0.0
 		return
@@ -134,6 +145,10 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector3.ZERO
 		return
 
+	if eva_mode:
+		_eva_physics(delta)
+		return
+
 	var input_dir := Vector2.ZERO
 
 	if is_on_floor() and Input.is_physical_key_pressed(KEY_SPACE):
@@ -169,3 +184,39 @@ func _physics_process(delta: float) -> void:
 ## не зависело от раскладки.
 func _is_key(event: InputEventKey, key: Key) -> bool:
 	return event.keycode == key or event.physical_keycode == key
+
+
+# ------------------------------------------------------------- невесомость --
+
+## Переключение режима скафандра (EVA). Вызывает контроллер шлюза.
+func set_eva_mode(enabled: bool) -> void:
+	eva_mode = enabled
+	velocity = Vector3.ZERO
+	if camera != null:
+		camera.position = Vector3.ZERO
+	if head != null and enabled:
+		# тело больше не должно «прилипать» к полу — сбрасываем скольжение
+		velocity = Vector3.ZERO
+
+
+## Полёт в невесомости: тяга относительно взгляда, инерция, торможение.
+func _eva_physics(delta: float) -> void:
+	var thrust := Vector3.ZERO
+	var basis := camera.global_transform.basis
+	if Input.is_physical_key_pressed(KEY_W):
+		thrust -= basis.z
+	if Input.is_physical_key_pressed(KEY_S):
+		thrust += basis.z
+	if Input.is_physical_key_pressed(KEY_D):
+		thrust += basis.x
+	if Input.is_physical_key_pressed(KEY_A):
+		thrust -= basis.x
+	if Input.is_physical_key_pressed(KEY_SPACE):
+		thrust += basis.y
+	if Input.is_physical_key_pressed(KEY_CTRL):
+		thrust -= basis.y
+	if thrust.length_squared() > 0.0:
+		velocity += thrust.normalized() * eva_thrust * delta
+	velocity *= maxf(0.0, 1.0 - eva_damping * delta)
+	velocity = velocity.limit_length(eva_max_speed)
+	move_and_slide()
