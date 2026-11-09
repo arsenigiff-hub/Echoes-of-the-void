@@ -107,7 +107,7 @@
 - Радио: `scenes/radio_device.tscn`, управление в `scripts/radio.gd`; камера всегда едет в
   `Radio/CameraTarget` (фиксированный ракурс), углы — по кратчайшему пути; узлы
   `controls/slider_knob*` и `controls/dial_cap` обязательны.
-- Радио-регресс: `res://.codex_qa/radio_focus/verify_no_spin.gd`.
+- Радио-регресс: `res://tests/verify_radio_no_spin.gd`.
 
 ### Сцены и сохранение
 - `scenes/main.tscn`: Player, ShipInterior, Radio, Sun, PostFX (VHS), SpaceStage, EVA,
@@ -159,8 +159,8 @@
   `airlock_hatch_v2.glb`. Петля/центр люка уже в мировых координатах внутри GLB — инстанс ставить
   в (0,0,0), НЕ добавлять трансформ повторно (был баг: люк улетал). Вращается внутренний узел
   петли, открытие +95° вокруг Y.
-- Проверка: `res://.codex_qa/eva/test_eva.gd` (выход/возврат), закрытый люк:
-  `res://.codex_qa/eva/show_hatch_closed.gd`.
+- Проверка: `res://tests/test_eva.gd` (выход/возврат), закрытый люк:
+  `res://tests/show_hatch_closed.gd`.
 
 ## 5. Ключевые файлы
 
