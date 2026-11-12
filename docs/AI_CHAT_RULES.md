@@ -169,8 +169,9 @@
 - `scripts/`: player.gd, radio.gd, interactable.gd, ship_dresser.gd, screen_dresser.gd,
   eva_controller.gd, airlock_hatch.gd, space_stage.gd, radio_materials.gd,
   ship_exterior_materials.gd, kit_materials.gd.
-- Генераторы сцен (черновики, вне git): `.codex_qa/shipassemble/build_ship.gd`,
-  `build_and_save.gd`; снимки — `.codex_qa/ship_rebuild/capture_final.gd`.
+- **Генератор интерьера (в git, исключение из `.codex_qa`):** `.codex_qa/shipassemble/build_ship.gd`,
+  `build_and_save.gd` — канонический пайплайн пересборки `scenes/ship_interior.tscn`;
+  снимки — `.codex_qa/ship_rebuild/capture_final.gd` (вне git).
 - **Регресс-проверки (в git):** `tests/verify_radio_no_spin.gd`, `tests/test_eva.gd`,
   `tests/show_hatch_closed.gd`. Новые проверки добавлять только сюда, а не в `.codex_qa/`.
 - Ассеты: `assetss/shipkit/{arch,equip,radio}`, `assetss/rooms/{quarters,airlock,airlock_room}`,
@@ -210,9 +211,10 @@ $godot = "D:\Godot_v4.7.2-stable_win64.exe"
   если без тела непонятно.
 - После коммита — push в `origin/main` (если есть доступ); локальная копия без push не считается
   сохранённой.
-- В git **не** идут: `.codex_qa/`, `.backup_fix/`, `*.tmp`, `__pycache__/`, отчёты `.docx`,
-  папка `Отчеты/`, неиспользуемые экспортные текстуры. Всё важное дублируется в `tests/`,
-  `scripts/`, `scenes/`, `docs/`.
+- В git **не** идут: `.codex_qa/` (исключение — `.codex_qa/shipassemble/*.gd`, это канонический
+  генератор интерьера), `.backup_fix/`, `*.tmp`, `__pycache__/`, отчёты `.docx`, папка `Отчеты/`,
+  неиспользуемые экспортные текстуры. Всё важное дублируется в `tests/`, `scripts/`, `scenes/`,
+  `docs/`.
 - Перед коммитом смотреть `git status`: в индекс не должны попасть черновики, диагностические
   скрипты, скриншоты и мусор от экспорта.
 
@@ -258,8 +260,8 @@ VHS-меню/интро, текстуры. Состояние работы 26–
 стыки коридор↔мостик и шлюз↔коридор, каюта, hazard-трим, окно мостика (щели 0.12 м к космосу),
 декали по лучевым замерам, труба/кабели вдоль стены, бумаги/кружка/ящик/таблички на местах,
 внешняя оболочка `_build_shell`. `scenes/ship_interior.tscn` пересобран, `scripts/ship_dresser.gd`
-обновлён. **Генераторы `.codex_qa/shipassemble/*.gd` пропатчены и лежат вне git — при переносе
-проекта их нужно забрать, иначе пересборка вернёт старые наложения.**
+обновлён. **Генераторы `.codex_qa/shipassemble/*.gd` пропатчены и трекаются в git (исключение
+из `.codex_qa` в `.gitignore`) — пересборка интерьера воспроизводима.**
 
 Не сделано:
 - кинематографичный отъезд камеры при выходе в космос;

@@ -3,7 +3,11 @@
 /android/
 
 # QA-артефакты, кадры и локальные бэкапы (не часть игры)
-.codex_qa/
+.codex_qa/*
+# Генератор интерьера — канонический пайплайн сборки, трекается в git
+!.codex_qa/shipassemble/
+.codex_qa/shipassemble/*
+!.codex_qa/shipassemble/*.gd
 .backup_fix/
 *.tmp
 __pycache__/

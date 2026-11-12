@@ -70,7 +70,8 @@ const DECALS := [
 			"rot": Vector3(-90, 0, 0), "size": Vector2(0.32, 0.42)},
 	{"tex": "poster_mng", "pos": Vector3(-5.4, 3.6986, 10.534),
 			"rot": Vector3(0, 0, 0), "size": Vector2(0.5, 0.7)},
-	{"tex": "sign_decompression", "pos": Vector3(-6.6, 3.5986, 10.498),
+	# F21b: сдвинута на +0.45 по x — вплотную к стене табличку закрывали труба/вентиль
+	{"tex": "sign_decompression", "pos": Vector3(-6.15, 3.5986, 10.498),
 			"rot": Vector3(0, 0, 0), "size": Vector2(0.9, 0.5)},
 	{"tex": "hazard_labels", "pos": Vector3(-7.35, 3.4486, 10.516),
 			"rot": Vector3(0, 0, 0), "size": Vector2(0.5, 0.5)},
