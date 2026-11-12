@@ -54,51 +54,51 @@ const SPECIAL_KEYS := ["fabric_dirty", "fabric_light", "fabric_pillow", "paper_o
 # верстаке, в final_02 (взгляд назад) — плакат на правом борту и номер B-3 на
 # двери. Исходные координаты давали на кадре 25-86 px для DECK B и знака
 # (нечитаемо), поэтому часть декалей сдвинута вдоль коридора в зону, которую
-# реально видно; Z — 0.07 м от плоскости панелей, чтобы не проваливаться за
-# рёбра панелей.
+# реально видно. F21: z каждой декали — поверхность панели + 4 мм (лучевые замеры
+# аудита, .codex_qa/model_audit/decal_fixes.csv), а не Z0+0.06: наклейки парили.
 const DECALS := [
-	{"tex": "stencil_deckb", "pos": Vector3(2.0, 4.12, 10.536),
+	{"tex": "stencil_deckb", "pos": Vector3(2.0, 4.12, 10.512),
 			"rot": Vector3(0, 0, 0), "size": Vector2(1.3, 0.5)},
-	{"tex": "poster_keepcalm", "pos": Vector3(1.0, 3.36, 13.264),
+	{"tex": "poster_keepcalm", "pos": Vector3(1.0, 3.36, 13.274),
 			"rot": Vector3(0, 180, 0), "size": Vector2(0.5, 0.7)},
-	{"tex": "poster_rec", "pos": Vector3(1.55, 3.6486, 13.264),
+	{"tex": "poster_rec", "pos": Vector3(1.55, 3.6486, 13.316),
 			"rot": Vector3(0, 180, 0), "size": Vector2(0.45, 0.62)},
-	{"tex": "sign_warning", "pos": Vector3(7.4, 3.55, 10.536),
+	{"tex": "sign_warning", "pos": Vector3(7.4, 3.55, 10.4415),
 			"rot": Vector3(0, 0, 0), "size": Vector2(0.5, 0.5)},
 	# записка лежит на столешнице верстака (её верх — 3.1086)
 	{"tex": "note_handwritten", "pos": Vector3(4.42, 3.012, 12.93),
 			"rot": Vector3(-90, 0, 0), "size": Vector2(0.32, 0.42)},
-	{"tex": "poster_mng", "pos": Vector3(-5.4, 3.6986, 10.536),
+	{"tex": "poster_mng", "pos": Vector3(-5.4, 3.6986, 10.534),
 			"rot": Vector3(0, 0, 0), "size": Vector2(0.5, 0.7)},
-	{"tex": "sign_decompression", "pos": Vector3(-6.6, 3.5986, 10.536),
+	{"tex": "sign_decompression", "pos": Vector3(-6.6, 3.5986, 10.498),
 			"rot": Vector3(0, 0, 0), "size": Vector2(0.9, 0.5)},
-	{"tex": "hazard_labels", "pos": Vector3(-7.1, 3.4486, 10.536),
+	{"tex": "hazard_labels", "pos": Vector3(-7.35, 3.4486, 10.516),
 			"rot": Vector3(0, 0, 0), "size": Vector2(0.5, 0.5)},
-	{"tex": "porthole", "pos": Vector3(10.2, 3.6486, 13.264),
+	{"tex": "porthole", "pos": Vector3(10.2, 3.6486, 13.316),
 			"rot": Vector3(0, 180, 0), "size": Vector2(0.6, 0.6)},
 	# номер на двери B-3 (геометрия модели затекстурена, надпись — декаль)
-	{"tex": "b3_number", "pos": Vector3(-3.724, 3.62, 11.9),
+	{"tex": "b3_number", "pos": Vector3(-3.797, 3.62, 11.9),
 			"rot": Vector3(0, 90, 0), "size": Vector2(0.62, 0.46)},
 	# шлюз
-	{"tex": "airlock_stencils", "pos": Vector3(-5.15, 3.62, 10.695),
+	{"tex": "airlock_stencils", "pos": Vector3(-5.15, 3.62, 10.699),
 			"rot": Vector3(0, 0, 0), "size": Vector2(1.25, 0.70)},
-	{"tex": "airlock_labels", "pos": Vector3(-5.0, 3.02, 10.695),
+	{"tex": "airlock_labels", "pos": Vector3(-5.0, 3.02, 10.699),
 			"rot": Vector3(0, 0, 0), "size": Vector2(0.62, 0.35)},
-	{"tex": "airlock_frost", "pos": Vector3(-7.55, 3.5, 12.85),
+	{"tex": "airlock_frost", "pos": Vector3(-7.546, 3.5, 12.85),
 			"rot": Vector3(0, 90, 0), "size": Vector2(0.9, 0.9)},
 	# каюта экипажа
-	{"tex": "poster_keepcalm", "pos": Vector3(6.564, 3.85, 8.4),
+	{"tex": "poster_keepcalm", "pos": Vector3(6.602, 3.85, 8.4),
 			"rot": Vector3(0, -90, 0), "size": Vector2(0.45, 0.62)},
-	{"tex": "note_handwritten", "pos": Vector3(3.236, 3.65, 8.1),
+	{"tex": "note_handwritten", "pos": Vector3(3.184, 3.65, 8.1),
 			"rot": Vector3(0, 90, 0), "size": Vector2(0.3, 0.4)},
-	{"tex": "sign_warning", "pos": Vector3(4.2, 3.9, 7.236),
+	{"tex": "sign_warning", "pos": Vector3(4.2, 3.9, 7.184),
 			"rot": Vector3(0, 0, 0), "size": Vector2(0.4, 0.4)},
 	# полировка 2026-10-22: новые декали на пустые панели (вне проёмов)
-	{"tex": "stencil_deckb", "pos": Vector3(8.9, 3.95, 13.264),
+	{"tex": "stencil_deckb", "pos": Vector3(8.9, 3.95, 13.3585),
 			"rot": Vector3(0, 180, 0), "size": Vector2(1.1, 0.42)},
-	{"tex": "sign_warning", "pos": Vector3(3.1, 3.55, 10.536),
+	{"tex": "sign_warning", "pos": Vector3(3.1, 3.55, 10.4415),
 			"rot": Vector3(0, 0, 0), "size": Vector2(0.45, 0.45)},
-	{"tex": "hazard_labels", "pos": Vector3(-3.1, 3.45, 13.264),
+	{"tex": "hazard_labels", "pos": Vector3(-3.1, 3.45, 13.28),
 			"rot": Vector3(0, 180, 0), "size": Vector2(0.5, 0.5)},
 ]
 
