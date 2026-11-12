@@ -1,0 +1,1031 @@
+[
+  {
+    "center": [
+      4.73000001907349,
+      2.9235999584198,
+      12.3400001525879
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": -1.0
+    },
+    "hit_front": {
+      "dist": 0.0100002291282977,
+      "glb": "",
+      "path": "ShipInterior/@MeshInstance3D@51",
+      "point": [
+        4.73000001907349,
+        2.9235999584198,
+        12.3500003814697
+      ],
+      "tri_dot": 1.0
+    },
+    "id": 51,
+    "name": "@MeshInstance3D@55",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "ShipInterior/@MeshInstance3D@55",
+    "size": [
+      1.51999974250793,
+      0.0139999389648438,
+      0.0300006866455078
+    ]
+  },
+  {
+    "center": [
+      -4.21500015258789,
+      2.16260004043579,
+      11.8999996185303
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": -1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 58,
+    "name": "@MeshInstance3D@66",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "ShipInterior/@MeshInstance3D@66",
+    "size": [
+      0.0120000839233398,
+      0.0159997940063477,
+      1.28000068664551
+    ]
+  },
+  {
+    "center": [
+      5.21000003814697,
+      2.90781021118164,
+      9.13000011444092
+    ],
+    "glb": "res://assetss/rooms/quarters/personal_photo_a.glb",
+    "hit_back": {
+      "dist": -1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 144,
+    "name": "personal_photo_a",
+    "normal": [
+      0.139173120260239,
+      0.0,
+      0.990268111228943
+    ],
+    "path": "ShipInterior/personal_photo_a2/personal_photo_a",
+    "size": [
+      0.117867469787598,
+      0.010420560836792,
+      0.143335342407227
+    ]
+  },
+  {
+    "center": [
+      5.80000019073486,
+      2.90781021118164,
+      9.25
+    ],
+    "glb": "res://assetss/rooms/quarters/personal_photo_b.glb",
+    "hit_back": {
+      "dist": -1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 145,
+    "name": "personal_photo_b",
+    "normal": [
+      -0.61566150188446,
+      0.0,
+      0.788010776042938
+    ],
+    "path": "ShipInterior/personal_photo_b2/personal_photo_b",
+    "size": [
+      0.145516395568848,
+      0.010420560836792,
+      0.150638580322266
+    ]
+  },
+  {
+    "center": [
+      5.28000020980835,
+      2.91196370124817,
+      9.32000064849854
+    ],
+    "glb": "res://assetss/rooms/quarters/personal_pencil.glb",
+    "hit_back": {
+      "dist": -1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 148,
+    "name": "personal_pencil",
+    "normal": [
+      0.939692616462708,
+      0.0,
+      0.342020153999329
+    ],
+    "path": "ShipInterior/personal_pencil2/personal_pencil",
+    "size": [
+      0.0594797134399414,
+      0.0127272605895996,
+      0.142299652099609
+    ]
+  },
+  {
+    "center": [
+      5.82999992370605,
+      2.9111762046814,
+      9.05000019073486
+    ],
+    "glb": "res://assetss/rooms/quarters/personal_toothbrush.glb",
+    "hit_back": {
+      "dist": 0.357766691711826,
+      "glb": "res://assetss/rooms/quarters/personal_notebook.glb",
+      "path": "ShipInterior/personal_notebook2/personal_notebook",
+      "point": [
+        5.47766828536987,
+        2.9111762046814,
+        9.11212539672852
+      ],
+      "tri_dot": 0.926183938980103
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 150,
+    "name": "personal_toothbrush",
+    "normal": [
+      0.984807789325714,
+      0.0,
+      -0.173648208379745
+    ],
+    "path": "ShipInterior/personal_toothbrush2/personal_toothbrush",
+    "size": [
+      0.062896728515625,
+      0.0171523094177246,
+      0.21324348449707
+    ]
+  },
+  {
+    "center": [
+      13.0340976715088,
+      2.84401679039001,
+      11.9225406646729
+    ],
+    "glb": "res://assetss/shipkit/equip/equip_papers.glb",
+    "hit_back": {
+      "dist": -1.0
+    },
+    "hit_front": {
+      "dist": 0.0974629936180076,
+      "glb": "res://assetss/shipkit/equip/equip_keyboard.glb",
+      "path": "ShipInterior/@Node3D@126/equip_keyboard",
+      "point": [
+        13.0900001525879,
+        2.84401679039001,
+        12.0023775100708
+      ],
+      "tri_dot": 0.5735764503479
+    },
+    "id": 151,
+    "name": "equip_papers",
+    "normal": [
+      0.5735764503479,
+      0.0,
+      0.819152057170868
+    ],
+    "path": "ShipInterior/PolishProp_equip_papers/equip_papers",
+    "size": [
+      0.322056770324707,
+      0.0019073486328125,
+      0.33248233795166
+    ]
+  },
+  {
+    "center": [
+      11.9081726074219,
+      2.1862998008728,
+      10.9014406204224
+    ],
+    "glb": "res://assetss/shipkit/arch/cable_bundle.glb",
+    "hit_back": {
+      "dist": -1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 152,
+    "name": "cable_bundle",
+    "normal": [
+      0.984807729721069,
+      0.0,
+      0.173648223280907
+    ],
+    "path": "ShipInterior/PolishProp_cable_bundle/cable_bundle",
+    "size": [
+      0.574385643005371,
+      0.0146000385284424,
+      3.15468406677246
+    ]
+  },
+  {
+    "center": [
+      -3.19742202758789,
+      2.18563985824585,
+      12.959620475769
+    ],
+    "glb": "res://assetss/shipkit/arch/cable_bundle.glb",
+    "hit_back": {
+      "dist": -1.0
+    },
+    "hit_front": {
+      "dist": 0.285093477773356,
+      "glb": "res://assetss/shipkit/arch/trim_hazard.glb",
+      "path": "ShipInterior/@Node3D@25/trim_hazard",
+      "point": [
+        -3.12363433837891,
+        2.18563985824585,
+        13.2349996566772
+      ],
+      "tri_dot": 0.965925812721252
+    },
+    "id": 154,
+    "name": "cable_bundle",
+    "normal": [
+      0.258819043636322,
+      0.0,
+      0.965925812721252
+    ],
+    "path": "ShipInterior/@Node3D@175/cable_bundle",
+    "size": [
+      3.86960411071777,
+      0.0175201892852783,
+      1.05729866027832
+    ]
+  },
+  {
+    "center": [
+      560.0,
+      13.5,
+      -96.0
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": -1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 176,
+    "name": "SpaceBlackHole",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "ShipInterior/SpaceBlackHole",
+    "size": [
+      82.0,
+      82.0,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      2.0,
+      4.11999988555908,
+      10.53600025177
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.0279998790717987,
+      "glb": "res://assetss/shipkit/arch/wall_panel_a.glb",
+      "path": "ShipInterior/@Node3D@29/wall_panel_a",
+      "point": [
+        2.0,
+        4.11999988555908,
+        10.5080003738403
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 177,
+    "name": "Decal_stencil_deckb",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "ShipInterior/Decal_stencil_deckb",
+    "size": [
+      1.30000007152557,
+      0.5,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      1.0,
+      3.35999989509583,
+      13.2639999389648
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.013999938129241,
+      "glb": "res://assetss/shipkit/arch/wall_panel_a.glb",
+      "path": "ShipInterior/@Node3D@30/wall_panel_a",
+      "point": [
+        1.0,
+        3.35999989509583,
+        13.2779998779297
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 178,
+    "name": "Decal_poster_keepcalm",
+    "normal": [
+      -0.0000000874227765734759,
+      0.0,
+      -1.0
+    ],
+    "path": "ShipInterior/Decal_poster_keepcalm",
+    "size": [
+      0.5,
+      0.699999809265137,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      1.54999995231628,
+      3.64860010147095,
+      13.2639999389648
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.0560001080377676,
+      "glb": "res://assetss/shipkit/arch/wall_panel_a.glb",
+      "path": "ShipInterior/@Node3D@30/wall_panel_a",
+      "point": [
+        1.54999995231628,
+        3.64860010147095,
+        13.3199996948242
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 179,
+    "name": "Decal_poster_rec",
+    "normal": [
+      -0.0000000874227765734759,
+      0.0,
+      -1.0
+    ],
+    "path": "ShipInterior/Decal_poster_rec",
+    "size": [
+      0.450000047683716,
+      0.619999885559082,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      7.40000009536743,
+      3.54999995231628,
+      10.53600025177
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.0985002553829874,
+      "glb": "res://assetss/shipkit/arch/wall_panel_b.glb",
+      "path": "ShipInterior/@Node3D@40/wall_panel_b",
+      "point": [
+        7.40000009536743,
+        3.54999995231628,
+        10.4375
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 180,
+    "name": "Decal_sign_warning",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "ShipInterior/Decal_sign_warning",
+    "size": [
+      0.5,
+      0.5,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      4.25,
+      3.10999989509583,
+      12.4499998092651
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.00139975548327382,
+      "glb": "",
+      "path": "ShipInterior/@MeshInstance3D@52",
+      "point": [
+        4.25,
+        3.10860013961792,
+        12.4499998092651
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 181,
+    "name": "Decal_note_handwritten",
+    "normal": [
+      0.0,
+      1.0,
+      -0.0000000437113882867379
+    ],
+    "path": "ShipInterior/Decal_note_handwritten",
+    "size": [
+      0.319999694824219,
+      0.0,
+      0.420000076293945
+    ]
+  },
+  {
+    "center": [
+      -5.40000009536743,
+      3.69860029220581,
+      10.53600025177
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.00600051861586332,
+      "glb": "res://assetss/shipkit/arch/wall_panel_b.glb",
+      "path": "ShipInterior/@Node3D@83/wall_panel_b",
+      "point": [
+        -5.40000009536743,
+        3.69860029220581,
+        10.5299997329712
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 182,
+    "name": "Decal_poster_mng",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "ShipInterior/Decal_poster_mng",
+    "size": [
+      0.5,
+      0.700000047683716,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      -6.59999990463257,
+      3.59859991073608,
+      10.53600025177
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.0419998153150077,
+      "glb": "res://assetss/shipkit/arch/wall_panel_b.glb",
+      "path": "ShipInterior/@Node3D@79/wall_panel_b",
+      "point": [
+        -6.59999990463257,
+        3.59859991073608,
+        10.4940004348755
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 183,
+    "name": "Decal_sign_decompression",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "ShipInterior/Decal_sign_decompression",
+    "size": [
+      0.899999618530273,
+      0.5,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      -7.09999990463257,
+      3.44860005378723,
+      10.53600025177
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.0240001665588208,
+      "glb": "res://assetss/shipkit/arch/wall_panel_b.glb",
+      "path": "ShipInterior/@Node3D@79/wall_panel_b",
+      "point": [
+        -7.09999990463257,
+        3.44860005378723,
+        10.5120000839233
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": 0.0206932809393735,
+      "glb": "res://assetss/shipkit/arch/wall_panel_b.glb",
+      "path": "ShipInterior/@Node3D@79/wall_panel_b",
+      "point": [
+        -7.09999990463257,
+        3.44860005378723,
+        10.5566930770874
+      ],
+      "tri_dot": -0.92352020740509
+    },
+    "id": 184,
+    "name": "Decal_hazard_labels",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "ShipInterior/Decal_hazard_labels",
+    "size": [
+      0.5,
+      0.5,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      10.1999998092651,
+      3.64860010147095,
+      13.2639999389648
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.0560007081520515,
+      "glb": "res://assetss/shipkit/arch/wall_panel_a.glb",
+      "path": "ShipInterior/@Node3D@96/wall_panel_a",
+      "point": [
+        10.1999998092651,
+        3.64860010147095,
+        13.3200006484985
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 185,
+    "name": "Decal_porthole",
+    "normal": [
+      -0.0000000874227765734759,
+      0.0,
+      -1.0
+    ],
+    "path": "ShipInterior/Decal_porthole",
+    "size": [
+      0.600000381469727,
+      0.599999904632568,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      -3.72399997711182,
+      3.61999988555908,
+      11.8999996185303
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.0770001477699268,
+      "glb": "res://assetss/shipkit/equip/door_b3.glb",
+      "path": "ShipInterior/door_b3/door_b3",
+      "point": [
+        -3.80100011825562,
+        3.61999988555908,
+        11.8999996185303
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 186,
+    "name": "Decal_b3_number",
+    "normal": [
+      1.0,
+      0.0,
+      -0.0000000437113882867379
+    ],
+    "path": "ShipInterior/Decal_b3_number",
+    "size": [
+      0.0,
+      0.460000038146973,
+      0.620000839233398
+    ]
+  },
+  {
+    "center": [
+      6.56400012969971,
+      3.84999990463257,
+      8.39999961853027
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.0419998144043625,
+      "glb": "res://assetss/shipkit/arch/wall_panel_b.glb",
+      "path": "ShipInterior/@Node3D@140/wall_panel_b",
+      "point": [
+        6.60599994659424,
+        3.84999990463257,
+        8.39999961853027
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 187,
+    "name": "@MeshInstance3D@2",
+    "normal": [
+      -1.0,
+      0.0,
+      -0.0000000437113882867379
+    ],
+    "path": "ShipInterior/@MeshInstance3D@2",
+    "size": [
+      0.0,
+      0.619999885559082,
+      0.450000762939453
+    ]
+  },
+  {
+    "center": [
+      3.23600006103516,
+      3.65000009536743,
+      8.10000038146973
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.0559999927744045,
+      "glb": "res://assetss/shipkit/arch/wall_panel_a.glb",
+      "path": "ShipInterior/@Node3D@139/wall_panel_a",
+      "point": [
+        3.1800000667572,
+        3.65000009536743,
+        8.10000038146973
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 188,
+    "name": "@MeshInstance3D@3",
+    "normal": [
+      1.0,
+      0.0,
+      -0.0000000437113882867379
+    ],
+    "path": "ShipInterior/@MeshInstance3D@3",
+    "size": [
+      0.0,
+      0.400000095367432,
+      0.299999713897705
+    ]
+  },
+  {
+    "center": [
+      4.19999980926514,
+      3.90000009536743,
+      7.23600006103516
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.0560002292718993,
+      "glb": "res://assetss/shipkit/arch/wall_panel_a.glb",
+      "path": "ShipInterior/@Node3D@137/wall_panel_a",
+      "point": [
+        4.19999980926514,
+        3.90000009536743,
+        7.17999982833862
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 189,
+    "name": "@MeshInstance3D@4",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "ShipInterior/@MeshInstance3D@4",
+    "size": [
+      0.399999856948853,
+      0.399999856948853,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      8.89999961853027,
+      3.94999980926514,
+      13.2639999389648
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.0985002553829874,
+      "glb": "res://assetss/shipkit/arch/wall_panel_a.glb",
+      "path": "ShipInterior/@Node3D@45/wall_panel_a",
+      "point": [
+        8.89999961853027,
+        3.94999980926514,
+        13.3625001907349
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 190,
+    "name": "@MeshInstance3D@5",
+    "normal": [
+      -0.0000000874227765734759,
+      0.0,
+      -1.0
+    ],
+    "path": "ShipInterior/@MeshInstance3D@5",
+    "size": [
+      1.10000038146973,
+      0.419999837875366,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      3.09999990463257,
+      3.54999995231628,
+      10.53600025177
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.0985002553829874,
+      "glb": "res://assetss/shipkit/arch/wall_panel_b.glb",
+      "path": "ShipInterior/@Node3D@33/wall_panel_b",
+      "point": [
+        3.09999990463257,
+        3.54999995231628,
+        10.4375
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": 0.363999354575898,
+      "glb": "res://assetss/shipkit/arch/wall_panel_a.glb",
+      "path": "ShipInterior/@Node3D@141/wall_panel_a",
+      "point": [
+        3.09999990463257,
+        3.54999995231628,
+        10.8999996185303
+      ],
+      "tri_dot": -1.0
+    },
+    "id": 191,
+    "name": "@MeshInstance3D@6",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "ShipInterior/@MeshInstance3D@6",
+    "size": [
+      0.449999809265137,
+      0.449999809265137,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      -3.09999990463257,
+      3.45000004768372,
+      13.2639999389648
+    ],
+    "glb": "",
+    "hit_back": {
+      "dist": 0.0200004582436625,
+      "glb": "res://assetss/shipkit/arch/wall_panel_a.glb",
+      "path": "ShipInterior/@Node3D@24/wall_panel_a",
+      "point": [
+        -3.09999990463257,
+        3.45000004768372,
+        13.2840003967285
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": 0.0829992284053558,
+      "glb": "res://assetss/shipkit/equip/poster.glb",
+      "path": "ShipInterior/@Node3D@179/poster",
+      "point": [
+        -3.09999990463257,
+        3.45000004768372,
+        13.1810007095337
+      ],
+      "tri_dot": 1.0
+    },
+    "id": 192,
+    "name": "@MeshInstance3D@7",
+    "normal": [
+      -0.0000000874227765734759,
+      0.0,
+      -1.0
+    ],
+    "path": "ShipInterior/@MeshInstance3D@7",
+    "size": [
+      0.5,
+      0.5,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      4.57499980926514,
+      3.46109986305237,
+      12.6319942474365
+    ],
+    "glb": "res://assetss/shipkit/radio/radio.glb",
+    "hit_back": {
+      "dist": 0.00300572658539361,
+      "glb": "res://assetss/shipkit/radio/radio.glb",
+      "path": "Radio/Model/RadioDevice/RadioBody",
+      "point": [
+        4.57499980926514,
+        3.46109986305237,
+        12.6350002288818
+      ],
+      "tri_dot": 1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 194,
+    "name": "Screen",
+    "normal": [
+      -0.0000000874227765734759,
+      0.0,
+      -1.0
+    ],
+    "path": "Radio/Model/RadioDevice/Screen",
+    "size": [
+      0.299999713897705,
+      0.139999866485596,
+      0.0000104904174804688
+    ]
+  },
+  {
+    "center": [
+      508.414001464844,
+      73.2350082397461,
+      11.8999996185303
+    ],
+    "glb": "res://scenes/sun.tscn",
+    "hit_back": {
+      "dist": -1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 201,
+    "name": "Corona",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "Sun/Corona",
+    "size": [
+      251.904022216797,
+      251.904022216797,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      450.686004638672,
+      73.2350082397461,
+      11.8999996185303
+    ],
+    "glb": "res://scenes/sun.tscn",
+    "hit_back": {
+      "dist": -1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 202,
+    "name": "Glow",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "Sun/Glow",
+    "size": [
+      196.799987792969,
+      196.800018310547,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      448.718017578125,
+      73.2349853515625,
+      11.8999996185303
+    ],
+    "glb": "res://scenes/sun.tscn",
+    "hit_back": {
+      "dist": -1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 203,
+    "name": "HaloOuter",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "Sun/HaloOuter",
+    "size": [
+      721.599975585938,
+      721.599975585938,
+      0.0
+    ]
+  },
+  {
+    "center": [
+      444.782012939453,
+      73.2350006103516,
+      11.8999996185303
+    ],
+    "glb": "res://scenes/sun.tscn",
+    "hit_back": {
+      "dist": -1.0
+    },
+    "hit_front": {
+      "dist": -1.0
+    },
+    "id": 204,
+    "name": "Rays",
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "path": "Sun/Rays",
+    "size": [
+      564.159973144531,
+      564.159973144531,
+      0.0
+    ]
+  }
+]

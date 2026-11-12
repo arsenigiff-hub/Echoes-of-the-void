@@ -1,0 +1,17 @@
+﻿name;current_x;current_y;current_z;gap_back_m;new_x;new_y;new_z;delta_x;delta_y;delta_z;issue;backing
+Decal_stencil_deckb;2.0;4.12;10.536;0.028;2.0;4.12;10.512;0.0;0.0;-0.024;floating;ShipInterior/@Node3D@29/wall_panel_a
+Decal_poster_keepcalm;1.0;3.36;13.264;0.014;1.0;3.36;13.274;0.0;0.0;0.01;ok;ShipInterior/@Node3D@30/wall_panel_a
+Decal_poster_rec;1.55;3.6486;13.264;0.056;1.55;3.6486;13.316;0.0;0.0;0.052;floating;ShipInterior/@Node3D@30/wall_panel_a
+Decal_sign_warning;7.4;3.55;10.536;0.0985;7.4;3.55;10.4415;0.0;0.0;-0.0945;floating;ShipInterior/@Node3D@40/wall_panel_b
+Decal_note_handwritten;4.25;3.11;12.45;0.0014;4.25;3.1126;12.45;0.0;0.0026;0.0;ok;ShipInterior/@MeshInstance3D@52
+Decal_poster_mng;-5.4;3.6986;10.536;0.006;-5.4;3.6986;10.534;0.0;0.0;-0.002;ok;ShipInterior/@Node3D@83/wall_panel_b
+Decal_sign_decompression;-6.6;3.5986;10.536;0.042;-6.6;3.5986;10.498;0.0;0.0;-0.038;floating;ShipInterior/@Node3D@79/wall_panel_b
+Decal_hazard_labels;-7.1;3.4486;10.536;0.024;-7.1;3.4486;10.516;0.0;0.0;-0.02;floating;ShipInterior/@Node3D@79/wall_panel_b
+Decal_porthole;10.2;3.6486;13.264;0.056;10.2;3.6486;13.316;0.0;0.0;0.052;floating;ShipInterior/@Node3D@96/wall_panel_a
+Decal_b3_number;-3.724;3.62;11.9;0.077;-3.797;3.62;11.9;-0.073;0.0;0.0;floating;ShipInterior/door_b3/door_b3
+@MeshInstance3D@2;6.564;3.85;8.4;0.042;6.602;3.85;8.4;0.038;0.0;0.0;floating;ShipInterior/@Node3D@140/wall_panel_b
+@MeshInstance3D@3;3.236;3.65;8.1;0.056;3.184;3.65;8.1;-0.052;0.0;0.0;floating;ShipInterior/@Node3D@139/wall_panel_a
+@MeshInstance3D@4;4.2;3.9;7.236;0.056;4.2;3.9;7.184;0.0;0.0;-0.052;floating;ShipInterior/@Node3D@137/wall_panel_a
+@MeshInstance3D@5;8.9;3.95;13.264;0.0985;8.9;3.95;13.3585;0.0;0.0;0.0945;floating;ShipInterior/@Node3D@45/wall_panel_a
+@MeshInstance3D@6;3.1;3.55;10.536;0.0985;3.1;3.55;10.4415;0.0;0.0;-0.0945;floating;ShipInterior/@Node3D@33/wall_panel_b
+@MeshInstance3D@7;-3.1;3.45;13.264;0.02;-3.1;3.45;13.28;0.0;0.0;0.016;floating;ShipInterior/@Node3D@24/wall_panel_a

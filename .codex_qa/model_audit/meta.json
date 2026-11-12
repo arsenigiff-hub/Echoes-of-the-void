@@ -1,0 +1,40 @@
+{
+  "colliders": 34,
+  "godot_version": "4.7.2-stable (official)",
+  "headless": "headless",
+  "lights": 21,
+  "load_settle_ms": 642.657,
+  "main_scene_nodes": 459,
+  "mesh_instances": 205,
+  "nodes_total": 459,
+  "particles": [
+    {
+      "amount": 260,
+      "material": {
+        "cls": "StandardMaterial3D",
+        "cull": 0,
+        "emission": false,
+        "name": "dust_lit",
+        "shading": 1,
+        "tex": "res://assetss/fx/dust_mote.png",
+        "tex_key": "dust_mote",
+        "transparency": 1,
+        "unshaded": false,
+        "vertex_color": true
+      },
+      "mesh": {
+        "class": "QuadMesh",
+        "name": "",
+        "resource_path": "res://scenes/main.tscn::QuadMesh_dust",
+        "surfaces": 1
+      },
+      "path": "Dust"
+    }
+  ],
+  "renderer": "gl_compatibility",
+  "settle_frames": 6,
+  "viewport": [
+    64,
+    64
+  ]
+}

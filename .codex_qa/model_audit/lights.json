@@ -1,0 +1,400 @@
+[
+  {
+    "angle": 40.0,
+    "class": "SpotLight3D",
+    "color": [
+      1.0,
+      0.959999978542328,
+      0.879999995231628
+    ],
+    "energy": 1.60000002384186,
+    "path": "Player/Head/Camera3D/SpotLight3D",
+    "pos": [
+      3.18339133262634,
+      3.75449299812317,
+      12.4822483062744
+    ],
+    "range": 12.0,
+    "shadow": true,
+    "visible": false
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      0.699999988079071,
+      0.829999983310699,
+      1.0
+    ],
+    "energy": 3.20000004768372,
+    "path": "ShipInterior/@OmniLight3D@221",
+    "pos": [
+      0.0,
+      4.29860019683838,
+      11.8999996185303
+    ],
+    "range": 3.59999990463257,
+    "shadow": true,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      0.699999988079071,
+      0.829999983310699,
+      1.0
+    ],
+    "energy": 3.20000004768372,
+    "path": "ShipInterior/@OmniLight3D@222",
+    "pos": [
+      4.5,
+      4.29860019683838,
+      11.8999996185303
+    ],
+    "range": 3.59999990463257,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      0.699999988079071,
+      0.829999983310699,
+      1.0
+    ],
+    "energy": 3.20000004768372,
+    "path": "ShipInterior/@OmniLight3D@223",
+    "pos": [
+      8.0,
+      4.29860019683838,
+      11.8999996185303
+    ],
+    "range": 3.59999990463257,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      1.0,
+      0.0700000002980232,
+      0.0299999993294477
+    ],
+    "energy": 2.40000009536743,
+    "path": "ShipInterior/@OmniLight3D@224",
+    "pos": [
+      -2.5,
+      4.29860019683838,
+      11.8999996185303
+    ],
+    "range": 3.59999990463257,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      1.0,
+      0.0700000002980232,
+      0.0299999993294477
+    ],
+    "energy": 2.40000009536743,
+    "path": "ShipInterior/@OmniLight3D@225",
+    "pos": [
+      6.5,
+      4.29860019683838,
+      11.8999996185303
+    ],
+    "range": 3.59999990463257,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      1.0,
+      0.119999997317791,
+      0.0500000007450581
+    ],
+    "energy": 1.0,
+    "path": "ShipInterior/@OmniLight3D@226",
+    "pos": [
+      -3.59999990463257,
+      4.34859991073608,
+      11.8999996185303
+    ],
+    "range": 2.0,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      0.600000023841858,
+      0.759999990463257,
+      1.0
+    ],
+    "energy": 0.600000023841858,
+    "path": "ShipInterior/@OmniLight3D@227",
+    "pos": [
+      -2.29999995231628,
+      3.64860010147095,
+      11.8999996185303
+    ],
+    "range": 2.79999995231628,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      0.680000007152557,
+      0.800000011920929,
+      0.949999988079071
+    ],
+    "energy": 1.89999997615814,
+    "path": "ShipInterior/@OmniLight3D@228",
+    "pos": [
+      -5.80000019073486,
+      4.29860019683838,
+      11.8999996185303
+    ],
+    "range": 4.0,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      0.699999988079071,
+      0.829999983310699,
+      1.0
+    ],
+    "energy": 3.0,
+    "path": "ShipInterior/@OmniLight3D@229",
+    "pos": [
+      10.6000003814697,
+      4.34859991073608,
+      11.8999996185303
+    ],
+    "range": 4.40000009536743,
+    "shadow": true,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      0.699999988079071,
+      0.829999983310699,
+      1.0
+    ],
+    "energy": 2.5,
+    "path": "ShipInterior/@OmniLight3D@230",
+    "pos": [
+      13.1999998092651,
+      4.34859991073608,
+      11.8999996185303
+    ],
+    "range": 4.0,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      0.300000011920929,
+      1.0,
+      0.449999988079071
+    ],
+    "energy": 2.20000004768372,
+    "path": "ShipInterior/@OmniLight3D@231",
+    "pos": [
+      13.8999996185303,
+      3.24860000610352,
+      11.8999996185303
+    ],
+    "range": 2.79999995231628,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      1.0,
+      0.829999983310699,
+      0.550000011920929
+    ],
+    "energy": 1.79999995231628,
+    "path": "ShipInterior/@OmniLight3D@232",
+    "pos": [
+      4.69999980926514,
+      4.04860019683838,
+      12.5
+    ],
+    "range": 2.20000004768372,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      0.720000028610229,
+      0.839999973773956,
+      1.0
+    ],
+    "energy": 2.90000009536743,
+    "path": "ShipInterior/@OmniLight3D@233",
+    "pos": [
+      5.0,
+      4.29860019683838,
+      8.85000038146973
+    ],
+    "range": 4.40000009536743,
+    "shadow": true,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      1.0,
+      0.800000011920929,
+      0.479999989271164
+    ],
+    "energy": 1.89999997615814,
+    "path": "ShipInterior/@OmniLight3D@234",
+    "pos": [
+      5.90000009536743,
+      3.49860000610352,
+      8.0
+    ],
+    "range": 2.20000004768372,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      1.0,
+      0.119999997317791,
+      0.0500000007450581
+    ],
+    "energy": 1.5,
+    "path": "ShipInterior/@OmniLight3D@235",
+    "pos": [
+      3.79999995231628,
+      4.19859981536865,
+      7.80000019073486
+    ],
+    "range": 2.20000004768372,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      0.620000004768372,
+      0.759999990463257,
+      1.0
+    ],
+    "energy": 0.300000011920929,
+    "path": "ShipInterior/@OmniLight3D@236",
+    "pos": [
+      -1.0,
+      3.0485999584198,
+      11.1000003814697
+    ],
+    "range": 3.59999990463257,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      0.620000004768372,
+      0.759999990463257,
+      1.0
+    ],
+    "energy": 0.300000011920929,
+    "path": "ShipInterior/@OmniLight3D@237",
+    "pos": [
+      5.5,
+      3.0485999584198,
+      12.6999998092651
+    ],
+    "range": 3.59999990463257,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      0.620000004768372,
+      0.759999990463257,
+      1.0
+    ],
+    "energy": 0.349999994039536,
+    "path": "ShipInterior/@OmniLight3D@238",
+    "pos": [
+      12.0,
+      3.0485999584198,
+      11.1000003814697
+    ],
+    "range": 3.79999995231628,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "attenuation": 1.0,
+    "class": "OmniLight3D",
+    "color": [
+      0.620000004768372,
+      0.759999990463257,
+      1.0
+    ],
+    "energy": 0.899999976158142,
+    "path": "ShipInterior/@OmniLight3D@239",
+    "pos": [
+      -2.59999990463257,
+      3.40000009536743,
+      11.8999996185303
+    ],
+    "range": 3.20000004768372,
+    "shadow": false,
+    "visible": true
+  },
+  {
+    "class": "DirectionalLight3D",
+    "color": [
+      1.0,
+      0.879999995231628,
+      0.720000028610229
+    ],
+    "energy": 1.0,
+    "path": "SunLight",
+    "pos": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "range": -1.0,
+    "shadow": true,
+    "visible": true
+  }
+]

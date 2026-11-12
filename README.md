@@ -11,6 +11,11 @@
 - Арт-дирекшн и атмосфера: `docs/ART_DIRECTION.md`.
 - Отчёт о состоянии прототипа: `.codex_qa/work_report/report.md`.
 - Схемы механик: `diagrams_echoes_of_the_void.drawio`, `activity_*.xml`, `bpmn_*.xml`.
+- Отчёты и материалы: `Отчеты/` (ежедневные docx), корневые docx («Постановка задачи»,
+  итоговые отчёты), референсы `images/`, исходники моделей `blender/`, `future/new_ship.blend`.
+- Аудит геометрии и его фиксы: `.codex_qa/model_audit/report.md` (F1–F31, метрики, CSV),
+  `.codex_qa/zfight_fix/report.md` (что внедрено, before/after), `docs/QA_ARCHIVE.md`
+  (что в git, что локально).
 
 ## Запуск
 

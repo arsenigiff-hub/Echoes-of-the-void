@@ -1,0 +1,3215 @@
+[
+  {
+    "children": 11,
+    "path": "/root/main",
+    "source": "res://scenes/main.tscn",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 3,
+    "path": "Player",
+    "source": "res://scenes/player.tscn",
+    "type": "CharacterBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Player/CollisionShape3D",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "Player/Head",
+    "source": "",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 2,
+    "path": "Player/Head/Camera3D",
+    "source": "",
+    "type": "Camera3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Player/Head/Camera3D/RayCast3D",
+    "source": "",
+    "type": "RayCast3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Player/Head/Camera3D/SpotLight3D",
+    "source": "",
+    "type": "SpotLight3D",
+    "visible": false
+  },
+  {
+    "children": 0,
+    "path": "Player/Node3D",
+    "source": "",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "WorldEnvironment",
+    "source": "",
+    "type": "WorldEnvironment",
+    "visible": true
+  },
+  {
+    "children": 237,
+    "path": "ShipInterior",
+    "source": "res://scenes/ship_interior.tscn",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@3",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@3/@CollisionShape3D@2",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@5",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@5/@CollisionShape3D@4",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/floor_tile",
+    "source": "res://assetss/shipkit/arch/floor_tile.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/floor_tile/floor_tile",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/ceil_panel",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/ceil_panel/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@6",
+    "source": "res://assetss/shipkit/arch/floor_tile.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@6/floor_tile",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@7",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@7/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@8",
+    "source": "res://assetss/shipkit/arch/floor_tile.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@8/floor_tile",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@9",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@9/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@10",
+    "source": "res://assetss/shipkit/arch/floor_tile.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@10/floor_tile",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@11",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@11/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@12",
+    "source": "res://assetss/shipkit/arch/floor_tile.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@12/floor_tile",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@13",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@13/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@14",
+    "source": "res://assetss/shipkit/arch/floor_tile.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@14/floor_tile",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@15",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@15/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@16",
+    "source": "res://assetss/shipkit/arch/floor_tile.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@16/floor_tile",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@17",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@17/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@19",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@19/@CollisionShape3D@18",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@21",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@21/@CollisionShape3D@20",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@23",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@23/@CollisionShape3D@22",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/wall_panel_a",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/wall_panel_a/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@24",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@24/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/trim_hazard",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/trim_hazard/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@25",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@25/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/wall_panel_b",
+    "source": "res://assetss/shipkit/arch/wall_panel_b.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/wall_panel_b/wall_panel_b",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@26",
+    "source": "res://assetss/shipkit/arch/wall_panel_b.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@26/wall_panel_b",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@27",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@27/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@28",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@28/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@29",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@29/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@30",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@30/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@31",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@31/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@32",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@32/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@33",
+    "source": "res://assetss/shipkit/arch/wall_panel_b.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@33/wall_panel_b",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@34",
+    "source": "res://assetss/shipkit/arch/wall_panel_b.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@34/wall_panel_b",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@35",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@35/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@36",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@36/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@37",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@37/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@38",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@38/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@39",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@39/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@40",
+    "source": "res://assetss/shipkit/arch/wall_panel_b.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@40/wall_panel_b",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@41",
+    "source": "res://assetss/shipkit/arch/wall_panel_b.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@41/wall_panel_b",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@42",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@42/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@43",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@43/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@44",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@44/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@45",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@45/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@46",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@46/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@47",
+    "source": "res://assetss/shipkit/arch/trim_hazard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@47/trim_hazard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/pipe_run",
+    "source": "res://assetss/shipkit/arch/pipe_run.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/pipe_run/pipe_run",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/cable_bundle",
+    "source": "res://assetss/shipkit/arch/cable_bundle.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/cable_bundle/cable_bundle",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/ceil_light_fixture",
+    "source": "res://assetss/shipkit/arch/ceil_light_fixture.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/ceil_light_fixture/ceil_light_fixture",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@48",
+    "source": "res://assetss/shipkit/arch/ceil_light_fixture.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@48/ceil_light_fixture",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@49",
+    "source": "res://assetss/shipkit/arch/ceil_light_fixture.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@49/ceil_light_fixture",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@50",
+    "source": "res://assetss/shipkit/arch/ceil_light_fixture.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@50/ceil_light_fixture",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@51",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@52",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@54",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@54/@CollisionShape3D@53",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/equip_keyboard",
+    "source": "res://assetss/shipkit/equip/equip_keyboard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/equip_keyboard/equip_keyboard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/equip_mug",
+    "source": "res://assetss/shipkit/equip/equip_mug.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/equip_mug/equip_mug",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@55",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@57",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@58",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@59",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@61",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@61/@CollisionShape3D@60",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@63",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@63/@CollisionShape3D@62",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@65",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@65/@CollisionShape3D@64",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/door_frame",
+    "source": "res://assetss/shipkit/arch/door_frame.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/door_frame/door_frame",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/door_b3",
+    "source": "res://assetss/shipkit/equip/door_b3.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/door_b3/door_b3",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/lamp_red",
+    "source": "res://assetss/shipkit/equip/lamp_red.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/lamp_red/lamp_red",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@66",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@69",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@69/@CollisionShape3D@68",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@71",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@71/@CollisionShape3D@70",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@73",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@73/@CollisionShape3D@72",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@75",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@75/@CollisionShape3D@74",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@77",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@77/@CollisionShape3D@76",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/floor_tile_wet",
+    "source": "res://assetss/shipkit/arch/floor_tile_wet.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/floor_tile_wet/floor_tile_wet",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@78",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@78/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@79",
+    "source": "res://assetss/shipkit/arch/wall_panel_b.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@79/wall_panel_b",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@80",
+    "source": "res://assetss/shipkit/arch/wall_panel_b.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@80/wall_panel_b",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@81",
+    "source": "res://assetss/shipkit/arch/floor_tile_wet.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@81/floor_tile_wet",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@82",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@82/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@83",
+    "source": "res://assetss/shipkit/arch/wall_panel_b.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@83/wall_panel_b",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@84",
+    "source": "res://assetss/shipkit/arch/wall_panel_b.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@84/wall_panel_b",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/airlock_door",
+    "source": "res://assetss/shipkit/equip/airlock_door.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/airlock_door/airlock_door",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/suit_rack",
+    "source": "res://assetss/shipkit/equip/suit_rack.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/suit_rack/suit_rack",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@85",
+    "source": "res://assetss/shipkit/equip/crt_terminal.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@85/crt_terminal",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@85/crt_terminal/ScreenQuad_0",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/pipe_valves",
+    "source": "res://assetss/shipkit/equip/pipe_valves.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/pipe_valves/pipe_valves",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/crate",
+    "source": "res://assetss/shipkit/equip/crate.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/crate/crate",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/crate_small",
+    "source": "res://assetss/shipkit/equip/crate_small.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/crate_small/crate_small",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@87",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@87/@CollisionShape3D@86",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@89",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@89/@CollisionShape3D@88",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@91",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@91/@CollisionShape3D@90",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@93",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@93/@CollisionShape3D@92",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@94",
+    "source": "res://assetss/shipkit/arch/floor_tile.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@94/floor_tile",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@95",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@95/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@96",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@96/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@97",
+    "source": "res://assetss/shipkit/arch/floor_tile.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@97/floor_tile",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@98",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@98/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@99",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@99/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@100",
+    "source": "res://assetss/shipkit/arch/floor_tile.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@100/floor_tile",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@101",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@101/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@102",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@102/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@103",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@103/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@104",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@104/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@105",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@105/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@106",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@107",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@109",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@109/@CollisionShape3D@108",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@111",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@111/@CollisionShape3D@110",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@112",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@113",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@114",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@115",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@116",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@117",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@118",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@119",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@120",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/console_section",
+    "source": "res://assetss/shipkit/equip/console_section.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 3,
+    "path": "ShipInterior/console_section/console_section",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/console_section/console_section/ScreenQuad_0",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/console_section/console_section/ScreenQuad_1",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/console_section/console_section/ScreenQuad_2",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@122",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@122/@CollisionShape3D@121",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@123",
+    "source": "res://assetss/shipkit/equip/console_section.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 3,
+    "path": "ShipInterior/@Node3D@123/console_section",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@123/console_section/ScreenQuad_0",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@123/console_section/ScreenQuad_1",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@123/console_section/ScreenQuad_2",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@125",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@125/@CollisionShape3D@124",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@126",
+    "source": "res://assetss/shipkit/equip/equip_keyboard.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@126/equip_keyboard",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@127",
+    "source": "res://assetss/shipkit/equip/equip_mug.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@127/equip_mug",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@128",
+    "source": "res://assetss/shipkit/equip/crt_terminal.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@128/crt_terminal",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@128/crt_terminal/ScreenQuad_0",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/poster",
+    "source": "res://assetss/shipkit/equip/poster.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/poster/poster",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@129",
+    "source": "res://assetss/shipkit/equip/lamp_red.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@129/lamp_red",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@130",
+    "source": "res://assetss/shipkit/equip/lamp_red.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@130/lamp_red",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@131",
+    "source": "res://assetss/shipkit/equip/lamp_red.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@131/lamp_red",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@132",
+    "source": "res://assetss/shipkit/equip/lamp_red.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@132/lamp_red",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@133",
+    "source": "res://assetss/shipkit/arch/floor_tile.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@133/floor_tile",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@134",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@134/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@135",
+    "source": "res://assetss/shipkit/arch/floor_tile.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@135/floor_tile",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@136",
+    "source": "res://assetss/shipkit/arch/ceil_panel.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@136/ceil_panel",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@137",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@137/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@138",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@138/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@139",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@139/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@140",
+    "source": "res://assetss/shipkit/arch/wall_panel_b.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@140/wall_panel_b",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@141",
+    "source": "res://assetss/shipkit/arch/wall_panel_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@141/wall_panel_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@142",
+    "source": "res://assetss/shipkit/arch/wall_panel_b.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@142/wall_panel_b",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@143",
+    "source": "res://assetss/shipkit/arch/door_frame.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@143/door_frame",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@144",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@145",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@146",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@148",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@148/@CollisionShape3D@147",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@150",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@150/@CollisionShape3D@149",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@152",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@152/@CollisionShape3D@151",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@154",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@154/@CollisionShape3D@153",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@156",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@156/@CollisionShape3D@155",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@158",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@158/@CollisionShape3D@157",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@159",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@160",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@161",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@162",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@163",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@164",
+    "source": "res://assetss/shipkit/arch/ceil_light_fixture.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@164/ceil_light_fixture",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/bunk_bed2",
+    "source": "res://assetss/rooms/quarters/bunk_bed.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/bunk_bed2/bunk_bed",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@168",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@168/@CollisionShape3D@167",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/locker2",
+    "source": "res://assetss/rooms/quarters/locker.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/locker2/locker",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@170",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@170/@CollisionShape3D@169",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/shelf_rack2",
+    "source": "res://assetss/rooms/quarters/shelf_rack.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/shelf_rack2/shelf_rack",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@172",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@172/@CollisionShape3D@171",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/table_small2",
+    "source": "res://assetss/rooms/quarters/table_small.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/table_small2/table_small",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@StaticBody3D@174",
+    "source": "",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@StaticBody3D@174/@CollisionShape3D@173",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/chair_folded2",
+    "source": "res://assetss/rooms/quarters/chair_folded.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/chair_folded2/chair_folded",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/sleeping_bag2",
+    "source": "res://assetss/rooms/quarters/sleeping_bag.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/sleeping_bag2/sleeping_bag",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/wall_pipes_small2",
+    "source": "res://assetss/rooms/quarters/wall_pipes_small.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/wall_pipes_small2/wall_pipes_small",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/vent_grille2",
+    "source": "res://assetss/rooms/quarters/vent_grille.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/vent_grille2/vent_grille",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/cable_bundle_floor2",
+    "source": "res://assetss/rooms/quarters/cable_bundle_floor.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/cable_bundle_floor2/cable_bundle_floor",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/papers_scattered2",
+    "source": "res://assetss/rooms/quarters/papers_scattered.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/papers_scattered2/papers_scattered",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/personal_photo_a2",
+    "source": "res://assetss/rooms/quarters/personal_photo_a.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/personal_photo_a2/personal_photo_a",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/personal_photo_b2",
+    "source": "res://assetss/rooms/quarters/personal_photo_b.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/personal_photo_b2/personal_photo_b",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/personal_mug2",
+    "source": "res://assetss/rooms/quarters/personal_mug.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/personal_mug2/personal_mug",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/personal_notebook2",
+    "source": "res://assetss/rooms/quarters/personal_notebook.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/personal_notebook2/personal_notebook",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/personal_pencil2",
+    "source": "res://assetss/rooms/quarters/personal_pencil.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/personal_pencil2/personal_pencil",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/personal_boots2",
+    "source": "res://assetss/rooms/quarters/personal_boots.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/personal_boots2/personal_boots",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/personal_toothbrush2",
+    "source": "res://assetss/rooms/quarters/personal_toothbrush.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/personal_toothbrush2/personal_toothbrush",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/PolishProp_equip_papers",
+    "source": "res://assetss/shipkit/equip/equip_papers.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/PolishProp_equip_papers/equip_papers",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/PolishProp_cable_bundle",
+    "source": "res://assetss/shipkit/arch/cable_bundle.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/PolishProp_cable_bundle/cable_bundle",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/PolishProp_equip_mug",
+    "source": "res://assetss/shipkit/equip/equip_mug.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/PolishProp_equip_mug/equip_mug",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@175",
+    "source": "res://assetss/shipkit/arch/cable_bundle.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@175/cable_bundle",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/PolishProp_crate_small",
+    "source": "res://assetss/shipkit/equip/crate_small.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/PolishProp_crate_small/crate_small",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@176",
+    "source": "res://assetss/shipkit/equip/crate.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@176/crate",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@177",
+    "source": "res://assetss/shipkit/equip/crate_small.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@177/crate_small",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@178",
+    "source": "res://assetss/shipkit/equip/crate.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@178/crate",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/sign_warning",
+    "source": "res://assetss/shipkit/equip/sign_warning.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/sign_warning/sign_warning",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@179",
+    "source": "res://assetss/shipkit/equip/poster.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@179/poster",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@180",
+    "source": "res://assetss/shipkit/arch/cable_bundle.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@180/cable_bundle",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/equip_papers",
+    "source": "res://assetss/shipkit/equip/equip_papers.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/equip_papers/equip_papers",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@181",
+    "source": "res://assetss/shipkit/equip/equip_papers.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@181/equip_papers",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@182",
+    "source": "res://assetss/shipkit/equip/equip_papers.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@182/equip_papers",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@183",
+    "source": "res://assetss/shipkit/equip/equip_papers.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@183/equip_papers",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@184",
+    "source": "res://assetss/shipkit/equip/equip_papers.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@184/equip_papers",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@185",
+    "source": "res://assetss/shipkit/equip/equip_papers.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@185/equip_papers",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@186",
+    "source": "res://assetss/shipkit/equip/equip_papers.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@186/equip_papers",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@187",
+    "source": "res://assetss/shipkit/equip/equip_papers.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@187/equip_papers",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@188",
+    "source": "res://assetss/shipkit/equip/equip_papers.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@188/equip_papers",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@189",
+    "source": "res://assetss/shipkit/equip/equip_papers.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@189/equip_papers",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@190",
+    "source": "res://assetss/shipkit/equip/lamp_red.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@190/lamp_red",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "ShipInterior/@Node3D@191",
+    "source": "res://assetss/shipkit/equip/lamp_red.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@Node3D@191/lamp_red",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/SpaceGasGiant",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/SpaceRing",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/SpaceBlackHole",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@221",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@222",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@223",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@224",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@225",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@226",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@227",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@228",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@229",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@230",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@231",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@232",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@233",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@234",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@235",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@236",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@237",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@238",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@OmniLight3D@239",
+    "source": "",
+    "type": "OmniLight3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/ShipDresser",
+    "source": "",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/Decal_stencil_deckb",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/Decal_poster_keepcalm",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/Decal_poster_rec",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/Decal_sign_warning",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/Decal_note_handwritten",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/Decal_poster_mng",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/Decal_sign_decompression",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/Decal_hazard_labels",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/Decal_porthole",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/Decal_b3_number",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@2",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@3",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@4",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@5",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@6",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ShipInterior/@MeshInstance3D@7",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "SpaceStage",
+    "source": "",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 4,
+    "path": "Radio",
+    "source": "res://scenes/radio_device.tscn",
+    "type": "StaticBody3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "Radio/Model",
+    "source": "res://assetss/shipkit/radio/radio.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 2,
+    "path": "Radio/Model/RadioDevice",
+    "source": "",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Radio/Model/RadioDevice/RadioBody",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Radio/Model/RadioDevice/Screen",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Radio/CollisionShape3D",
+    "source": "",
+    "type": "CollisionShape3D",
+    "visible": true
+  },
+  {
+    "children": 5,
+    "path": "Radio/controls",
+    "source": "",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "Radio/controls/slider_knob",
+    "source": "",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Radio/controls/slider_knob/@MeshInstance3D@2",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "Radio/controls/slider_knob2",
+    "source": "",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Radio/controls/slider_knob2/@MeshInstance3D@3",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "Radio/controls/slider_knob3",
+    "source": "",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Radio/controls/slider_knob3/@MeshInstance3D@4",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "Radio/controls/slider_knob4",
+    "source": "",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Radio/controls/slider_knob4/@MeshInstance3D@5",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "Radio/controls/dial_cap",
+    "source": "",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Radio/controls/dial_cap/@MeshInstance3D@6",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Radio/CameraTarget",
+    "source": "",
+    "type": "Camera3D",
+    "visible": true
+  },
+  {
+    "children": 5,
+    "path": "Sun",
+    "source": "res://scenes/sun.tscn",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "Sun/Disc",
+    "source": "res://assetss/sun/sun.glb",
+    "type": "Node3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Sun/Disc/sun",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Sun/Corona",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Sun/Glow",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Sun/HaloOuter",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Sun/Rays",
+    "source": "",
+    "type": "MeshInstance3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "SunLight",
+    "source": "",
+    "type": "DirectionalLight3D",
+    "visible": true
+  },
+  {
+    "children": 1,
+    "path": "PostFX",
+    "source": "",
+    "type": "CanvasLayer",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "PostFX/Atmosphere",
+    "source": "",
+    "type": "ColorRect",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "Dust",
+    "source": "",
+    "type": "CPUParticles3D",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "AmbientHum",
+    "source": "",
+    "type": "AudioStreamPlayer",
+    "visible": true
+  },
+  {
+    "children": 0,
+    "path": "ScreenDresser",
+    "source": "",
+    "type": "Node",
+    "visible": true
+  }
+]

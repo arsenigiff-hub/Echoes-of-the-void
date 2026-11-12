@@ -2,15 +2,12 @@
 .godot/
 /android/
 
-# QA-артефакты, кадры и локальные бэкапы (не часть игры)
+# QA-скриншоты и черновики (не часть игры). Выборочный evidence аудита/фиксов
+# добавлен в git принудительно (git add -f) — см. docs/QA_ARCHIVE.md.
 .codex_qa/*
 # Генератор интерьера — канонический пайплайн сборки, трекается в git
 !.codex_qa/shipassemble/
 .codex_qa/shipassemble/*
 !.codex_qa/shipassemble/*.gd
-.backup_fix/
 *.tmp
 __pycache__/
-
-# Локальные отчёты .docx (генерируются tools/gen_day*.py)
-Отчеты/

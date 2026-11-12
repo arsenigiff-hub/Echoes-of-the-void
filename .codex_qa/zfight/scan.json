@@ -1,0 +1,1745 @@
+{
+  "deep": [
+    {
+      "a": "main/ShipInterior/SpaceRing",
+      "axes": [],
+      "b": "main/ShipInterior/SpaceGasGiant",
+      "ov": [
+        83.834,
+        62.708,
+        83.834
+      ],
+      "vol": 440726.544775132
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_port/airlock_wall_port",
+      "ov": [
+        3.691,
+        2.566,
+        0.194
+      ],
+      "vol": 1.83742084460342
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_lockers/airlock_lockers",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "ov": [
+        1.614,
+        1.901,
+        0.474
+      ],
+      "vol": 1.45321545580172
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_aft_frame/airlock_aft_frame",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@7",
+      "ov": [
+        0.19,
+        2.6,
+        2.8
+      ],
+      "vol": 1.38319998893726
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_b3_frame/airlock_b3_frame",
+      "axes": [],
+      "b": "main/ShipInterior/door_frame/door_frame",
+      "ov": [
+        0.25,
+        2.4,
+        1.76
+      ],
+      "vol": 1.05600017929078
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_stbd/airlock_wall_stbd",
+      "ov": [
+        3.691,
+        2.566,
+        0.1
+      ],
+      "vol": 0.947112879452284
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_b3_frame/airlock_b3_frame",
+      "ov": [
+        0.118,
+        2.566,
+        2.8
+      ],
+      "vol": 0.849659916613196
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_b3_frame/airlock_b3_frame",
+      "axes": [],
+      "b": "main/ShipInterior/door_b3/door_b3",
+      "ov": [
+        0.202,
+        2.21,
+        1.426
+      ],
+      "vol": 0.636595641458862
+    },
+    {
+      "a": "main/ShipInterior/door_b3/door_b3",
+      "axes": [],
+      "b": "main/ShipInterior/door_frame/door_frame",
+      "ov": [
+        0.165,
+        2.21,
+        1.426
+      ],
+      "vol": 0.519991005757474
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_ceiling/airlock_ceiling",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "ov": [
+        1.501,
+        0.216,
+        1.501
+      ],
+      "vol": 0.486599496474727
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_b3_frame/airlock_b3_frame",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@70",
+      "ov": [
+        0.176,
+        2.6,
+        0.95
+      ],
+      "vol": 0.43472062526724
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_b3_frame/airlock_b3_frame",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@71",
+      "ov": [
+        0.176,
+        2.6,
+        0.95
+      ],
+      "vol": 0.434720188865595
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "axes": [],
+      "b": "main/ShipInterior/door_frame/door_frame",
+      "ov": [
+        0.087,
+        2.4,
+        1.76
+      ],
+      "vol": 0.368577272050776
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_oxygen/airlock_oxygen",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "ov": [
+        0.572,
+        1.151,
+        0.512
+      ],
+      "vol": 0.337511706780692
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@170",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@147/wall_panel_a",
+      "ov": [
+        0.06,
+        2.6,
+        2.0
+      ],
+      "vol": 0.31200085639928
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@169",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@145/wall_panel_a",
+      "ov": [
+        2.0,
+        2.6,
+        0.06
+      ],
+      "vol": 0.311999691009532
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@171",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@148/wall_panel_b",
+      "ov": [
+        0.06,
+        2.6,
+        2.0
+      ],
+      "vol": 0.311999616623009
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_bench/airlock_bench",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "ov": [
+        1.24,
+        0.531,
+        0.473
+      ],
+      "vol": 0.311535856503576
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@70",
+      "ov": [
+        0.122,
+        2.566,
+        0.95
+      ],
+      "vol": 0.298029018414763
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@71",
+      "ov": [
+        0.122,
+        2.566,
+        0.95
+      ],
+      "vol": 0.298028719233298
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_wall_details/airlock_wall_details",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "ov": [
+        1.186,
+        1.247,
+        0.193
+      ],
+      "vol": 0.285458771781268
+    },
+    {
+      "a": "main/ShipInterior/airlock_door/airlock_door",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_aft_frame/airlock_aft_frame",
+      "ov": [
+        0.077,
+        1.9,
+        1.91
+      ],
+      "vol": 0.279431773470914
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_lockers/airlock_lockers",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_stbd/airlock_wall_stbd",
+      "ov": [
+        1.614,
+        1.901,
+        0.087
+      ],
+      "vol": 0.266279523048001
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@169",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@146/wall_panel_a",
+      "ov": [
+        1.6,
+        2.6,
+        0.06
+      ],
+      "vol": 0.249599812316844
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@169",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@168",
+      "ov": [
+        4.3,
+        0.18,
+        0.3
+      ],
+      "vol": 0.232200551605499
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@169",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@167",
+      "ov": [
+        4.3,
+        0.17,
+        0.3
+      ],
+      "vol": 0.219300093793838
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_console/airlock_console",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "ov": [
+        0.621,
+        0.876,
+        0.383
+      ],
+      "vol": 0.208541101862713
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@170",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@149/wall_panel_a",
+      "ov": [
+        0.06,
+        2.6,
+        1.3
+      ],
+      "vol": 0.202800485992054
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@171",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@150/wall_panel_b",
+      "ov": [
+        0.06,
+        2.6,
+        1.3
+      ],
+      "vol": 0.202799680137759
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@171",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@168",
+      "ov": [
+        0.3,
+        0.18,
+        3.3
+      ],
+      "vol": 0.178200399971164
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_ceiling/airlock_ceiling",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_ceiling/airlock_ceiling",
+      "ov": [
+        1.501,
+        0.078,
+        1.501
+      ],
+      "vol": 0.176656505168512
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@171",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@167",
+      "ov": [
+        0.3,
+        0.17,
+        3.3
+      ],
+      "vol": 0.168300049924818
+    },
+    {
+      "a": "main/ShipInterior/door_frame/door_frame",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@70",
+      "ov": [
+        0.145,
+        2.4,
+        0.43
+      ],
+      "vol": 0.149640424342114
+    },
+    {
+      "a": "main/ShipInterior/door_frame/door_frame",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@71",
+      "ov": [
+        0.145,
+        2.4,
+        0.43
+      ],
+      "vol": 0.149640092463483
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_bench/airlock_bench",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_port/airlock_wall_port",
+      "ov": [
+        1.24,
+        0.531,
+        0.227
+      ],
+      "vol": 0.14951512689311
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@170",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@39/wall_panel_b",
+      "ov": [
+        0.3,
+        2.6,
+        0.16
+      ],
+      "vol": 0.124799955749438
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@171",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@45/wall_panel_b",
+      "ov": [
+        0.3,
+        2.6,
+        0.16
+      ],
+      "vol": 0.124799955749438
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_debris/airlock_debris",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "ov": [
+        1.144,
+        0.093,
+        1.077
+      ],
+      "vol": 0.114435626326587
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_wall_details/airlock_wall_details",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_port/airlock_wall_port",
+      "ov": [
+        1.186,
+        1.247,
+        0.071
+      ],
+      "vol": 0.104299749646497
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@150/wall_panel_b",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@45/wall_panel_b",
+      "ov": [
+        0.246,
+        2.6,
+        0.16
+      ],
+      "vol": 0.102335820892415
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_port/airlock_wall_port",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@70",
+      "ov": [
+        0.18,
+        2.6,
+        0.194
+      ],
+      "vol": 0.0907922648584297
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_console/airlock_console",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_port/airlock_wall_port",
+      "ov": [
+        0.621,
+        0.876,
+        0.166
+      ],
+      "vol": 0.0901213603442728
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_b3_frame/airlock_b3_frame",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_port/airlock_wall_port",
+      "ov": [
+        0.176,
+        2.6,
+        0.194
+      ],
+      "vol": 0.0887745681107255
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@171",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@144/ceil_panel",
+      "ov": [
+        0.2,
+        0.132,
+        3.3
+      ],
+      "vol": 0.0871198892212196
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@171",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@143/floor_tile",
+      "ov": [
+        0.2,
+        0.128,
+        3.3
+      ],
+      "vol": 0.0844797686006202
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@149/wall_panel_a",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@39/wall_panel_b",
+      "ov": [
+        0.19,
+        2.6,
+        0.16
+      ],
+      "vol": 0.0790399455261022
+    },
+    {
+      "a": "main/ShipInterior/crt_terminal/crt_terminal",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@111/wall_panel_a",
+      "ov": [
+        0.772,
+        1.069,
+        0.093
+      ],
+      "vol": 0.0763407328130172
+    },
+    {
+      "a": "main/ShipInterior/PolishProp_crate_small/crate_small",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "ov": [
+        0.447,
+        0.36,
+        0.44
+      ],
+      "vol": 0.0708320178385639
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_port/airlock_wall_port",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_ceiling/airlock_ceiling",
+      "ov": [
+        3.8,
+        0.078,
+        0.194
+      ],
+      "vol": 0.0575017258690579
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_b3_frame/airlock_b3_frame",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@72",
+      "ov": [
+        0.176,
+        0.35,
+        0.9
+      ],
+      "vol": 0.0554400741767875
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_oxygen/airlock_oxygen",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_stbd/airlock_wall_stbd",
+      "ov": [
+        0.572,
+        1.151,
+        0.076
+      ],
+      "vol": 0.0501994345708893
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_stbd/airlock_wall_stbd",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@71",
+      "ov": [
+        0.18,
+        2.6,
+        0.1
+      ],
+      "vol": 0.0468002561572146
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_b3_frame/airlock_b3_frame",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_stbd/airlock_wall_stbd",
+      "ov": [
+        0.176,
+        2.6,
+        0.1
+      ],
+      "vol": 0.0457597672270054
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@170",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@142/ceil_panel",
+      "ov": [
+        0.1,
+        0.132,
+        3.3
+      ],
+      "vol": 0.0435600484657098
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@170",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@141/floor_tile",
+      "ov": [
+        0.1,
+        0.128,
+        3.3
+      ],
+      "vol": 0.0422399850081381
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_b3_frame/airlock_b3_frame",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_ceiling/airlock_ceiling",
+      "ov": [
+        0.176,
+        0.078,
+        2.8
+      ],
+      "vol": 0.0384384491912907
+    },
+    {
+      "a": "main/ShipInterior/door_b3/door_b3",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@70",
+      "ov": [
+        0.06,
+        2.21,
+        0.263
+      ],
+      "vol": 0.0348739585468403
+    },
+    {
+      "a": "main/ShipInterior/door_b3/door_b3",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@71",
+      "ov": [
+        0.06,
+        2.21,
+        0.263
+      ],
+      "vol": 0.0348738320897444
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@72",
+      "ov": [
+        0.122,
+        0.316,
+        0.9
+      ],
+      "vol": 0.0347702642461859
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_stbd/airlock_wall_stbd",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_ceiling/airlock_ceiling",
+      "ov": [
+        3.8,
+        0.078,
+        0.1
+      ],
+      "vol": 0.0296398579786643
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@125",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@114/wall_panel_a",
+      "ov": [
+        0.2,
+        1.55,
+        0.09
+      ],
+      "vol": 0.0278998615255245
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@46/trim_hazard",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@45/wall_panel_b",
+      "ov": [
+        2.0,
+        0.2,
+        0.052
+      ],
+      "vol": 0.0207999984741036
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@48/trim_hazard",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@47/wall_panel_b",
+      "ov": [
+        2.0,
+        0.2,
+        0.052
+      ],
+      "vol": 0.0207999984741036
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@42/trim_hazard",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@41/wall_panel_b",
+      "ov": [
+        2.0,
+        0.2,
+        0.052
+      ],
+      "vol": 0.0207999984741036
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@40/trim_hazard",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@39/wall_panel_b",
+      "ov": [
+        2.0,
+        0.2,
+        0.052
+      ],
+      "vol": 0.0207999984741036
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@34/trim_hazard",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@33/wall_panel_b",
+      "ov": [
+        2.0,
+        0.2,
+        0.052
+      ],
+      "vol": 0.0207999984741036
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@32/trim_hazard",
+      "axes": [],
+      "b": "main/ShipInterior/wall_panel_b/wall_panel_b",
+      "ov": [
+        2.0,
+        0.2,
+        0.052
+      ],
+      "vol": 0.0207999984741036
+    },
+    {
+      "a": "main/ShipInterior/sign_warning/sign_warning",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@15/ceil_panel",
+      "ov": [
+        0.46,
+        0.132,
+        0.34
+      ],
+      "vol": 0.0206448062042219
+    },
+    {
+      "a": "main/ShipInterior/door_frame/door_frame",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@72",
+      "ov": [
+        0.145,
+        0.15,
+        0.9
+      ],
+      "vol": 0.0195750638007714
+    },
+    {
+      "a": "main/ShipInterior/crt_terminal/crt_terminal/ScreenQuad_0",
+      "axes": [],
+      "b": "main/ShipInterior/crt_terminal/crt_terminal",
+      "ov": [
+        0.158,
+        0.299,
+        0.388
+      ],
+      "vol": 0.0183488907549887
+    },
+    {
+      "a": "main/ShipInterior/PolishProp_crate_small/crate_small",
+      "axes": [],
+      "b": "main/ShipInterior/airlock_door/airlock_door",
+      "ov": [
+        0.214,
+        0.159,
+        0.44
+      ],
+      "vol": 0.0149419042240994
+    },
+    {
+      "a": "main/ShipInterior/console_section/console_section/ScreenQuad_0",
+      "axes": [],
+      "b": "main/ShipInterior/console_section/console_section",
+      "ov": [
+        0.249,
+        0.129,
+        0.45
+      ],
+      "vol": 0.0143981152945223
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@133/console_section/ScreenQuad_2",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@133/console_section",
+      "ov": [
+        0.45,
+        0.129,
+        0.249
+      ],
+      "vol": 0.0143981152945223
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@133/console_section/ScreenQuad_1",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@133/console_section",
+      "ov": [
+        0.45,
+        0.129,
+        0.249
+      ],
+      "vol": 0.0143981152945223
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@133/console_section/ScreenQuad_0",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@133/console_section",
+      "ov": [
+        0.45,
+        0.129,
+        0.249
+      ],
+      "vol": 0.0143981152945223
+    },
+    {
+      "a": "main/ShipInterior/console_section/console_section/ScreenQuad_2",
+      "axes": [],
+      "b": "main/ShipInterior/console_section/console_section",
+      "ov": [
+        0.249,
+        0.129,
+        0.45
+      ],
+      "vol": 0.0143981152945223
+    },
+    {
+      "a": "main/ShipInterior/console_section/console_section/ScreenQuad_1",
+      "axes": [],
+      "b": "main/ShipInterior/console_section/console_section",
+      "ov": [
+        0.249,
+        0.129,
+        0.45
+      ],
+      "vol": 0.0143981152945223
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_ceiling/airlock_ceiling",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@70",
+      "ov": [
+        0.18,
+        0.078,
+        0.95
+      ],
+      "vol": 0.013338045066881
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_ceiling/airlock_ceiling",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@71",
+      "ov": [
+        0.18,
+        0.078,
+        0.95
+      ],
+      "vol": 0.0133380316772591
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_ceiling/airlock_ceiling",
+      "axes": [],
+      "b": "main/ShipInterior/@MeshInstance3D@72",
+      "ov": [
+        0.18,
+        0.078,
+        0.9
+      ],
+      "vol": 0.0126360271911672
+    },
+    {
+      "a": "main/ShipInterior/radio_cabinet/RadioCabinet/CabinetBody",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@44/trim_hazard",
+      "ov": [
+        1.0,
+        0.2,
+        0.054
+      ],
+      "vol": 0.0107999698639105
+    },
+    {
+      "a": "main/ShipInterior/cable_bundle_floor2/cable_bundle_floor",
+      "axes": [],
+      "b": "main/ShipInterior/sleeping_bag2/sleeping_bag",
+      "ov": [
+        0.709,
+        0.138,
+        0.085
+      ],
+      "vol": 0.00828788751645721
+    },
+    {
+      "a": "main/ShipInterior/papers_scattered2/papers_scattered",
+      "axes": [],
+      "b": "main/ShipInterior/table_small2/table_small",
+      "ov": [
+        0.862,
+        0.097,
+        0.056
+      ],
+      "vol": 0.00467533723209529
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@136/equip_mug",
+      "axes": [],
+      "b": "main/ShipInterior/console_section/console_section",
+      "ov": [
+        0.166,
+        0.105,
+        0.149
+      ],
+      "vol": 0.0025968712489246
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_b3_frame/airlock_b3_frame",
+      "axes": [],
+      "b": "main/ShipInterior/trim_hazard/trim_hazard",
+      "ov": [
+        0.142,
+        0.2,
+        0.054
+      ],
+      "vol": 0.0015335978630033
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_b3_frame/airlock_b3_frame",
+      "axes": [],
+      "b": "main/ShipInterior/@Node3D@31/trim_hazard",
+      "ov": [
+        0.142,
+        0.2,
+        0.054
+      ],
+      "vol": 0.0015335978630033
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_debris/airlock_debris",
+      "axes": [],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_airlock_oxygen/airlock_oxygen",
+      "ov": [
+        0.158,
+        0.093,
+        0.075
+      ],
+      "vol": 0.00109803547849421
+    }
+  ],
+  "dupes": [],
+  "meshes": 218,
+  "thin": [
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_floor/airlock_floor",
+      "ov": [
+        3.691,
+        0.009,
+        2.8
+      ],
+      "vol": 0.090949726585157
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@168",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@Node3D@142/ceil_panel",
+      "ov": [
+        2.0,
+        0.012,
+        3.3
+      ],
+      "vol": 0.0792005470275399
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@168",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@Node3D@144/ceil_panel",
+      "ov": [
+        1.9,
+        0.012,
+        3.3
+      ],
+      "vol": 0.0752405045698574
+    },
+    {
+      "a": "main/ShipInterior/radio_cabinet/RadioCabinet/CabinetBody",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@43/wall_panel_a",
+      "ov": [
+        1.0,
+        0.85,
+        0.025
+      ],
+      "vol": 0.021249673366583
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "axes": [
+        "x"
+      ],
+      "b": "main/ShipInterior/door_b3/door_b3",
+      "ov": [
+        0.002,
+        2.21,
+        1.426
+      ],
+      "vol": 0.00711544493905627
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@154",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@Node3D@151/door_frame",
+      "ov": [
+        1.76,
+        0.02,
+        0.2
+      ],
+      "vol": 0.00704018890444771
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@64/ceil_light_fixture",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@Node3D@19/ceil_panel",
+      "ov": [
+        1.2,
+        0.022,
+        0.2
+      ],
+      "vol": 0.00527997993454526
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@65/ceil_light_fixture",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@Node3D@23/ceil_panel",
+      "ov": [
+        1.1,
+        0.022,
+        0.2
+      ],
+      "vol": 0.00483998405442166
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@63/ceil_light_fixture",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@Node3D@15/ceil_panel",
+      "ov": [
+        1.1,
+        0.022,
+        0.2
+      ],
+      "vol": 0.00483998248086476
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@119",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@114/wall_panel_a",
+      "ov": [
+        0.18,
+        0.801,
+        0.03
+      ],
+      "vol": 0.00432752852708217
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@119",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@115/wall_panel_a",
+      "ov": [
+        0.18,
+        0.801,
+        0.03
+      ],
+      "vol": 0.00432739095743068
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_lockers/airlock_lockers",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_floor/airlock_floor",
+      "ov": [
+        1.614,
+        0.005,
+        0.474
+      ],
+      "vol": 0.00382227420079129
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_debris/airlock_debris",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_floor/airlock_floor",
+      "ov": [
+        1.144,
+        0.003,
+        1.077
+      ],
+      "vol": 0.00369669318858735
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_port/airlock_wall_port",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_floor/airlock_floor",
+      "ov": [
+        3.8,
+        0.005,
+        0.194
+      ],
+      "vol": 0.00368608918964006
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_bench/airlock_bench",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_floor/airlock_floor",
+      "ov": [
+        1.24,
+        0.005,
+        0.473
+      ],
+      "vol": 0.00293392777079589
+    },
+    {
+      "a": "main/ShipInterior/ceil_light_fixture/ceil_light_fixture",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@Node3D@13/ceil_panel",
+      "ov": [
+        0.6,
+        0.022,
+        0.2
+      ],
+      "vol": 0.0026399904917916
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@172/ceil_light_fixture",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@Node3D@142/ceil_panel",
+      "ov": [
+        0.6,
+        0.022,
+        0.2
+      ],
+      "vol": 0.00263998996727263
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@172/ceil_light_fixture",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@Node3D@144/ceil_panel",
+      "ov": [
+        0.6,
+        0.022,
+        0.2
+      ],
+      "vol": 0.00263998996727263
+    },
+    {
+      "a": "main/ShipInterior/ceil_light_fixture/ceil_light_fixture",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/ceil_panel/ceil_panel",
+      "ov": [
+        0.6,
+        0.022,
+        0.2
+      ],
+      "vol": 0.00263998996727263
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_b3_frame/airlock_b3_frame",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_floor/airlock_floor",
+      "ov": [
+        0.176,
+        0.005,
+        2.8
+      ],
+      "vol": 0.00246417487342106
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_oxygen/airlock_oxygen",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_floor/airlock_floor",
+      "ov": [
+        0.572,
+        0.005,
+        0.512
+      ],
+      "vol": 0.00146674829275486
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@120",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@114/wall_panel_a",
+      "ov": [
+        0.18,
+        0.249,
+        0.03
+      ],
+      "vol": 0.00134243035993434
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@120",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@115/wall_panel_a",
+      "ov": [
+        0.18,
+        0.249,
+        0.03
+      ],
+      "vol": 0.00134238768484263
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_airlock_console/airlock_console",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_floor/airlock_floor",
+      "ov": [
+        0.621,
+        0.005,
+        0.383
+      ],
+      "vol": 0.00119053521886967
+    },
+    {
+      "a": "main/ShipInterior/PolishProp_crate_small/crate_small",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_floor/airlock_floor",
+      "ov": [
+        0.447,
+        0.005,
+        0.44
+      ],
+      "vol": 0.00098380017756241
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_floor/airlock_floor",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@MeshInstance3D@70",
+      "ov": [
+        0.18,
+        0.005,
+        0.95
+      ],
+      "vol": 0.0008550217056775
+    },
+    {
+      "a": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_floor/airlock_floor",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@MeshInstance3D@71",
+      "ov": [
+        0.18,
+        0.005,
+        0.95
+      ],
+      "vol": 0.000855020847349515
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@72",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@MeshInstance3D@70",
+      "ov": [
+        0.18,
+        0.35,
+        0.0
+      ],
+      "vol": 0.0000000600816492807299
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@126",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@MeshInstance3D@119",
+      "ov": [
+        0.18,
+        0.0,
+        0.16
+      ],
+      "vol": 0.00000000686646017128423
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@127",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@MeshInstance3D@119",
+      "ov": [
+        0.18,
+        0.0,
+        0.16
+      ],
+      "vol": 0.00000000686646017128423
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@128",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@MeshInstance3D@119",
+      "ov": [
+        0.18,
+        0.0,
+        0.16
+      ],
+      "vol": 0.00000000686646017128423
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@130",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/@MeshInstance3D@119",
+      "ov": [
+        0.18,
+        0.0,
+        0.16
+      ],
+      "vol": 0.00000000686646017128423
+    },
+    {
+      "a": "main/ShipInterior/@Node3D@37/wall_panel_a",
+      "axes": [
+        "x"
+      ],
+      "b": "main/ShipInterior/@Node3D@33/wall_panel_b",
+      "ov": [
+        0.0,
+        2.6,
+        0.19
+      ],
+      "vol": 0.00000000129560269259115
+    },
+    {
+      "a": "main/Radio/Model/RadioField/RadioBody",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/Decal_note_handwritten",
+      "ov": [
+        0.16,
+        0.0,
+        0.29
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@17",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@30/wall_panel_a",
+      "ov": [
+        0.5,
+        0.5,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@16",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@149/wall_panel_a",
+      "ov": [
+        0.19,
+        0.45,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@16",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@39/wall_panel_b",
+      "ov": [
+        0.45,
+        0.45,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@16",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@MeshInstance3D@170",
+      "ov": [
+        0.225,
+        0.45,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@15",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@51/wall_panel_a",
+      "ov": [
+        1.1,
+        0.42,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@14",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@145/wall_panel_a",
+      "ov": [
+        0.4,
+        0.4,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@13",
+      "axes": [
+        "x"
+      ],
+      "b": "main/ShipInterior/@Node3D@147/wall_panel_a",
+      "ov": [
+        0.0,
+        0.4,
+        0.3
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/@MeshInstance3D@12",
+      "axes": [
+        "x"
+      ],
+      "b": "main/ShipInterior/@Node3D@148/wall_panel_b",
+      "ov": [
+        0.0,
+        0.62,
+        0.45
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_airlock_frost",
+      "axes": [
+        "x"
+      ],
+      "b": "main/ShipInterior/airlock_door/airlock_door",
+      "ov": [
+        0.0,
+        0.9,
+        0.46
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_airlock_labels",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "ov": [
+        0.62,
+        0.35,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_airlock_labels",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_airlock_console/airlock_console",
+      "ov": [
+        0.62,
+        0.179,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_airlock_stencils",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_airlock_wall_details/airlock_wall_details",
+      "ov": [
+        0.968,
+        0.7,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_airlock_stencils",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "ov": [
+        1.25,
+        0.7,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_b3_number",
+      "axes": [
+        "x"
+      ],
+      "b": "main/ShipInterior/door_b3/door_b3",
+      "ov": [
+        0.0,
+        0.46,
+        0.62
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_porthole",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@109/wall_panel_a",
+      "ov": [
+        0.5,
+        0.6,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_hazard_labels",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "ov": [
+        0.5,
+        0.5,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_hazard_labels",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_port/airlock_wall_port",
+      "ov": [
+        0.5,
+        0.5,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_sign_decompression",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_port/airlock_wall_port",
+      "ov": [
+        0.9,
+        0.5,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_poster_mng",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_details/airlock_details",
+      "ov": [
+        0.5,
+        0.7,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_poster_mng",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/res___assetss_rooms_airlock_room_airlock_wall_port/airlock_wall_port",
+      "ov": [
+        0.5,
+        0.7,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_note_handwritten",
+      "axes": [
+        "y"
+      ],
+      "b": "main/ShipInterior/equip_mug/equip_mug",
+      "ov": [
+        0.165,
+        0.0,
+        0.16
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_sign_warning",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@45/wall_panel_b",
+      "ov": [
+        0.5,
+        0.5,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_poster_rec",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@37/wall_panel_a",
+      "ov": [
+        0.45,
+        0.62,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_poster_keepcalm",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@37/wall_panel_a",
+      "ov": [
+        0.5,
+        0.7,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_stencil_deckb",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@39/wall_panel_b",
+      "ov": [
+        0.65,
+        0.5,
+        0.0
+      ],
+      "vol": 0.0
+    },
+    {
+      "a": "main/ShipInterior/Decal_stencil_deckb",
+      "axes": [
+        "z"
+      ],
+      "b": "main/ShipInterior/@Node3D@35/wall_panel_a",
+      "ov": [
+        0.65,
+        0.5,
+        0.0
+      ],
+      "vol": 0.0
+    }
+  ]
+}

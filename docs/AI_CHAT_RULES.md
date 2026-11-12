@@ -171,7 +171,11 @@
   ship_exterior_materials.gd, kit_materials.gd.
 - **Генератор интерьера (в git, исключение из `.codex_qa`):** `.codex_qa/shipassemble/build_ship.gd`,
   `build_and_save.gd` — канонический пайплайн пересборки `scenes/ship_interior.tscn`;
-  снимки — `.codex_qa/ship_rebuild/capture_final.gd` (вне git).
+  снимки — `.codex_qa/ship_rebuild/capture_final.gd` (в git).
+- **Evidence аудита/фиксов (в git):** `.codex_qa/model_audit/` (аудит F1–F31, `fixes.csv`,
+  `decal_fixes.csv`, `analyze.py`, `audit.gd`), `.codex_qa/zfight_fix/` (`report.md`,
+  `apply_fixes.py`, `compare/*.jpg`, `out/scan*.json`), `.codex_qa/zfight/` (сканер наложений,
+  метрики). QA-свалка кадров (~1.5 ГБ) — локально, воспроизводима: `docs/QA_ARCHIVE.md`.
 - **Регресс-проверки (в git):** `tests/verify_radio_no_spin.gd`, `tests/test_eva.gd`,
   `tests/show_hatch_closed.gd`. Новые проверки добавлять только сюда, а не в `.codex_qa/`.
 - Ассеты: `assetss/shipkit/{arch,equip,radio}`, `assetss/rooms/{quarters,airlock,airlock_room}`,
@@ -211,10 +215,11 @@ $godot = "D:\Godot_v4.7.2-stable_win64.exe"
   если без тела непонятно.
 - После коммита — push в `origin/main` (если есть доступ); локальная копия без push не считается
   сохранённой.
-- В git **не** идут: `.codex_qa/` (исключение — `.codex_qa/shipassemble/*.gd`, это канонический
-  генератор интерьера), `.backup_fix/`, `*.tmp`, `__pycache__/`, отчёты `.docx`, папка `Отчеты/`,
-  неиспользуемые экспортные текстуры. Всё важное дублируется в `tests/`, `scripts/`, `scenes/`,
-  `docs/`.
+- В git идут: правила, `docs/`, `Отчеты/` (docx-отчёты), корневые docx, ассеты, сцены, скрипты,
+  тесты, инструменты, генератор интерьера (`.codex_qa/shipassemble/*.gd`) и evidence аудита/фиксов
+  (`.codex_qa/model_audit/`, `.codex_qa/zfight_fix/`, `.codex_qa/zfight/`).
+- Не идут (локально, воспроизводимо): `.godot/`, bulk `.codex_qa/` (QA-скриншоты ~1.5 ГБ),
+  `*.tmp`, `__pycache__/`, неиспользуемые экспортные текстуры. Полный список — `docs/QA_ARCHIVE.md`.
 - Перед коммитом смотреть `git status`: в индекс не должны попасть черновики, диагностические
   скрипты, скриншоты и мусор от экспорта.
 
@@ -261,7 +266,8 @@ VHS-меню/интро, текстуры. Состояние работы 26–
 декали по лучевым замерам, труба/кабели вдоль стены, бумаги/кружка/ящик/таблички на местах,
 внешняя оболочка `_build_shell`. `scenes/ship_interior.tscn` пересобран, `scripts/ship_dresser.gd`
 обновлён. **Генераторы `.codex_qa/shipassemble/*.gd` пропатчены и трекаются в git (исключение
-из `.codex_qa` в `.gitignore`) — пересборка интерьера воспроизводима.**
+из `.codex_qa` в `.gitignore`) — пересборка интерьера воспроизводима.** Вся документация и
+отчёты — в git: `Отчеты/`, `docs/`, evidence аудита/фиксов (`docs/QA_ARCHIVE.md`).
 
 Не сделано:
 - кинематографичный отъезд камеры при выходе в космос;
