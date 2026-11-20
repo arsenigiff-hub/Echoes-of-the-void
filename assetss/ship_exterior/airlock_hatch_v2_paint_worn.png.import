@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://4xm54wnnnfnf"
-path="res://.godot/imported/airlock_hatch_v2_paint_worn.png-de3bc24a1c40e76f5e93ac45f3131e1e.ctex"
+path.s3tc="res://.godot/imported/airlock_hatch_v2_paint_worn.png-de3bc24a1c40e76f5e93ac45f3131e1e.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "b46d6c90b6d282576f2d64860088c31d"
@@ -14,7 +15,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assetss/ship_exterior/airlock_hatch_v2_paint_worn.png"
-dest_files=["res://.godot/imported/airlock_hatch_v2_paint_worn.png-de3bc24a1c40e76f5e93ac45f3131e1e.ctex"]
+dest_files=["res://.godot/imported/airlock_hatch_v2_paint_worn.png-de3bc24a1c40e76f5e93ac45f3131e1e.s3tc.ctex"]
 
 [params]
 

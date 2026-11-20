@@ -2,10 +2,10 @@
 
 Проект: **ECHOES OF THE VOID** (Godot 4.7.2). Дата интеграции: 2026-10-26.
 
-Каталог: `res://assetss/audio/intro/` — 9 WAV-файлов с фиксированными именами,
-которые загружает `scripts/intro_cutscene.gd` (`_build_audio()`):
+Каталог: `res://assetss/audio/intro/` — 8 активных WAV-файлов и 1 активный CC0 OGG,
+которые загружают `scripts/intro_cutscene.gd` и `scripts/eva_controller.gd`:
 
-`power_up.wav`, `alarm_loop.wav`, `engine_sputter.wav`, `engine_ignition.wav`,
+`power_up.wav`, `alarm_warning.ogg`, `engine_sputter.wav`, `engine_ignition.wav`,
 `engine_rumble_loop.wav`, `sparks.wav`, `clunk.wav`, `whoosh_flyby.wav`, `hull_groan.wav`.
 
 Пайплайн и замеры: `.codex_qa/sfx_final/process.py`, отчёт:
@@ -16,10 +16,11 @@
 
 | Источник | Лицензия | Файлов в игре | Атрибуция |
 |---|---|---|---|
-| [Mixkit](https://mixkit.co/) (Envato) | **Mixkit Sound Effects Free License** | 8 из 9 | **не требуется** |
-| [SoundBible](https://soundbible.com/) | **Public Domain** | 1 из 9 (`hull_groan.wav`) | **не требуется** |
+| [Mixkit](https://mixkit.co/) (Envato) | **Mixkit Sound Effects Free License** | 7 активных файлов | **не требуется** |
+| [SoundBible](https://soundbible.com/) | **Public Domain** | 1 активный файл (`hull_groan.wav`) | **не требуется** |
+| [OpenGameArt — Alarm](https://opengameart.org/content/alarm-1), EZduzziteh | **CC0** | 1 активный файл (`alarm_warning.ogg`) | **не требуется** |
 
-Все 9 финальных файлов — свободные лицензии, разрешающие коммерческое
+Все 9 активных звуковых файлов имеют свободные лицензии, разрешающие коммерческое
 использование и модификацию, в том числе **в видеоиграх**. YouTube-рипы,
 платные ассеты, «неясные» лицензии и AI-генерация не использовались.
 
@@ -60,11 +61,14 @@
 
 ## Атрибуция в игре
 
-Для текущего набора финальных файлов **атрибуция не обязательна**.
+Тревога заменена коротким сигналом EZduzziteh с OpenGameArt (CC0). Старый
+`alarm_loop.wav` Mixkit оставлен неиспользуемым резервом и не загружается.
+
+Для текущего набора активных файлов **атрибуция не обязательна**.
 Рекомендуемая «вежливая» строка для титров (не обязательна):
 
 > Sound effects: Mixkit (mixkit.co) and SoundBible.com — Mixkit Sound Effects
-> Free License / Public Domain.
+> Free License / Public Domain; alarm by EZduzziteh (OpenGameArt, CC0).
 
 ⚠️ В staging у механического агента лежит **неиспользуемая** альтернатива
 `alt_clunk.wav` — SoundBible “Metal Bang” (**CC BY 3.0, автор Mike Koenig**).
@@ -101,11 +105,12 @@
 * пик нормализован ровно в **−4.0 dBFS** (диапазон контракта −3…−6 dBFS),
   клиппинга нет;
 * удалён DC/инфраниз, подрезана тишина по краям, короткие fade-in/out;
-* `engine_rumble_loop.wav` и `alarm_loop.wav` — бесшовные лупы: кроссфейд
+* `engine_rumble_loop.wav` — бесшовный луп: кроссфейд
   **60 мс** (2646 сэмплов), проверка численная: скачок на стыке меньше
   p99.9 обычных шагов на 19.2 и 49.2 dB соответственно;
 * для лупов Godot-импорт оставлен с `edit/loop_mode=2` (Forward), так что
-  `AudioStreamWAV` играет их нативно без паузы.
+  `AudioStreamWAV` играет его нативно без паузы. Старый `alarm_loop.wav` более не
+  используется; новая тревога — короткий OGG-сигнал с паузами, а не зацикленный звук.
 
 Обработка выполнялась для всех файлов одинаково, исходные записи не
 перезаписывались — оригиналы остались в staging и в бэкапе

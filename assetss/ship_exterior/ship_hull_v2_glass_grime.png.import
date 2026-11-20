@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://kmoporh0qwvj"
-path="res://.godot/imported/ship_hull_v2_glass_grime.png-623cd1e3cfe5c285613d994502e0fcb2.ctex"
+path.s3tc="res://.godot/imported/ship_hull_v2_glass_grime.png-623cd1e3cfe5c285613d994502e0fcb2.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "5db6e8338d6e233fc46267aa5788747a"
@@ -14,7 +15,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assetss/ship_exterior/ship_hull_v2_glass_grime.png"
-dest_files=["res://.godot/imported/ship_hull_v2_glass_grime.png-623cd1e3cfe5c285613d994502e0fcb2.ctex"]
+dest_files=["res://.godot/imported/ship_hull_v2_glass_grime.png-623cd1e3cfe5c285613d994502e0fcb2.s3tc.ctex"]
 
 [params]
 

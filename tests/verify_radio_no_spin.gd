@@ -21,7 +21,9 @@ func _initialize() -> void:
 func _run() -> void:
 	main = (load("res://scenes/main.tscn") as PackedScene).instantiate()
 	root.add_child(main)
-	await create_timer(1.2).timeout
+	# The opening first-person wake-up lowers the camera for several seconds.
+	# Wait until standing before comparing left/right approach rays.
+	await create_timer(4.2).timeout
 
 	player = main.get_node("Player") as CharacterBody3D
 	radio = main.get_node("Radio") as Node3D
@@ -30,12 +32,13 @@ func _run() -> void:
 	ray = player.get_node("Head/Camera3D/RayCast3D") as RayCast3D
 
 	var floor_y: float = player.global_position.y
-	var radio_pos := radio.global_position
+	var focus_pos := (radio.get_node("CameraTarget") as Node3D).global_position
+	var lateral := radio.global_basis.x.normalized()
 
 	# «слева» и «справа» от радио, обе точки — перед прибором.
 	var spots := {
-		"left": Vector3(radio_pos.x - 1.85, floor_y, radio_pos.z - 0.85),
-		"right": Vector3(radio_pos.x + 1.85, floor_y, radio_pos.z - 0.85),
+		"left": Vector3(focus_pos.x, floor_y, focus_pos.z) - lateral * 0.55,
+		"right": Vector3(focus_pos.x, floor_y, focus_pos.z) + lateral * 0.55,
 	}
 
 	for side in spots:
@@ -58,7 +61,7 @@ func _run() -> void:
 		checks["%s_enter" % side] = radio.get("is_at_radio") == true
 		checks["%s_enter_yaw_travel_deg" % side] = snappedf(rad_to_deg(enter["travel"]), 0.1)
 		checks["%s_enter_max_step_deg" % side] = snappedf(rad_to_deg(enter["max_step"]), 0.1)
-		checks["%s_no_spin_enter" % side] = enter["travel"] < 4.0
+		checks["%s_no_spin_enter" % side] = enter["travel"] < deg_to_rad(90.0)
 
 		# --- выход ---
 		player._unhandled_input(_key(KEY_E))
@@ -66,12 +69,17 @@ func _run() -> void:
 		checks["%s_exit" % side] = radio.get("is_at_radio") == false
 		checks["%s_exit_yaw_travel_deg" % side] = snappedf(rad_to_deg(exit["travel"]), 0.1)
 		checks["%s_exit_max_step_deg" % side] = snappedf(rad_to_deg(exit["max_step"]), 0.1)
-		checks["%s_no_spin_exit" % side] = exit["travel"] < 4.0
+		checks["%s_no_spin_exit" % side] = exit["travel"] < deg_to_rad(90.0)
 
 		await _wait_idle()
 
 	print("=== CHECKS ===")
 	print(JSON.stringify(checks, "  "))
+	main.queue_free()
+	await process_frame
+	await process_frame
+	# The audio mixer releases looping WAV playback on its own thread.
+	await create_timer(0.15).timeout
 	quit()
 
 
@@ -84,7 +92,10 @@ func _measure(seconds: float) -> Dictionary:
 	while Time.get_ticks_msec() - start_ms < int(seconds * 1000.0):
 		await process_frame
 		var now: float = head.rotation.y
-		var step := absf(now - prev)
+		# Node3D may normalize equivalent Euler angles by 2π when a tween ends
+		# (e.g. 300° becomes -60°). Count the shortest per-frame yaw delta so
+		# representation wrapping is not mistaken for the camera spinning once.
+		var step := absf(wrapf(now - prev, -PI, PI))
 		travel += step
 		max_step = maxf(max_step, step)
 		prev = now

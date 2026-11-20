@@ -10,14 +10,18 @@ config_version=5
 
 [application]
 
-config/name="test"
-run/main_scene="uid://chp56y0i0a2wj"
+config/name="ECHOES OF THE VOID"
+run/main_scene="uid://dqqbblk6vnnqr"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [audio]
 
 buses/default_bus_layout="uid://doeotxymw54lm"
+
+[autoload]
+
+ProfileDB="*res://scripts/profile_database.gd"
 
 [display]
 

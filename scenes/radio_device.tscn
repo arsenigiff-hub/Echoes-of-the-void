@@ -24,8 +24,8 @@ radial_segments = 18
 [node name="Radio" type="StaticBody3D" unique_id=2056249395]
 script = ExtResource("1_vbiy8")
 slider_step = 0.012
-slider_min_y = 0.19
-slider_max_y = 0.312
+slider_min_y = 0.125
+slider_max_y = 0.175
 
 [node name="Model" type="Node3D" parent="." unique_id=1903159199 instance=ExtResource("2_asldt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
@@ -38,35 +38,35 @@ shape = SubResource("BoxShape3D_pynvi")
 [node name="controls" type="Node3D" parent="." unique_id=716338897]
 
 [node name="slider_knob" type="Node3D" parent="controls" unique_id=1206160881]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.015, 0.251, -0.1365)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13, 0.15, -0.152)
 
 [node name="@MeshInstance3D@2" type="MeshInstance3D" parent="controls/slider_knob" unique_id=940434116]
 material_override = SubResource("StandardMaterial3D_h1qoy")
 mesh = SubResource("BoxMesh_bc3j5")
 
 [node name="slider_knob2" type="Node3D" parent="controls" unique_id=1200224218]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.251, -0.1365)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.055, 0.15, -0.152)
 
 [node name="@MeshInstance3D@3" type="MeshInstance3D" parent="controls/slider_knob2" unique_id=1909675057]
 material_override = SubResource("StandardMaterial3D_h1qoy")
 mesh = SubResource("BoxMesh_bc3j5")
 
 [node name="slider_knob3" type="Node3D" parent="controls" unique_id=1580293283]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.125, 0.251, -0.1365)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.15, -0.152)
 
 [node name="@MeshInstance3D@4" type="MeshInstance3D" parent="controls/slider_knob3" unique_id=1930848179]
 material_override = SubResource("StandardMaterial3D_h1qoy")
 mesh = SubResource("BoxMesh_bc3j5")
 
 [node name="slider_knob4" type="Node3D" parent="controls" unique_id=820777710]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18, 0.251, -0.1365)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.095, 0.15, -0.152)
 
 [node name="@MeshInstance3D@5" type="MeshInstance3D" parent="controls/slider_knob4" unique_id=1329796732]
 material_override = SubResource("StandardMaterial3D_h1qoy")
 mesh = SubResource("BoxMesh_bc3j5")
 
 [node name="dial_cap" type="Node3D" parent="controls" unique_id=198982502]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.075, 0.132, -0.148)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08, 0.15, -0.158)
 
 [node name="@MeshInstance3D@6" type="MeshInstance3D" parent="controls/dial_cap" unique_id=729490971]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
@@ -74,4 +74,4 @@ material_override = SubResource("StandardMaterial3D_h1qoy")
 mesh = SubResource("CylinderMesh_nk0ww")
 
 [node name="CameraTarget" type="Camera3D" parent="." unique_id=681570385]
-transform = Transform3D(-1, 0, 0, 0, 0.95721143, 0.2893895, 0, 0.2893895, -0.95721143, 0, 0.52, -1.02)
+transform = Transform3D(-0.981066, 0, 0.193672, 0.033481, 0.984944, 0.1696, -0.190756, 0.172873, -0.966295, 0, 0.36, -0.95)

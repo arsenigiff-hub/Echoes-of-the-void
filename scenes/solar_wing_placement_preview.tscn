@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://pd3vyut4tky7"]
+
+[ext_resource type="PackedScene" uid="uid://cro4l7g8557sd" path="res://assetss/ship_exterior/ship_hull_v2_eva_platform.glb" id="1_hull"]
+[ext_resource type="PackedScene" uid="uid://cwywq47yjgbs0" path="res://assetss/ship_exterior/solar_wings_pair_large.glb" id="2_solar"]
+
+[node name="SolarWingPlacementPreview" type="Node3D" unique_id=1023716001]
+
+[node name="ShipHullReference" parent="." unique_id=1170891928 instance=ExtResource("1_hull")]
+
+[node name="SolarWings" parent="." unique_id=598728155 instance=ExtResource("2_solar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6, 0)
+
+[node name="array-gimbal_001" parent="SolarWings" index="0" unique_id=1069763688]
+transform = Transform3D(-8.146255e-08, 0.43947473, -0.34707627, 1.131616e-07, 0.34707624, 0.4394748, 0.56, -6.2052954e-09, -1.3929532e-07, 9, 9.806, 16.836784)
+
+[node name="array-gimbal_002" parent="SolarWings" index="1" unique_id=1854417700]
+transform = Transform3D(1.2408867e-07, 0.43955302, 0.34697703, -1.5719641e-07, 0.3469771, -0.439553, -0.5599999, 0, 2.0027159e-07, 9.881919, 9.806493, 5.7044277)
+
+[node name="solar-array-wing-deployed_0_001" parent="SolarWings" index="2" unique_id=623773556]
+transform = Transform3D(-1.5953385e-07, 3.57858, -2.8261924, 4.6072935e-07, 2.8261921, 3.5785804, 4.5600004, -1.6035193e-07, -4.6044522e-07, 9, 9.806, 20.412783)
+
+[node name="solar-array-wing-deployed_0_002" parent="SolarWings" index="3" unique_id=965999853]
+transform = Transform3D(1.0104366e-06, 3.5792181, 2.8253849, -1.2800281e-06, 2.8253849, -3.5792172, -4.56, 0, 1.6307833e-06, 9.88192, 9.806493, 2.128428)
+
+[node name="solar-array-wing-deployed_1_001" parent="SolarWings" index="4" unique_id=1119289296]
+transform = Transform3D(-1.5175311e-07, 3.4040456, -2.6883535, 4.382586e-07, 2.688353, 3.4040458, 4.3375998, -1.5253119e-07, -4.379884e-07, 9, 9.806, 20.494383)
+
+[node name="solar-array-wing-deployed_1_002" parent="SolarWings" index="5" unique_id=1051105360]
+transform = Transform3D(9.611554e-07, 3.4046526, 2.6875854, -1.2175987e-06, 2.6875858, -3.4046526, -4.3375998, 0, 1.5512466e-06, 9.88192, 9.806493, 2.0468278)
+
+[node name="solar-array-wing-deployed_3_001" parent="SolarWings" index="6" unique_id=1916000914]
+transform = Transform3D(-1.2874662e-07, 2.8879774, -2.2807877, 3.718167e-07, 2.280787, 2.887978, 3.6800005, -1.2940686e-07, -3.715875e-07, 9, 9.806, 21.092783)
+
+[node name="solar-array-wing-deployed_3_002" parent="SolarWings" index="7" unique_id=1484994395]
+transform = Transform3D(8.154399e-07, 2.8884916, 2.2801352, -1.033005e-06, 2.2801352, -2.8884914, -3.6799998, 0, 1.3160706e-06, 9.88192, 9.806493, 1.4484282)
+
+[node name="solar-array-wing-deployed_4_001" parent="SolarWings" index="8" unique_id=403696831]
+transform = Transform3D(-1.0333312e-08, 0.2317916, -0.18305798, 2.9842337e-08, 0.18305798, 0.2317916, 0.29536006, -1.0386311e-08, -2.9823934e-08, 9, 9.806, 15.932783)
+
+[node name="solar-array-wing-deployed_4_002" parent="SolarWings" index="9" unique_id=1906195904]
+transform = Transform3D(6.544791e-08, 0.23183283, 0.18300562, -8.2909885e-08, 0.18300565, -0.23183285, -0.29535997, 0, 1.05628956e-07, 10.343449, 10.170818, 6.608428)
+
+[editable path="SolarWings"]

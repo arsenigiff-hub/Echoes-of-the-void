@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assetss/ship_exterior/ship_hull_v2_eva_platform_wide_airlock.glb" id="1_hull"]
+[ext_resource type="PackedScene" path="res://assetss/ship_exterior/airlock_hatch_v3_wide.glb" id="2_hatch"]
+
+[node name="LambdaShuttle" type="Node3D"]
+
+[node name="ShipOffset" type="Node3D" parent="."]
+position = Vector3(-3.2, 0.0, -11.22)
+
+[node name="Hull" parent="ShipOffset" instance=ExtResource("1_hull")]
+
+[node name="Airlock" parent="ShipOffset" instance=ExtResource("2_hatch")]

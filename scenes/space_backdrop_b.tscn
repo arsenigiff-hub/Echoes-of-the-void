@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assetss/space/planet_gas.png" id="1_evme0"]
+[ext_resource type="Texture2D" path="res://assetss/space/planet_ring.png" id="2_b6dvu"]
+[ext_resource type="Texture2D" path="res://assetss/space/planet_blackhole.png" id="3_8k4rs"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3yrpk"]
+shading_mode = 0
+disable_fog = true
+albedo_texture = ExtResource("1_evme0")
+texture_filter = 5
+disable_receive_shadows = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_ktk8d"]
+radius = 1.0
+height = 2.0
+radial_segments = 48
+rings = 24
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3kta8"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+disable_fog = true
+albedo_color = Color(0.62, 0.6, 0.65, 0.88)
+albedo_texture = ExtResource("2_b6dvu")
+disable_receive_shadows = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_q6qjr"]
+size = Vector2(210, 210)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d65p2"]
+transparency = 1
+shading_mode = 0
+disable_fog = true
+albedo_color = Color(0.4, 0.39, 0.46, 0.9)
+albedo_texture = ExtResource("3_8k4rs")
+texture_filter = 5
+disable_receive_shadows = true
+billboard_mode = 2
+
+[sub_resource type="QuadMesh" id="QuadMesh_4oehb"]
+size = Vector2(82, 82)
+
+[node name="SpaceBackdrop" type="Node3D" unique_id=1026570417]
+
+[node name="SpaceGasGiant" type="MeshInstance3D" parent="." unique_id=1484047324]
+position = Vector3(331.3, -20.9, 33.0)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(42, 42, 42)
+material_override = SubResource("StandardMaterial3D_3yrpk")
+mesh = SubResource("SphereMesh_ktk8d")
+
+[node name="SpaceRing" type="MeshInstance3D" parent="." unique_id=866646465]
+transform = Transform3D(0.9970359, 0.06371955, 0.043119192, 0.02402338, 0.27458853, -0.9612617, -0.073091194, 0.95944834, 0.27224383, 331.3, -20.9, 33.0)
+material_override = SubResource("StandardMaterial3D_3kta8")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_q6qjr")
+
+[node name="SpaceBlackHole" type="MeshInstance3D" parent="." unique_id=1415695558]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1198.5, -86.6, 84.3)
+material_override = SubResource("StandardMaterial3D_d65p2")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_4oehb")

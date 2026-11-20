@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bo570wuhq0ylb"
-path="res://.godot/imported/ship_hull_v2_hazard_k.png-e803f7b153d2a486710100357b4fcace.ctex"
+path.s3tc="res://.godot/imported/ship_hull_v2_hazard_k.png-e803f7b153d2a486710100357b4fcace.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "f9bdbf4855594c4c497aca06511d96f1"
@@ -14,7 +15,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assetss/ship_exterior/ship_hull_v2_hazard_k.png"
-dest_files=["res://.godot/imported/ship_hull_v2_hazard_k.png-e803f7b153d2a486710100357b4fcace.ctex"]
+dest_files=["res://.godot/imported/ship_hull_v2_hazard_k.png-e803f7b153d2a486710100357b4fcace.s3tc.ctex"]
 
 [params]
 

@@ -68,7 +68,7 @@ func _material_for(key: String) -> Material:
 		"red_lamp":
 			m = _emissive(Color(1.0, 0.08, 0.03), 0.8)
 		"lamp_cold":
-			m = _emissive(Color(0.75, 0.85, 1.0), 0.7)
+			m = _emissive(Color(0.42, 0.55, 0.50), 0.22)
 		"glass_grime":
 			m = _glass()
 	_cache[key] = m
@@ -111,14 +111,14 @@ func _glass() -> StandardMaterial3D:
 
 func _screen_material() -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
-	var tex := load(TEX + "radio_screen.png") as Texture2D
+	var tex := load(TEX + "radio_screen_v2.png") as Texture2D
 	if tex != null:
 		m.albedo_texture = tex
 		m.emission_texture = tex
 	m.albedo_color = Color(0.9, 0.95, 0.9)
 	m.emission_enabled = true
 	m.emission = Color(0.6, 1.0, 0.65)
-	m.emission_energy_multiplier = 0.85
+	m.emission_energy_multiplier = 1.25
 	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	m.disable_receive_shadows = true
 	m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS

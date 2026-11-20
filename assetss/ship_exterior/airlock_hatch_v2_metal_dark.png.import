@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dut5f4jvdhnlx"
-path="res://.godot/imported/airlock_hatch_v2_metal_dark.png-a2c239a86a65eca67ab39d61f6e76d40.ctex"
+path.s3tc="res://.godot/imported/airlock_hatch_v2_metal_dark.png-a2c239a86a65eca67ab39d61f6e76d40.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "7f39571cffdc6e20ab1433a1224cd75f"
@@ -14,7 +15,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assetss/ship_exterior/airlock_hatch_v2_metal_dark.png"
-dest_files=["res://.godot/imported/airlock_hatch_v2_metal_dark.png-a2c239a86a65eca67ab39d61f6e76d40.ctex"]
+dest_files=["res://.godot/imported/airlock_hatch_v2_metal_dark.png-a2c239a86a65eca67ab39d61f6e76d40.s3tc.ctex"]
 
 [params]
 

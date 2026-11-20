@@ -1,22 +1,25 @@
 # Sources — финальные звуки катсцены intro
 
 Проект: **ECHOES OF THE VOID**. Каталог: `res://assetss/audio/intro/`.
-Дата интеграции: 2026-10-26. Все файлы найдены в интернете агентами
+Дата интеграции: 2026-10-26; сирена обновлена 2026-11-15. Все файлы найдены в интернете агентами
 `sfx-engine` (двигатели/старт) и `sfx-mech` (механика/тревога/электрика),
 проверены и приведены к контракту пайплайном `.codex_qa/sfx_final/process.py`.
 
-Итоговый формат всех файлов: **WAV, 44.1 кГц, 16-bit PCM, stereo, пик −4 dBFS**.
+Основные SFX — **WAV, 44.1 кГц, 16-bit PCM, stereo, пик −4 dBFS**. Новая тревога оставлена
+коротким OGG без искусственного лупа: в игре она звучит отдельными тихими импульсами.
 Лицензии (подробно — в [LICENSE_SFX.md](LICENSE_SFX.md)): Mixkit Sound Effects
-Free License (атрибуция не требуется) — 8 файлов; SoundBible Public Domain
-(атрибуция не требуется) — 1 файл (`hull_groan.wav`). Ничего с YouTube, рипов,
-платных ассетов или AI-генерации не использовалось.
+Free License (атрибуция не требуется) — 7 активных файлов; SoundBible Public Domain
+(атрибуция не требуется) — 1 файл (`hull_groan.wav`); OpenGameArt CC0 — новая короткая
+тревога (`alarm_warning.ogg`). Ничего с YouTube, рипов, платных ассетов или AI-генерации
+не использовалось.
 
 ## Таблица финальных файлов
 
 | Файл в игре | Слот в `intro_cutscene.gd` | Название звука в источнике | Страница | Прямая ссылка | Автор / издатель | Лицензия | Атрибуция | Обработка |
 |---|---|---|---|---|---|---|---|---|
 | `power_up.wav` | power_up | Mixkit #3160 “Sci fi power up” | https://mixkit.co/free-sound-effects/discover/sci-fi-power-up-3160/ | https://assets.mixkit.co/active_storage/sfx/3160/3160.wav | Mixkit (Envato) | Mixkit Sound Effects Free License | не требуется | исходник 2.00 s (staging `mech/final_power_up.wav`) → подрезана тишина 0.10/0.57 s → 1.32 s, нормализация −4 dBFS |
-| `alarm_loop.wav` | alarm_loop | Mixkit #1653 “Sci fi ship siren alert” | https://mixkit.co/free-sound-effects/discover/sci-fi-ship-siren-alert-1653/ | https://assets.mixkit.co/active_storage/sfx/1653/1653.wav | Mixkit (Envato) | Mixkit Sound Effects Free License | не требуется | из записи вырезано 2 периода сирены (3.34 s) мех-агентом, затем бесшовный кроссфейд-луп 60 мс → 3.27 s |
+| `alarm_warning.ogg` | alarm | [OpenGameArt — Alarm](https://opengameart.org/content/alarm-1) | страница исходника | исходный файл `alarm.ogg` | EZduzziteh | CC0 | не требуется; автор указан в этом файле | короткий сигнал; в прологе одно срабатывание, в начале игры — импульс раз в 7 секунд на тихом уровне |
+| `alarm_loop.wav` | legacy, не загружается | Mixkit #1653 “Sci fi ship siren alert” | https://mixkit.co/free-sound-effects/discover/sci-fi-ship-siren-alert-1653/ | https://assets.mixkit.co/active_storage/sfx/1653/1653.wav | Mixkit (Envato) | Mixkit Sound Effects Free License | не требуется | прежний непрерывный луп оставлен в каталоге как резерв, больше не используется |
 | `engine_sputter.wav` | engine_sputter | Mixkit #1540 “Failed car ignition” | https://mixkit.co/free-sound-effects/car/ | https://assets.mixkit.co/active_storage/sfx/1540/1540-preview.mp3 | Mixkit (Envato) | Mixkit Sound Effects Free License | не требуется | 2.73 s, подрезка хвоста, нормализация −4 dBFS |
 | `engine_ignition.wav` | engine_ignition | Mixkit #1717 “Space Shuttle rocket ignition start” | https://mixkit.co/free-sound-effects/rocket/ | https://assets.mixkit.co/active_storage/sfx/1717/1717-preview.mp3 | Mixkit (Envato) | Mixkit Sound Effects Free License | не требуется | 3.79 s, нормализация −4 dBFS (клиппинга нет: 0 сэмплов на потолке) |
 | `engine_rumble_loop.wav` | engine_rumble_loop | Mixkit #1720 “Space rocket full power turbine” | https://mixkit.co/free-sound-effects/rocket/ | https://assets.mixkit.co/active_storage/sfx/1720/1720-preview.mp3 | Mixkit (Envato) | Mixkit Sound Effects Free License | не требуется | 8.28 s, бесшовный кроссфейд-луп 60 мс (стык −19.2 dB ниже p99.9 шагов) |
@@ -43,7 +46,7 @@ Free License (атрибуция не требуется) — 8 файлов; So
 | `engine/final_liftoff_roar.wav` | (не используется сценой) | Mixkit #1719 “Space rocket traveling in distance” | Mixkit Free | сценой не загружается |
 | `mech/final_power_up.wav` | power_up | Mixkit #3160 | Mixkit Free | **выбран** |
 | `mech/alt_power_up.wav` | power_up | Mixkit #2600 “Electricity static power up” | Mixkit Free | альтернатива |
-| `mech/final_alarm_loop.wav` | alarm_loop | Mixkit #1653 | Mixkit Free | **выбран** (loop уже 3.34 s) |
+| `mech/final_alarm_loop.wav` | alarm_loop | Mixkit #1653 | Mixkit Free | прежний вариант; заменён на `alarm_warning.ogg` 2026-11-15 |
 | `mech/alt_alarm_loop.wav` | alarm_loop | SoundBible #1577 “Siren Noise” (KevanGC) | Public Domain | альтернатива |
 | `mech/final_sparks.wav` | sparks | Mixkit #2598 | Mixkit Free | **выбран** |
 | `mech/alt_sparks.wav` | sparks | Mixkit #1455 “Static electric crackles” | Mixkit Free | альтернатива |

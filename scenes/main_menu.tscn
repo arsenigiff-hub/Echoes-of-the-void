@@ -5,8 +5,9 @@
 [ext_resource type="Texture2D" uid="uid://f5lqt5kg5qws" path="res://assetss/earth_8081_earthmap10k.jpg" id="3_map"]
 [ext_resource type="Texture2D" uid="uid://g6r2jpn3d413" path="res://assetss/earth_8081_earthspec10k.jpg" id="4_spec"]
 [ext_resource type="Script" uid="uid://nyqymlm2i5l5" path="res://scripts/earthrotating.gd" id="5_earthrot"]
-[ext_resource type="Shader" uid="uid://bhjkb41ck5m4h" path="res://shaders/vhs.gdshader" id="6_vhs"]
-[ext_resource type="FontFile" uid="uid://dcylrjgipaa72" path="res://assetss/ui/fonts/Tektur.ttf" id="7_tektur"]
+[ext_resource type="Shader" path="res://shaders/vhs_soft_grain.gdshader" id="6_vhs"]
+[ext_resource type="FontFile" path="res://assetss/ui/fonts/RussoOne-Regular.ttf" id="7_russo"]
+[ext_resource type="FontFile" path="res://assetss/ui/fonts/CascadiaMono.ttf" id="8_cascadia"]
 [ext_resource type="Texture2D" uid="uid://deykwgguoc2xx" path="res://assetss/ui/textures/title_eotv.png" id="8_title"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_atmo"]
@@ -29,26 +30,28 @@ adjustment_saturation = 0.66
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vhs"]
 shader = ExtResource("6_vhs")
-shader_parameter/strength = 0.85
-shader_parameter/preset = 1
-shader_parameter/dither_size = 3.0
-shader_parameter/color_depth = 18.0
-shader_parameter/chroma_shift = 0.7
-shader_parameter/scanline = 0.18
-shader_parameter/grain = 0.045
-shader_parameter/tracking = 0.15
-shader_parameter/tear = 0.08
-shader_parameter/jitter = 0.12
-shader_parameter/jump = 0.04
-shader_parameter/vignette = 0.45
-shader_parameter/vignette_softness = 0.6
-shader_parameter/cold_tint = Vector3(0.92, 0.97, 1.05)
-shader_parameter/warm_tint = Vector3(1.03, 1, 0.98)
-shader_parameter/contrast = 1.08
-shader_parameter/brightness = 1.12
-shader_parameter/saturation = 0.74
-shader_parameter/black_crush = 0.012
-shader_parameter/flicker = 0.004
+shader_parameter/strength = 0.8
+shader_parameter/preset = 2
+shader_parameter/dither_size = 2.0
+shader_parameter/color_depth = 64.0
+shader_parameter/retro_pixelation = 0.04
+shader_parameter/chroma_shift = 0.65
+shader_parameter/scanline = 0.0
+shader_parameter/grain = 0.1
+shader_parameter/grain_pixel_size = 2.0
+shader_parameter/tracking = 0.0
+shader_parameter/tear = 0.025
+shader_parameter/jitter = 0.08
+shader_parameter/jump = 0.015
+shader_parameter/vignette = 0.3
+shader_parameter/vignette_softness = 0.68
+shader_parameter/cold_tint = Vector3(0.91, 0.97, 1.04)
+shader_parameter/warm_tint = Vector3(1.05, 0.99, 0.93)
+shader_parameter/contrast = 1.04
+shader_parameter/brightness = 1.04
+shader_parameter/saturation = 0.9
+shader_parameter/black_crush = 0.0
+shader_parameter/flicker = 0.006
 shader_parameter/fade_amount = 0.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_row_normal"]
@@ -240,7 +243,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("7_tektur")
+theme_override_fonts/font = ExtResource("7_russo")
 theme_override_font_sizes/font_size = 47
 text = "НОВАЯ ИГРА"
 vertical_alignment = 1
@@ -276,7 +279,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("7_tektur")
+theme_override_fonts/font = ExtResource("7_russo")
 theme_override_font_sizes/font_size = 47
 text = "ПРОДОЛЖИТЬ"
 vertical_alignment = 1
@@ -312,7 +315,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("7_tektur")
+theme_override_fonts/font = ExtResource("7_russo")
 theme_override_font_sizes/font_size = 47
 text = "НАСТРОЙКИ"
 vertical_alignment = 1
@@ -348,7 +351,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("7_tektur")
+theme_override_fonts/font = ExtResource("7_russo")
 theme_override_font_sizes/font_size = 47
 text = "ВЫХОД"
 vertical_alignment = 1
@@ -361,7 +364,7 @@ offset_right = 578.0
 offset_bottom = 652.0
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.74, 0.78, 0.82, 1)
-theme_override_fonts/font = ExtResource("7_tektur")
+theme_override_fonts/font = ExtResource("8_cascadia")
 theme_override_font_sizes/font_size = 22
 text = "// СОХРАНЕНИЙ НЕ НАЙДЕНО"
 
@@ -401,7 +404,7 @@ offset_top = 26.0
 offset_right = 564.0
 offset_bottom = 72.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("7_tektur")
+theme_override_fonts/font = ExtResource("7_russo")
 theme_override_font_sizes/font_size = 40
 text = "НАСТРОЙКИ"
 
@@ -419,7 +422,7 @@ offset_top = 104.0
 offset_right = 564.0
 offset_bottom = 140.0
 theme_override_colors/font_color = Color(0.8, 0.84, 0.88, 1)
-theme_override_fonts/font = ExtResource("7_tektur")
+theme_override_fonts/font = ExtResource("8_cascadia")
 theme_override_font_sizes/font_size = 24
 text = "// РАЗДЕЛ В РАЗРАБОТКЕ"
 
@@ -429,7 +432,7 @@ offset_top = 146.0
 offset_right = 564.0
 offset_bottom = 176.0
 theme_override_colors/font_color = Color(0.56, 0.6, 0.65, 1)
-theme_override_fonts/font = ExtResource("7_tektur")
+theme_override_fonts/font = ExtResource("8_cascadia")
 theme_override_font_sizes/font_size = 18
 text = "ЭКРАН НАСТРОЕК ПОЯВИТСЯ ПОЗЖЕ"
 
@@ -440,7 +443,7 @@ offset_right = 236.0
 offset_bottom = 338.0
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("7_tektur")
+theme_override_fonts/font = ExtResource("7_russo")
 theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_row_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_row_active")
@@ -454,7 +457,7 @@ offset_top = 294.0
 offset_right = 564.0
 offset_bottom = 326.0
 theme_override_colors/font_color = Color(0.56, 0.6, 0.65, 1)
-theme_override_fonts/font = ExtResource("7_tektur")
+theme_override_fonts/font = ExtResource("8_cascadia")
 theme_override_font_sizes/font_size = 18
 text = "ESC — ЗАКРЫТЬ"
 horizontal_alignment = 2

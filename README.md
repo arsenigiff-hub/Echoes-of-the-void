@@ -5,14 +5,15 @@
 
 ## Документы
 
-- **Сюжет, структура игры и roadmap: `docs/PLOT.md` — единственный источник истины по истории.**
-  Задание на реализацию для ИИ и этапы M0–M6 — §12.
+- **Сюжет: `docs/PLOT.md`.** Старые подробные главы и roadmap в §7/§12 помечены как ожидающие переработки.
+- **Новая игровая петля и механики: `docs/MECHANICS_REWORK.md` — рабочий документ, не утверждённая финальная спецификация.**
 - Правила работы для агентов: `AGENTS.md`, `docs/AI_CHAT_RULES.md`.
 - Арт-дирекшн и атмосфера: `docs/ART_DIRECTION.md`.
+- Новый интерьер и его сборка: `docs/INTERIOR_LAYOUT_B.md`.
 - Отчёт о состоянии прототипа: `.codex_qa/work_report/report.md`.
-- Схемы механик: `diagrams_echoes_of_the_void.drawio`, `activity_*.xml`, `bpmn_*.xml`.
-- Отчёты и материалы: `Отчеты/` (ежедневные docx), корневые docx («Постановка задачи»,
-  итоговые отчёты), референсы `images/`, исходники моделей `blender/`, `future/new_ship.blend`.
+- Схемы механик: `Документы курсовой/03_Спецификация и проектирование/Схемы/`.
+- Отчёты и материалы: `Отчеты/` (ежедневные docx), `Документы курсовой/`
+  (требования, постановка, отчёты и схемы), референсы `images/`, исходники моделей `blender/`.
 - Аудит геометрии и его фиксы: `.codex_qa/model_audit/report.md` (F1–F31, метрики, CSV),
   `.codex_qa/zfight_fix/report.md` (что внедрено, before/after), `docs/QA_ARCHIVE.md`
   (что в git, что локально).
@@ -26,8 +27,9 @@
 
 ```powershell
 $godot = "D:\Godot_v4.7.2-stable_win64.exe"
-& $godot --headless --path "D:\4" --quit                                   # проект грузится без ошибок
-& $godot --headless --path "D:\4" --script "res://tests/verify_radio_no_spin.gd"   # радио-регресс
+& $godot --headless --path "D:\Echoes-of-the-void-main" --quit
+& $godot --headless --path "D:\Echoes-of-the-void-main" --script "res://tests/verify_radio_no_spin.gd"
+& $godot --headless --path "D:\Echoes-of-the-void-main" --script "res://tests/test_ship_layout_b.gd"
 ```
 
 ## Управление
@@ -38,7 +40,7 @@ WASD — движение, мышь — обзор, Space — прыжок, E �
 
 ## Статус
 
-Готово: интерьер корабля (коридор Deck B, мостик, каюта, шлюз), игрок, радио (фокус камеры,
+Готово: новый интерьер планировки Б (общий отсек, Г-образный проход, мостик, каюта, шлюз), игрок, радио (фокус камеры,
 ползунки, диск), фонарь, меню, вступление с процедурной стартовой площадкой, VHS-пост-обработка,
 внешний корабль с люком, цикл EVA (выход → невесомость → возврат), атмосферный звук и интро-SFX.
 

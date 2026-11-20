@@ -106,6 +106,13 @@ const DECALS := [
 var _cache: Dictionary = {}
 var _surfaces := 0
 var _decals := 0
+# Главная сцена начинается после аварийного обесточивания. StoryProgression
+# выставит нужную долю питания после загрузки/восстановления сохранения.
+var _story_power_fraction := 0.0
+var _power_lights: Array[Light3D] = []
+var _base_light_energy: Dictionary = {}
+var _power_emitters: Array[StandardMaterial3D] = []
+var _base_emission: Dictionary = {}
 
 
 func _ready() -> void:
@@ -117,7 +124,50 @@ func _ready() -> void:
 		return
 	_dress_meshes(host)
 	_place_decals(host)
+	_cache_power_state(host)
+	_apply_story_power()
 	print("[ShipDresser] surfaces=", _surfaces, " decals=", _decals)
+
+
+func set_story_power(fraction: float) -> void:
+	_story_power_fraction = clampf(fraction, 0.0, 1.0)
+	_apply_story_power()
+
+
+func _cache_power_state(node: Node) -> void:
+	if node is Light3D:
+		var light := node as Light3D
+		_power_lights.append(light)
+		_base_light_energy[light] = light.light_energy
+	if node is MeshInstance3D:
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance.mesh != null:
+			for surface in mesh_instance.mesh.get_surface_count():
+				var material := mesh_instance.get_surface_override_material(surface) as StandardMaterial3D
+				if material == null:
+					continue
+				if String(material.resource_name) not in ["dress_lamp_cold", "dress_red_lamp"]:
+					continue
+				if not _base_emission.has(material):
+					_power_emitters.append(material)
+					_base_emission[material] = {
+						"energy": material.emission_energy_multiplier,
+						"albedo": material.albedo_color,
+					}
+	for child in node.get_children():
+		_cache_power_state(child)
+
+
+func _apply_story_power() -> void:
+	for light in _power_lights:
+		if is_instance_valid(light):
+			light.light_energy = float(_base_light_energy.get(light, light.light_energy)) * _story_power_fraction
+	for material in _power_emitters:
+		if not is_instance_valid(material):
+			continue
+		var data: Dictionary = _base_emission[material]
+		material.emission_energy_multiplier = float(data["energy"]) * _story_power_fraction
+		material.albedo_color = Color(0.018, 0.022, 0.028).lerp(data["albedo"], _story_power_fraction)
 
 
 # --------------------------------------------------------------- материалы --

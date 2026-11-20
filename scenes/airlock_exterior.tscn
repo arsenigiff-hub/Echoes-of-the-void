@@ -1,6 +1,6 @@
-[gd_scene format=4]
+[gd_scene format=4 uid="uid://c6jq216tcel03"]
 
-[ext_resource type="PackedScene" path="res://assetss/shipkit/equip/airlock_door.glb" id="1_v211p"]
+[ext_resource type="PackedScene" uid="uid://c5cgylqsyfki" path="res://assetss/shipkit/equip/airlock_door.glb" id="1_v211p"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yjpli"]
 albedo_color = Color(0.16, 0.17, 0.17, 1)
@@ -279,10 +279,10 @@ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0
 material_override = SubResource("StandardMaterial3D_yjpli")
 mesh = SubResource("CylinderMesh_83tru")
 
-[node name="HatchDoor" type="Node3D" parent="." unique_id=1526686708 instance=ExtResource("1_v211p")]
+[node name="HatchDoor" parent="." unique_id=1526686708 instance=ExtResource("1_v211p")]
 transform = Transform3D(0.1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
-[node name="airlock_door" type="MeshInstance3D" parent="HatchDoor" unique_id=1883559289]
+[node name="airlock_door2" type="MeshInstance3D" parent="HatchDoor" unique_id=1883559289]
 mesh = SubResource("ArrayMesh_hpd56")
 
 [node name="Lamp1" type="MeshInstance3D" parent="." unique_id=450322499]

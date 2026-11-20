@@ -12,9 +12,9 @@ const DOCK_SCENE := "res://scenes/launch_dock.tscn"
 
 # ── камеры (три плана) ───────────────────────────────────────────────────
 const SHOT1_POS := Vector3(-30.0, 22.0, -40.0)
-const SHOT1_TARGET := Vector3(0.0, 11.0, 0.0)
+const SHOT1_TARGET := Vector3(4.5, 9.0, -3.0)
 const SHOT1_END_POS := Vector3(-22.0, 16.0, -33.0)
-const SHOT1_END_TARGET := Vector3(0.0, 9.5, 0.0)
+const SHOT1_END_TARGET := Vector3(4.5, 7.5, -3.0)
 const SHOT1_FOV := 52.0
 const SHOT1_END_FOV := 46.0
 
@@ -26,7 +26,7 @@ const SHOT2_FOV := 46.0
 const SHOT2_END_FOV := 42.0
 
 const SHOT3_POS := Vector3(-34.0, 6.0, 0.0)
-const SHOT3_TARGET := Vector3(0.0, 11.0, 0.0)
+const SHOT3_TARGET := Vector3(0.0, 9.0, -4.5)
 const SHOT3_FOV := 58.0
 
 const SHIP_PARK := Vector3(0.0, 3.12, 0.0)
@@ -34,11 +34,11 @@ const SHIP_LIFT := Vector3(0.0, 4.0, 0.0)
 const SHIP_GONE := Vector3(-10.0, 110.0, -560.0)
 
 # ── базовые параметры VHS (модулируются сбоями) ─────────────────────────
-const VHS_STRENGTH := 0.95
-const VHS_TEAR := 0.06
-const VHS_JUMP := 0.03
-const VHS_JITTER := 0.1
-const VHS_CHROMA := 0.8
+const VHS_STRENGTH := 0.8
+const VHS_TEAR := 0.025
+const VHS_JUMP := 0.015
+const VHS_JITTER := 0.08
+const VHS_CHROMA := 0.65
 
 @export var skip_enabled := true
 @export var use_placeholder_dock := true
@@ -96,6 +96,7 @@ func _ready() -> void:
 	_rng.randomize()
 	_build_environment()
 	_setup_ship()
+	_attach_authored_solar_wings()
 	_build_dock()
 	_build_dock_lights()
 	_build_beacons()
@@ -170,10 +171,10 @@ func _update_engine(delta: float) -> void:
 func _update_glitch(delta: float) -> void:
 	_glitch_amt = maxf(0.0, _glitch_amt - delta * 2.2)
 	_vhs.set_shader_parameter("strength", VHS_STRENGTH + _glitch_amt * 0.22)
-	_vhs.set_shader_parameter("tear", VHS_TEAR + _glitch_amt * 0.55)
-	_vhs.set_shader_parameter("jump", VHS_JUMP + _glitch_amt * 0.35)
-	_vhs.set_shader_parameter("jitter", VHS_JITTER + _glitch_amt * 0.9)
-	_vhs.set_shader_parameter("chroma_shift", VHS_CHROMA + _glitch_amt * 3.0)
+	_vhs.set_shader_parameter("tear", VHS_TEAR + _glitch_amt * 0.035)
+	_vhs.set_shader_parameter("jump", VHS_JUMP + _glitch_amt * 0.02)
+	_vhs.set_shader_parameter("jitter", VHS_JITTER + _glitch_amt * 0.12)
+	_vhs.set_shader_parameter("chroma_shift", VHS_CHROMA + _glitch_amt * 0.35)
 
 
 func _update_timecode() -> void:
@@ -201,8 +202,7 @@ func _build_environment() -> void:
 
 
 func _setup_ship() -> void:
-	# Корабль из Blockbench-кита: притемняем светлый «бумажный» корпус,
-	# чтобы он читался как грязный металл в духе арт-дирекшна.
+	# Старый шаттл имел один меш Hull; текущий GLB сохраняет собственные материалы.
 	var hull := _shuttle.get_node_or_null("Hull") as MeshInstance3D
 	if hull == null or hull.mesh == null:
 		return
@@ -220,6 +220,30 @@ func _setup_ship() -> void:
 		dup.roughness = 0.82
 		dup.metallic = 0.22
 		hull.set_surface_override_material(i, dup)
+
+
+func _attach_authored_solar_wings() -> void:
+	# Reuse the placement scene the author adjusted against the production hull.
+	# Its hull reference is only for positioning, so detach just the wing assembly.
+	var offset := _shuttle.get_node_or_null("ShipOffset") as Node3D
+	if offset == null or offset.get_node_or_null("SolarWings") != null:
+		return
+	const PLACEMENT_SCENE := "res://scenes/solar_wing_placement_preview.tscn"
+	var packed := load(PLACEMENT_SCENE) as PackedScene
+	if packed == null:
+		push_warning("Could not load the authored solar-wing placement scene")
+		return
+	var placement := packed.instantiate() as Node3D
+	var wings := placement.get_node_or_null("SolarWings") as Node3D
+	if wings == null:
+		placement.free()
+		push_warning("Solar-wing placement scene does not contain SolarWings")
+		return
+	placement.remove_child(wings)
+	wings.owner = null
+	wings.name = "SolarWings"
+	offset.add_child(wings)
+	placement.free()
 
 
 func _look_basis(from: Vector3, to: Vector3) -> Transform3D:
@@ -455,9 +479,9 @@ func _build_engine_fx() -> void:
 		var flame := MeshInstance3D.new()
 		flame.mesh = quad
 		flame.material_override = flame_mat
-		flame.position = Vector3(-11.8, -0.35, 1.45 * sz)
+		flame.position = Vector3(-11.5, 3.12, 11.44 + 3.2 * sz)
 		flame.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		_ship_shake.add_child(flame)
+		_ship_fx_parent().add_child(flame)
 		_engine_flames.append(flame)
 
 	for sz in [-1.0, 1.0]:
@@ -466,18 +490,23 @@ func _build_engine_fx() -> void:
 		light.omni_range = 55.0
 		light.omni_attenuation = 1.2
 		light.light_energy = 0.0
-		light.position = Vector3(-13.2, -0.4, 1.45 * sz)
+		light.position = Vector3(-11.5, 3.12, 11.44 + 3.2 * sz)
 		light.set_meta("base_energy", 7.0)
-		_ship_shake.add_child(light)
+		_ship_fx_parent().add_child(light)
 		_engine_lights.append(light)
 	var bounce := OmniLight3D.new()
 	bounce.light_color = Color(1.0, 0.6, 0.3)
 	bounce.omni_range = 30.0
 	bounce.light_energy = 0.0
-	bounce.position = Vector3(-9.0, -1.5, 0.0)
+	bounce.position = Vector3(-9.0, 3.2, 11.44)
 	bounce.set_meta("base_energy", 2.2)
-	_ship_shake.add_child(bounce)
+	_ship_fx_parent().add_child(bounce)
 	_engine_lights.append(bounce)
+
+
+func _ship_fx_parent() -> Node3D:
+	var offset := _shuttle.get_node_or_null("ShipOffset") as Node3D
+	return offset if offset != null else _ship_shake
 
 
 func _build_sparks() -> void:
@@ -504,7 +533,7 @@ func _build_sparks() -> void:
 	var quad := QuadMesh.new()
 	quad.size = Vector2(0.7, 0.7)
 	quad.material = mat
-	for p in [Vector3(-8.6, 2.4, 6.4), Vector3(-9.6, 0.2, -6.2), Vector3(-10.2, -1.0, 2.2)]:
+	for p in [Vector3(-8.6, 2.4, 8.2), Vector3(-9.4, 1.6, 14.5), Vector3(-8.8, 1.2, 11.4)]:
 		var parts := CPUParticles3D.new()
 		parts.mesh = quad
 		parts.position = p
@@ -533,14 +562,14 @@ func _build_sparks() -> void:
 		parts.color_ramp = ramp
 		parts.emitting = false
 		parts.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		_ship_shake.add_child(parts)
+		_ship_fx_parent().add_child(parts)
 		_sparks.append(parts)
 	_spark_light = OmniLight3D.new()
 	_spark_light.light_color = Color(1.0, 0.6, 0.25)
 	_spark_light.omni_range = 22.0
 	_spark_light.light_energy = 0.0
-	_spark_light.position = Vector3(-8.6, 1.5, 6.2)
-	_ship_shake.add_child(_spark_light)
+	_spark_light.position = Vector3(-8.6, 1.5, 8.2)
+	_ship_fx_parent().add_child(_spark_light)
 
 
 func _build_steam() -> void:
@@ -567,8 +596,8 @@ func _build_steam() -> void:
 	var quad := QuadMesh.new()
 	quad.size = Vector2(3.5, 3.5)
 	quad.material = mat
-	for p in [Vector3(-7.5, 0.3, -8.5), Vector3(7.5, 0.3, -8.5),
-			Vector3(-7.5, 0.3, 8.5), Vector3(7.5, 0.3, 8.5)]:
+	for p in [Vector3(-4.0, 0.3, -11.5), Vector3(4.0, 0.3, -11.5),
+			Vector3(-4.0, 0.3, 11.5), Vector3(4.0, 0.3, 11.5)]:
 		var parts := CPUParticles3D.new()
 		parts.mesh = quad
 		parts.position = p
@@ -613,7 +642,7 @@ func _build_audio() -> void:
 	for p in _players.values():
 		(p as AudioStreamPlayer).volume_db = -60.0
 	_add_sound("power_up", "res://assetss/audio/intro/power_up.wav", -8.0)
-	_add_sound("alarm", "res://assetss/audio/intro/alarm_loop.wav", -12.0, true)
+	_add_sound("alarm", "res://assetss/audio/intro/alarm_warning.ogg", -18.0)
 	_add_sound("sputter", "res://assetss/audio/intro/engine_sputter.wav", -8.0)
 	_add_sound("ignition", "res://assetss/audio/intro/engine_ignition.wav", -4.0)
 	_add_sound("rumble", "res://assetss/audio/intro/engine_rumble_loop.wav", -14.0, true)
@@ -752,7 +781,7 @@ func _power_up() -> void:
 
 func _malfunction() -> void:
 	_sputter = true
-	_play("alarm", -14.0, 0.2)
+	_play("alarm", -18.0, 0.2)
 	_play("sputter", -8.0, 0.1)
 	_play("groan", -13.0, 0.2)
 	_show_warning("СБОЙ ТЯГИ // ПЕРЕЗАПУСК", true)
@@ -840,7 +869,7 @@ func _liftoff() -> void:
 	if _cam_tween != null and _cam_tween.is_valid():
 		_cam_tween.kill()
 	_cam_tween = create_tween().set_parallel(true)
-	_cam_tween.tween_property(_cam_target, "position", Vector3(0, 13, 0), 3.0
+	_cam_tween.tween_property(_cam_target, "position", Vector3(0, 9, -4.5), 3.0
 			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	_cam_tween.tween_property(_cam_rig, "position", Vector3(-36.5, 6.5, 1.5), 3.0
 			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -883,7 +912,7 @@ func _depart() -> void:
 	_cam_tween = create_tween().set_parallel(true)
 	_cam_tween.tween_property(_cam_rig, "position", Vector3(0.0, 20.0, 56.0), 5.0
 			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	_cam_tween.tween_property(_cam_target, "position", Vector3(0.0, 26.0, -40.0), 5.0
+	_cam_tween.tween_property(_cam_target, "position", Vector3(-3.0, 8.0, -40.0), 5.0
 			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	_cam_tween.tween_property(_cam, "fov", 46.0, 5.0
 			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)

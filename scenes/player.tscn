@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://d3cpik1ayfhsl" path="res://scripts/player.gd" id="1_3vyb7"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rrmyu"]
+radius = 0.38
+height = 1.82
 
 [node name="Player" type="CharacterBody3D" unique_id=502170894]
 script = ExtResource("1_3vyb7")
@@ -27,6 +29,8 @@ transform = Transform3D(1, 0, 0, 0, 0.990268, 0.139173, 0, -0.139173, 0.990268, 
 light_energy = 1.6
 light_color = Color(1, 0.96, 0.88, 1)
 shadow_enabled = true
+shadow_bias = 0.4
+shadow_normal_bias = 2.0
 spot_range = 12.0
 spot_angle = 40.0
 

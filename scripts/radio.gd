@@ -46,10 +46,18 @@ extends Interactable
 # к передней панели), а не UP, как было у старой модели радио.
 @onready var dial: Node3D = $controls/dial_cap
 
+const TELEMETRY_FONT: Font = preload("res://assetss/ui/fonts/CascadiaMono.ttf")
+
 var is_at_radio := false   # игрок сейчас у прибора
 var is_moving := false     # проигрывается анимация — новые нажатия не берём
 var slider_value := 0.0    # текущее положение ползунков (локальный Y)
 var dial_angle := 0.0      # текущий угол диска в градусах
+var _initial_slider_value := 0.0
+var _signal_lock_time := 0.0
+var _first_packet_received := false
+var _signal_canvas: CanvasLayer
+var _signal_label: Label
+var _radio_screen: MeshInstance3D
 
 var _move_tween: Tween
 var _slider_tween: Tween
@@ -66,7 +74,51 @@ func _ready() -> void:
 	# Берём стартовое положение ползунков из самой модели, а не из головы:
 	# первое нажатие должно отсчитываться от того места, где они нарисованы.
 	if not sliders.is_empty():
+		# Bring the knobs out of the deep recessed slots and make them easier
+		# to read at the radio camera distance.
+		for slider in sliders:
+			slider.position.z -= 0.032
+			for child in slider.get_children():
+				if child is MeshInstance3D:
+					(child as MeshInstance3D).scale *= 1.28
 		slider_value = clampf(sliders[0].position.y, slider_min_y, slider_max_y)
+	_initial_slider_value = slider_value
+	_radio_screen = find_child("Screen", true, false) as MeshInstance3D
+
+
+func _process(delta: float) -> void:
+	var story := _get_story_progression()
+	var stage := int(story.get("stage")) if story != null else 0
+	# До восстановления кислородного контура приёмник физически обесточен.
+	if _radio_screen != null:
+		_radio_screen.visible = stage >= 2
+	if not is_at_radio:
+		return
+	if _signal_label == null:
+		_build_signal_display()
+	if stage < 2:
+		_signal_lock_time = 0.0
+		_signal_label.text = "ПРИЁМНИК ОБЕСТОЧЕН\nСначала восстанови кислородный контур."
+		return
+	if _first_packet_received or stage >= 3:
+		_first_packet_received = true
+		_signal_label.text = "145.80 MHz  //  ПАКЕТ ПРИНЯТ\nДанные сохранены в бортовом журнале."
+		return
+	var frequency := _current_frequency()
+	var difference := absf(frequency - 145.80)
+	if difference <= 0.015:
+		_signal_lock_time += delta
+	else:
+		_signal_lock_time = 0.0
+	var signal_state := "ШУМ"
+	if difference <= 0.015:
+		signal_state = "ЗАХВАТ %0.1f / 3.0 С" % minf(_signal_lock_time, 3.0)
+	elif difference <= 0.18:
+		signal_state = "СЛАБЫЙ НЕСТАБИЛЬНЫЙ СИГНАЛ"
+	_signal_label.text = "%.2f MHz  //  %s\nA/D — настройка · удержать захват 3 секунды" % [frequency, signal_state]
+	if _signal_lock_time >= 3.0 and story != null:
+		_first_packet_received = true
+		story.call("on_first_radio_packet")
 
 
 func interact(player: CharacterBody3D) -> void:
@@ -139,6 +191,8 @@ func _enter(player: CharacterBody3D, head: Node3D, camera: Camera3D) -> void:
 
 	is_at_radio = true
 	is_moving = true
+	_build_signal_display()
+	_signal_canvas.show()
 	await _move_tween.finished
 	is_moving = false
 
@@ -157,6 +211,9 @@ func _exit(player: CharacterBody3D, head: Node3D, camera: Camera3D) -> void:
 
 	is_at_radio = false
 	is_moving = true
+	_signal_lock_time = 0.0
+	if _signal_canvas != null:
+		_signal_canvas.hide()
 	await _move_tween.finished
 	is_moving = false
 
@@ -174,6 +231,9 @@ func focus_input(event: InputEvent) -> void:
 		return
 	var key_event := event as InputEventKey
 	if not key_event.pressed or key_event.echo:
+		return
+	var story := _get_story_progression()
+	if story != null and int(story.get("stage")) < 2:
 		return
 
 	# W/S — ползунки вверх/вниз, A/D — диск влево/вправо.
@@ -223,6 +283,55 @@ func _turn_dial(direction: float) -> void:
 	# Ось диска — локальная Z (панель вертикальная), поэтому rotation:z.
 	# Если диск крутится не в ту сторону — поменяй знак у direction.
 	_dial_tween.tween_property(dial, "rotation:z", deg_to_rad(dial_angle), dial_time)
+
+
+func _current_frequency() -> float:
+	var coarse_steps := roundi(dial_angle / dial_step_deg)
+	var fine_steps := roundi((slider_value - _initial_slider_value) / slider_step)
+	return 145.20 + float(coarse_steps) * 0.15 + float(fine_steps) * 0.02
+
+
+func _get_story_progression() -> Node:
+	var host := get_parent()
+	return host.get_node_or_null("StoryProgression") if host != null else null
+
+
+func _build_signal_display() -> void:
+	if _signal_canvas != null:
+		return
+	_signal_canvas = CanvasLayer.new()
+	_signal_canvas.name = "SignalDisplay"
+	_signal_canvas.layer = 90
+	add_child(_signal_canvas)
+	# Статус не перекрывает сцену подложкой: только компактная телеметрия.
+	_signal_label = Label.new()
+	_signal_label.custom_minimum_size = Vector2(700, 120)
+	_signal_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_signal_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	_signal_label.add_theme_font_override("font", TELEMETRY_FONT)
+	_signal_label.add_theme_font_size_override("font_size", 18)
+	_signal_label.add_theme_color_override("font_color", Color(0.72, 0.88, 0.80, 0.95))
+	_signal_label.add_theme_color_override("font_shadow_color", Color(0.01, 0.015, 0.018, 0.6))
+	_signal_label.add_theme_constant_override("shadow_offset_x", 1)
+	_signal_label.add_theme_constant_override("shadow_offset_y", 1)
+	var signal_panel := PanelContainer.new()
+	signal_panel.anchor_left = 0.5
+	signal_panel.anchor_right = 0.5
+	signal_panel.anchor_top = 1.0
+	signal_panel.anchor_bottom = 1.0
+	signal_panel.offset_left = -390.0
+	signal_panel.offset_right = 390.0
+	signal_panel.offset_top = -190.0
+	signal_panel.offset_bottom = -36.0
+	var signal_style := StyleBoxFlat.new()
+	signal_style.bg_color = Color(0.010, 0.020, 0.018, 0.90)
+	signal_style.set_border_width_all(1)
+	signal_style.border_color = Color(0.20, 0.36, 0.30, 0.9)
+	signal_style.set_corner_radius_all(3)
+	signal_style.set_content_margin_all(22)
+	signal_panel.add_theme_stylebox_override("panel", signal_style)
+	signal_panel.add_child(_signal_label)
+	_signal_canvas.add_child(signal_panel)
 
 
 func _find_sliders() -> Array[Node3D]:

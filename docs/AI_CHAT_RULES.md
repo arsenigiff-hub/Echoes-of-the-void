@@ -1,7 +1,7 @@
 # ECHOES OF THE VOID — правила и контекст для нового чата
 
 Этот файл — «память» проекта. Если ты новый агент в этом чате:
-1) прочитай `D:\4\AGENTS.md` (базовые правила проекта);
+1) прочитай `D:\Echoes-of-the-void-main\AGENTS.md` (базовые правила проекта);
 2) прочитай этот файл целиком;
 3) не начинай работу сразу: проверь, что проект грузится (команда в конце файла), и спроси
    пользователя, что делаем — вариантами, как описано ниже.
@@ -27,6 +27,8 @@
 
 - Кратко, по делу, без длинных лекций. Ссылки на файлы — обычным markdown-путём.
 - После визуальных правок — 1–2 скриншота «до/после» в ответе (не больше без запроса).
+- Пользователь работает удалённо с телефона: в конце визуальной работы обязательно
+  показывать превью прямо в чате, не ограничиваться путями к файлам.
 - Итог работы — короткий список: что сделано, где лежит, какие проверки прогнаны.
 - Не вываливай содержимое файлов/логи в чат. Показывай только суть и пути.
 - Всё, что можно проверить скриптом/рендером — проверяй, не спрашивай «угадать».
@@ -97,7 +99,7 @@
 ## 4. Технические факты проекта (проверено практикой)
 
 ### Движок
-- Godot 4.7.2: `D:\Godot_v4.7.2-stable_win64.exe`, проект `D:\4`, рендерер **GL Compatibility**.
+- Godot 4.7.2: `D:\Godot_v4.7.2-stable_win64.exe`, проект `D:\Echoes-of-the-void-main`, рендерер **GL Compatibility**.
 - Bloom/SSAO недоступны. Свечение — только эмиссией/аддитивными квадами и светом.
 - PS1-стиль: низкие полигоны, 512–1024 текстуры, 5-битное квантование каналов.
 
@@ -150,21 +152,23 @@
 - Модели корабля/мебели лежат в `assetss/ship_exterior/`, `assetss/rooms/...`.
 
 ### EVA (выход в космос)
-- `scripts/eva_controller.gd`: триггеры у люка, затемнение, звук, открытие люка, телепорт наружу,
-  режим невесомости, трос, возврат. Скрывает ShipInterior и показывает ShipExterior, поднимает
-  ambient.
+- `scripts/eva_controller.gd`: триггеры у люка, затемнение, звук, открытие люка, физический проход
+  по тоннелю до внешнего порта, режим невесомости, трос и обратный маршрут. Скрывает ShipInterior
+  и показывает ShipExterior, поднимает ambient.
 - `scripts/player.gd`: `eva_mode` — тяга WASD относительно взгляда, Space/Ctrl вверх-вниз, инерция,
   торможение.
-- Внешний корабль: `assetss/ship_exterior/ship_hull_v2.glb` (лямбда-силуэт) + люк
-  `airlock_hatch_v2.glb`. Петля/центр люка уже в мировых координатах внутри GLB — инстанс ставить
-  в (0,0,0), НЕ добавлять трансформ повторно (был баг: люк улетал). Вращается внутренний узел
-  петли, открытие +95° вокруг Y.
+- Основной внешний корабль и активная вступительная сцена используют
+  `assetss/ship_exterior/ship_hull_v2_eva_platform_wide_airlock.glb` и
+  `airlock_hatch_v3_wide.glb`. Солнечные крылья — расстановка автора в
+  `scenes/solar_wing_placement_preview.tscn`; во вступлении сборка привязана к `ShipOffset`.
+  Старые GLB оставлены резервными. У точек/узлов люка сохраняется их координатное соглашение;
+  перед повторным смещением проверять `tests/show_hatch_closed.gd` и физический маршрут.
 - Проверка: `res://tests/test_eva.gd` (выход/возврат), закрытый люк:
   `res://tests/show_hatch_closed.gd`.
 
 ## 5. Ключевые файлы
 
-- `scenes/main.tscn`, `scenes/ship_interior.tscn`, `scenes/radio_device.tscn`,
+- `scenes/main.tscn`, `scenes/ship_interior_b.tscn`, `scenes/radio_device.tscn`,
   `scenes/main_menu.tscn`, `scenes/intro_cutscene.tscn`, `scenes/ship_exterior_view.tscn`.
 - `scripts/`: player.gd, radio.gd, interactable.gd, ship_dresser.gd, screen_dresser.gd,
   eva_controller.gd, airlock_hatch.gd, space_stage.gd, radio_materials.gd,
@@ -177,7 +181,9 @@
   `apply_fixes.py`, `compare/*.jpg`, `out/scan*.json`), `.codex_qa/zfight/` (сканер наложений,
   метрики). QA-свалка кадров (~1.5 ГБ) — локально, воспроизводима: `docs/QA_ARCHIVE.md`.
 - **Регресс-проверки (в git):** `tests/verify_radio_no_spin.gd`, `tests/test_eva.gd`,
-  `tests/show_hatch_closed.gd`. Новые проверки добавлять только сюда, а не в `.codex_qa/`.
+  `tests/test_ship_layout_b.gd`, `tests/test_bridge_alignment.gd`, `tests/show_hatch_closed.gd`. Физический проход через внутреннюю
+  дверь, тоннель, наружный люк и обратно проверяет `test_ship_layout_b.gd`; `test_eva.gd` снимает
+  визуальные кадры состояний. Новые постоянные проверки добавлять сюда, черновые — в `.codex_qa/`.
 - Ассеты: `assetss/shipkit/{arch,equip,radio}`, `assetss/rooms/{quarters,airlock,airlock_room}`,
   `assetss/ship_exterior`, `assetss/tex_gemini/*`, `assetss/space`.
 - Документы: `AGENTS.md`, `docs/AI_CHAT_RULES.md`, `docs/PLOT.md` (§12 — roadmap), 
@@ -190,19 +196,19 @@
 ```powershell
 $godot = "D:\Godot_v4.7.2-stable_win64.exe"
 # импорт новых ассетов
-& $godot --headless --path "D:\4" --import
+& $godot --headless --path "D:\Echoes-of-the-void-main" --import
 # пересборка интерьера и сохранение сцены
-& $godot --headless --path "D:\4" --script "res://.codex_qa/shipassemble/build_and_save.gd"
+& $godot --headless --path "D:\Echoes-of-the-void-main" --script "res://.codex_qa/shipassemble/build_and_save.gd"
 # проверка загрузки
-& $godot --headless --path "D:\4" --quit
+& $godot --headless --path "D:\Echoes-of-the-void-main" --quit
 # финальные кадры (final_01..final_11 в .codex_qa/ship_rebuild)
-& $godot --path "D:\4" --resolution 1680x1050 --script "res://.codex_qa/ship_rebuild/capture_final.gd"
+& $godot --path "D:\Echoes-of-the-void-main" --resolution 1680x1050 --script "res://.codex_qa/ship_rebuild/capture_final.gd"
 # тест радио (все no_spin=true)
-& $godot --headless --path "D:\4" --script "res://tests/verify_radio_no_spin.gd"
+& $godot --headless --path "D:\Echoes-of-the-void-main" --script "res://tests/verify_radio_no_spin.gd"
 # тест EVA (выход/возврат)
-& $godot --path "D:\4" --resolution 1680x1050 --script "res://tests/test_eva.gd"
+& $godot --path "D:\Echoes-of-the-void-main" --resolution 1680x1050 --script "res://tests/test_eva.gd"
 # кадр закрытого люка
-& $godot --path "D:\4" --resolution 1680x1050 --script "res://tests/show_hatch_closed.gd"
+& $godot --path "D:\Echoes-of-the-void-main" --resolution 1680x1050 --script "res://tests/show_hatch_closed.gd"
 ```
 - Godot-редактор может упасть из-за битого `.godot/editor` — удалить/переименовать только эту папку
   (импорт-кэш не трогать), затем запустить редактор снова.
@@ -254,39 +260,43 @@ $godot = "D:\Godot_v4.7.2-stable_win64.exe"
 - Зависший субагент: своих инструментов остановки нет (`interrupt_agent`/`job_kill` могут не
   видеть его) — попросить пользователя остановить его в UI; следить за расходом токенов.
 
-## 9. Текущее состояние (на 2026-11-12)
+## 9. Текущее состояние (на 2026-11-15)
 
-Сделано: новый интерьер (коридор Deck B, мостик, шлюз, каюта), радио + шкафчик, дверь B-3 с
-текстурой, внешний корабль с люком, EVA (выход/невесомость/возврат), новый детальный шлюз,
-VHS-меню/интро, текстуры. Состояние работы 26–27.10 закоммичено 09.11 и отправлено в
-`origin/main`; регресс-проверки вынесены в `tests/` (были вне git); README и правила
-синхронизированы с фактами.
-12.11: внедрены фиксы наложений/z-fighting F1–F31 из аудита `.codex_qa/model_audit/` —
-стыки коридор↔мостик и шлюз↔коридор, каюта, hazard-трим, окно мостика (щели 0.12 м к космосу),
-декали по лучевым замерам, труба/кабели вдоль стены, бумаги/кружка/ящик/таблички на местах,
-внешняя оболочка `_build_shell`. `scenes/ship_interior.tscn` пересобран, `scripts/ship_dresser.gd`
-обновлён. **Генераторы `.codex_qa/shipassemble/*.gd` пропатчены и трекаются в git (исключение
-из `.codex_qa` в `.gitignore`) — пересборка интерьера воспроизводима.** Вся документация и
-отчёты — в git: `Отчеты/`, `docs/`, evidence аудита/фиксов (`docs/QA_ARCHIVE.md`).
+Рабочая папка: `D:\Echoes-of-the-void-main`; `.git` в этой папке нет. Godot 4.7.2,
+GL Compatibility. Актуальная точка входа — `scenes/main_menu.tscn`; основная игровая сцена —
+`scenes/main.tscn`, интерьер B — `scenes/ship_interior_b.tscn`.
 
-Не сделано:
-- кинематографичный отъезд камеры при выходе в космос;
-- заменить корабль в интро на финальный (`scenes/lambda_shuttle.tscn` сейчас — старый челнок);
-- подтянуть размеры/читаемость трафаретов в шлюзе, полировка света;
-- HUD (пользователь пока решил без HUD);
-- F25: мёртвые `sub_resource` в `scenes/main.tscn` (~326 КиБ) — чистка в редакторе;
-- F90/мелкие контакты и `note_handwritten` на верстаке (в кадре не читается);
-- **системы по roadmap.** `docs/PLOT.md` §12 — этапы M0–M6. M0 не начат: в `project.godot`
-  приложение всё ещё `"test"`, нет автолоадов GameState/ChapterManager/SignalManager,
-  нет `data/` и глав. Ближайшая крупная работа — M0 → M1 (радиосистема: частоты, пакеты).
+Собран и прошёл QA первый вертикальный срез: аварийный пролог → EVA-ремонт солнечной панели →
+ремонт кислородного контура → радиопакет ЦУП → ввод координат → сон/FTL → первое пробуждение.
+Тексты событий лежат в `data/story_events.json`, игровой цикл — `scripts/story_progression.gd`.
+Продолжение работы — `docs/WORK_PLAN.md`; полный художественный замысел — `docs/PLOT.md`,
+порядок стартовых механик — `docs/MECHANICS_REWORK.md`.
+
+Офлайн-профили, связанные SQLite-таблицы, CRUD, хеширование паролей, сложность, автосохранение,
+продолжение и результаты реализуются через `scripts/profile_database.gd` и
+`scripts/main_menu.gd`; схема описана в `docs/PROFILE_DATABASE.md`. GDExtension Godot-SQLite v4.7
+и MIT-лицензия находятся в `addons/godot-sqlite/`.
+
+Последний полный функциональный прогон: импорт и `--headless --quit` чистые; маршруты EVA,
+мостик, кислород, радио, космические стадии и анимация чёрной дыры, сюжет до первого FTL и профили
+завершились с кодом 0. После более поздней замены корабля во вступлении отдельный полный таймлайн
+проверен до перехода в основную сцену; системные регрессии после замены тоже завершились с кодом 0.
+Подробности, визуальные кадры и оставшиеся ObjectDB/аудио-предупреждения тестовых сцен — в
+`docs/QA_REPORT_2026-11-15.md`, `docs/WORK_PLAN.md` и `.codex_qa/next5/post_intro_regression/`.
+Временные визуальные и сюжетные сценарии проверки держать в `.codex_qa/`, не в основной игре.
+
+Остаётся: авторская оценка подготовленных визуальных вариантов (яркость космических стадий,
+читаемость таблички и люка, 4K-лимит текстур Земли), дальнейшая профильная полировка и материалы
+для защиты. Полный сюжет после первого пробуждения до Стрельца A*
+описан в `docs/PLOT.md`, но в текущем вертикальном срезе пока не реализован. Изменения не
+коммитить: репозитория Git в рабочей папке нет.
 
 ## 10. Как начать новый чат
 
 Сообщение пользователю достаточно такое:
-«Продолжаем ECHOES OF THE VOID (D:\4). Прочитай AGENTS.md и docs/AI_CHAT_RULES.md, проверь, что
-проект грузится (`--headless --quit`), посмотри `git status`, прогони
-`res://tests/verify_radio_no_spin.gd` и предложи следующие шаги по roadmap (`docs/PLOT.md` §12)
-и списку из §9».
+«Продолжаем ECHOES OF THE VOID (D:\Echoes-of-the-void-main). Прочитай `AGENTS.md`,
+`docs/AI_CHAT_RULES.md`, `docs/WORK_PLAN.md`; проверь запуск и профильные регрессии. Не используй
+устаревший план M0–M6 из `docs/PLOT.md` вместо актуального `docs/WORK_PLAN.md`.»
 
-После этого: загрузить оба документа, прогнать проверки, затем спросить, что делаем (вариантами),
-и только после выбора — менять файлы. Если roadmap и §9 расходятся — прав roadmap.
+Текущий этап — доработка вертикального среза и подготовка к защите. Если состояние в этом разделе
+расходится с `docs/WORK_PLAN.md`, сначала сверить реальные файлы и тесты, затем обновить оба документа.

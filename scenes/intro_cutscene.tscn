@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://byjj8bvykid88"]
 
 [ext_resource type="Script" uid="uid://dsqrkn30mjlnp" path="res://scripts/intro_cutscene.gd" id="1_script"]
-[ext_resource type="Shader" uid="uid://bhjkb41ck5m4h" path="res://shaders/vhs.gdshader" id="2_vhs"]
+[ext_resource type="Shader" path="res://shaders/vhs_soft_grain.gdshader" id="2_vhs"]
 [ext_resource type="Texture2D" uid="uid://c3bbvyyvoyqkr" path="res://assetss/space/starfield_pano.png" id="3_stars"]
-[ext_resource type="FontFile" uid="uid://dcylrjgipaa72" path="res://assetss/ui/fonts/Tektur.ttf" id="4_tektur"]
+[ext_resource type="FontFile" path="res://assetss/ui/fonts/RussoOne-Regular.ttf" id="4_russo"]
 [ext_resource type="FontFile" uid="uid://cd7uyxrmwcx0i" path="res://assetss/ui/fonts/CascadiaMono.ttf" id="5_mono"]
-[ext_resource type="PackedScene" path="res://scenes/lambda_shuttle.tscn" id="6_shuttle"]
+[ext_resource type="PackedScene" path="res://scenes/intro_ship_current.tscn" id="6_shuttle"]
 [ext_resource type="PackedScene" path="res://scenes/sun.tscn" id="7_sun"]
 [ext_resource type="AudioStream" uid="uid://dw3j2xxhfdewg" path="res://assetss/the-sound-of-a-spaceship-taking-off-a-rocket.mp3" id="8_engine"]
 [ext_resource type="AudioStream" uid="uid://wnbfau8sfilq" path="res://assetss/vinilovoe-tploe-poskripyivanie-ts100065.mp3" id="9_creak"]
@@ -41,26 +41,28 @@ adjustment_saturation = 0.82
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vhs"]
 shader = ExtResource("2_vhs")
-shader_parameter/strength = 0.95
-shader_parameter/preset = 1
-shader_parameter/dither_size = 3.0
-shader_parameter/color_depth = 18.0
-shader_parameter/chroma_shift = 0.8
-shader_parameter/scanline = 0.16
-shader_parameter/grain = 0.05
-shader_parameter/tracking = 0.12
-shader_parameter/tear = 0.06
-shader_parameter/jitter = 0.1
-shader_parameter/jump = 0.03
-shader_parameter/vignette = 0.52
-shader_parameter/vignette_softness = 0.6
-shader_parameter/cold_tint = Vector3(0.9, 0.96, 1.06)
-shader_parameter/warm_tint = Vector3(1.04, 1, 0.96)
-shader_parameter/contrast = 1.08
-shader_parameter/brightness = 1.08
-shader_parameter/saturation = 0.76
-shader_parameter/black_crush = 0.012
-shader_parameter/flicker = 0.004
+shader_parameter/strength = 0.8
+shader_parameter/preset = 2
+shader_parameter/dither_size = 2.0
+shader_parameter/color_depth = 64.0
+shader_parameter/retro_pixelation = 0.04
+shader_parameter/chroma_shift = 0.65
+shader_parameter/scanline = 0.0
+shader_parameter/grain = 0.1
+shader_parameter/grain_pixel_size = 2.0
+shader_parameter/tracking = 0.0
+shader_parameter/tear = 0.025
+shader_parameter/jitter = 0.08
+shader_parameter/jump = 0.015
+shader_parameter/vignette = 0.3
+shader_parameter/vignette_softness = 0.68
+shader_parameter/cold_tint = Vector3(0.91, 0.97, 1.04)
+shader_parameter/warm_tint = Vector3(1.05, 0.99, 0.93)
+shader_parameter/contrast = 1.04
+shader_parameter/brightness = 1.04
+shader_parameter/saturation = 0.9
+shader_parameter/black_crush = 0.0
+shader_parameter/flicker = 0.006
 shader_parameter/fade_amount = 1.0
 
 [node name="IntroCutscene" type="Node3D"]
@@ -185,7 +187,7 @@ offset_top = 42.0
 offset_right = 700.0
 offset_bottom = 68.0
 theme_override_colors/font_color = Color(0.62, 0.57, 0.48, 0.9)
-theme_override_fonts/font = ExtResource("4_tektur")
+theme_override_fonts/font = ExtResource("4_russo")
 theme_override_font_sizes/font_size = 14
 text = "КАМЕРА 03 · ОРБИТАЛЬНЫЙ ДОК B-3"
 
@@ -213,7 +215,7 @@ theme_override_colors/font_color = Color(0.93, 0.9, 0.82, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.7)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("4_tektur")
+theme_override_fonts/font = ExtResource("5_mono")
 theme_override_font_sizes/font_size = 24
 vertical_alignment = 1
 
@@ -230,7 +232,7 @@ theme_override_colors/font_color = Color(0.92, 0.24, 0.16, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
-theme_override_fonts/font = ExtResource("4_tektur")
+theme_override_fonts/font = ExtResource("4_russo")
 theme_override_font_sizes/font_size = 36
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -248,7 +250,7 @@ offset_bottom = -34.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_colors/font_color = Color(0.56, 0.54, 0.48, 0.75)
-theme_override_fonts/font = ExtResource("4_tektur")
+theme_override_fonts/font = ExtResource("5_mono")
 theme_override_font_sizes/font_size = 16
 text = "ESC — ПРОПУСТИТЬ"
 horizontal_alignment = 2

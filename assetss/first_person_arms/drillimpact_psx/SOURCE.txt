@@ -1,0 +1,5 @@
+Source: Drillimpact, “PSX First Person Arms”
+Page: https://drillimpact.itch.io/psx-first-person-arms-free
+License: CC0 1.0 Universal (public domain dedication, verified on the creator's page)
+Integrated as the first-person repair viewmodel: PSX low-poly suit sleeves with graphite gloves, shown only during manual solar-panel and oxygen-system repairs. Repair actions use the source grab/push animations. The included texture is a recolored derivative of the source: exposed finger/palm pixels become graphite, exposed sleeve pixels become muted blue-grey, and the original folds are retained. A controlled unshaded material keeps the palette stable under EVA sunlight.
+The ZIP and original source files are preserved in .codex_qa/asset_review/drillimpact_psx_arms_cc0.zip and .codex_qa/asset_review/drillimpact_psx_arms/.

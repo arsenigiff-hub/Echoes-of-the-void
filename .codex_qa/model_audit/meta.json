@@ -1,15 +1,15 @@
 {
-  "colliders": 34,
+  "colliders": 77,
   "godot_version": "4.7.2-stable (official)",
   "headless": "headless",
-  "lights": 21,
-  "load_settle_ms": 642.657,
-  "main_scene_nodes": 459,
-  "mesh_instances": 205,
-  "nodes_total": 459,
+  "lights": 22,
+  "load_settle_ms": 442.884,
+  "main_scene_nodes": 308,
+  "mesh_instances": 89,
+  "nodes_total": 308,
   "particles": [
     {
-      "amount": 260,
+      "amount": 90,
       "material": {
         "cls": "StandardMaterial3D",
         "cull": 0,

@@ -1,12 +1,6 @@
 extends Node3D
 
-# Коллизии корабля уже лежат готовыми в main.tscn (140 x CollisionShape3D)
-# под корнем корабля "blockbench_export", который теперь StaticBody3D.
-#
-# Раньше здесь в _ready() на каждый MeshInstance3D создавалась ещё одна
-# trimesh-форма и добавлялась в Node3D "hull". Пока "hull" был обычным Node3D
-# без физического тела, эти формы не работали вовсе, а после смены типа корня
-# на StaticBody3D они стали бы дублями (двойная коллизия и лишняя нагрузка).
-# Генерировать формы в рантайме больше не нужно.
+# Collision and lamps for layout B are owned by scripts/ship_interior_b.gd.
+# The root must not create a second set of collision shapes.
 func _ready() -> void:
 	pass

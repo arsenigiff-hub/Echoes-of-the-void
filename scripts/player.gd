@@ -40,6 +40,7 @@ var eva_mode: bool = false
 
 var flashlight_flag: bool = false
 var is_interacting: bool = false
+var camera_position_managed := false
 var interacting_object: Interactable = null
 
 var _bob_time: float = 0.0
@@ -54,6 +55,9 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if camera_position_managed:
+		_bob_time = 0.0
+		return
 	# Камера «дышит» и покачивается при ходьбе. Меняем только локальную
 	# позицию камеры: вращение (мышь) и фокус на предметах не затрагиваются.
 	if not bob_enabled or is_interacting or eva_mode:
@@ -87,6 +91,18 @@ func _unhandled_input(event: InputEvent) -> void:
 		# событий в секунду.
 		if not key_event.pressed or key_event.echo:
 			return
+
+		if _is_key(key_event, KEY_TAB):
+			var story := get_parent().get_node_or_null("StoryProgression")
+			if story != null:
+				story.call("toggle_journal")
+			return
+
+		if _is_key(key_event, KEY_ESCAPE):
+			var story := get_parent().get_node_or_null("StoryProgression")
+			if story != null and bool(story.get("journal_open")):
+				story.call("toggle_journal")
+				return
 
 		if _is_key(key_event, KEY_F):
 			_toggle_flashlight()
@@ -126,6 +142,13 @@ func _interact_pressed() -> void:
 		if interacting_object != null:
 			interacting_object.interact(self)
 		return
+	# Airlock doors are controlled from nearby space so the player does not
+	# have to aim through the narrow doorway at an invisible trigger.
+	var eva := get_parent().get_node_or_null("EVA")
+	if eva != null and eva.has_method("try_interact_airlock"):
+		if bool(eva.call("try_interact_airlock", self)):
+			get_viewport().set_input_as_handled()
+			return
 
 	# ВХОД. Условие ровно одно: луч смотрит на предмет.
 	if not interaction_ray.is_colliding():

@@ -1,0 +1,55 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assetss/ship_layout_b_physical/ship_layout_b.glb" id="1_rooms"]
+[ext_resource type="PackedScene" path="res://assetss/ship_bridge_b/radio_room_v2.glb" id="2_bridge"]
+[ext_resource type="Script" path="res://scripts/ship_interior_b.gd" id="3_script"]
+[ext_resource type="PackedScene" path="res://assetss/ship_details_b/ship_details_b.glb" id="4_details"]
+[ext_resource type="PackedScene" path="res://assetss/ship_clutter_external/trash_bin_lowpoly.glb" id="5_bin"]
+[ext_resource type="PackedScene" path="res://assetss/rooms/quarters/papers_scattered.glb" id="6_papers"]
+[ext_resource type="PackedScene" path="res://assetss/rooms/quarters/personal_boots.glb" id="7_boots"]
+[ext_resource type="PackedScene" path="res://assetss/rooms/quarters/personal_mug.glb" id="8_mug"]
+[ext_resource type="PackedScene" path="res://assetss/rooms/quarters/personal_notebook.glb" id="9_notebook"]
+[ext_resource type="PackedScene" path="res://assetss/rooms/quarters/cable_bundle_floor.glb" id="10_cable"]
+[ext_resource type="PackedScene" path="res://assetss/rooms/quarters/personal_toothbrush.glb" id="11_toothbrush"]
+[ext_resource type="PackedScene" path="res://assetss/rooms/quarters/personal_photo_a.glb" id="12_photo"]
+
+[node name="ShipInterior" type="Node3D"]
+script = ExtResource("3_script")
+
+[node name="Rooms" parent="." instance=ExtResource("1_rooms")]
+
+[node name="Bridge" parent="." instance=ExtResource("2_bridge")]
+position = Vector3(3.14, 0, -15.72)
+rotation = Vector3(0, 3.14159265359, 0)
+
+[node name="Details" parent="." instance=ExtResource("4_details")]
+
+[node name="CrewWasteBin" parent="." instance=ExtResource("5_bin")]
+position = Vector3(1.42, 0.024, -2.82)
+
+[node name="CrewBootsAfterImpact" parent="." instance=ExtResource("7_boots")]
+position = Vector3(-1.36, 0.026, -5.47)
+rotation = Vector3(0, 0.43, 0)
+
+[node name="CrewPapersAfterImpact" parent="." instance=ExtResource("6_papers")]
+position = Vector3(-0.08, 0.026, -5.30)
+rotation = Vector3(0, -0.21, 0)
+
+[node name="CrewNotebookOnBunk" parent="." instance=ExtResource("9_notebook")]
+position = Vector3(-1.43, 0.622, -4.69)
+rotation = Vector3(0, 0.18, 0)
+
+[node name="CrewMugOnBunk" parent="." instance=ExtResource("8_mug")]
+position = Vector3(-1.02, 0.606, -3.58)
+rotation = Vector3(0, 0.35, 0)
+
+[node name="LooseCableAtQuartersWall" parent="." instance=ExtResource("10_cable")]
+position = Vector3(1.06, 0.026, -3.72)
+rotation = Vector3(0, 0.12, 0)
+
+[node name="CrewToothbrushOnBunk" parent="." instance=ExtResource("11_toothbrush")]
+position = Vector3(-1.43, 0.612, -3.55)
+rotation = Vector3(0, 0.82, 0)
+
+[node name="CrewPhotoSlipOnBunk" parent="." instance=ExtResource("12_photo")]
+position = Vector3(-1.72, 0.612, -4.08)
