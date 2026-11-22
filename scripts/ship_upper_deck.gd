@@ -541,7 +541,11 @@ func _build_walls() -> void:
 		hall, "HallTechWallAft")
 	_box(Vector3(WALL_T, CEIL - 4.92, 1.0), Vector3(X1 + WALL_T * 0.5, (4.92 + CEIL) * 0.5, -1.7),
 		hall, "TechDoorHeader")
-	_box(Vector3(WALL_T, height, -TECH_Z0), Vector3(X1 + WALL_T * 0.5, mid, -3.35),
+	# The aft hall wall used to run past the tech store's back wall, so it
+	# overlapped both HallTechWallAft and ObservationInner with coplanar faces.
+	# Keep exactly the segment between the observation wall and the tech store.
+	_box(Vector3(WALL_T, height, TECH_Z0 - HALL_Z0),
+		Vector3(X1 + WALL_T * 0.5, mid, (HALL_Z0 + TECH_Z0) * 0.5),
 		hall, "HallOuterAft")
 	# Tech storage shell.
 	_box(Vector3(WALL_T, height, -TECH_Z0), Vector3(TECH_X1 + WALL_T * 0.5, mid, TECH_Z0 * 0.5),
