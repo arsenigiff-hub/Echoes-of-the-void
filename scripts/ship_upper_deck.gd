@@ -616,9 +616,6 @@ func _build_stairs() -> void:
 			Vector3(-3.6, top + 0.009, z0 - 0.02), hazard, "StairNose_%02d" % i)
 	var length := sqrt(STAIR_RUN * STAIR_RUN + STAIR_RISE * STAIR_RISE)
 	var pitch := atan2(STAIR_RISE, STAIR_RUN)
-	for x in [-4.04, -3.20]:
-		_sloped(Vector3(0.06, 0.18, length), Vector3(x, STAIR_RISE * 0.5, -STAIR_RUN * 0.5),
-			riser, pitch, "StairStringer")
 	_box(Vector3(1.0, 0.02, 0.18), Vector3(-3.6, 0.032, 0.12), hazard, "StairThreshold")
 
 
