@@ -64,6 +64,7 @@ func _ready() -> void:
 	_build_walls()
 	_build_stairs()
 	_build_cut_trim()
+	_build_atrium_wall()
 	_build_railings()
 	_build_atrium_fascia()
 	_build_ceilings()
@@ -576,19 +577,35 @@ func _frame_z(z0: float, z1: float, x: float, material: Material) -> void:
 		Vector3(x, FLOOR + 2.14, (z0 + z1) * 0.5), material)
 
 
+func _build_atrium_wall() -> void:
+	# The stair's atrium-side wall is back. The door itself stays removed: the
+	# opening is open, but the shaft no longer looks into the atrium.
+	var wall := _material("wall_common", Color(0.28, 0.32, 0.30), 0.3, 0.78)
+	var edge := _material("brushed_edges", Color(0.48, 0.51, 0.49), 0.55, 0.55)
+	_box(Vector3(0.12, CEIL - 0.02, 2.10),
+		Vector3(ATRIUM_X0, (CEIL + 0.02) * 0.5, -1.95), wall, "AtriumWallNorth")
+	_box(Vector3(0.12, CEIL - 2.42, 1.50),
+		Vector3(ATRIUM_X0, (CEIL + 2.42) * 0.5, -0.15), wall, "AtriumWallHeader")
+	_box(Vector3(0.10, 2.42, 0.10), Vector3(ATRIUM_X0 - 0.06, 1.21, -0.90),
+		edge, "AtriumWallJambNorth")
+	_box(Vector3(0.10, 2.42, 0.10), Vector3(ATRIUM_X0 - 0.06, 1.21, 0.60),
+		edge, "AtriumWallJambSouth")
+	_box(Vector3(0.05, 0.08, 2.10), Vector3(ATRIUM_X0 - 0.07, 2.62, -1.95), edge)
+
+
 func _build_cut_trim() -> void:
 	# The door itself is intentionally gone. These are only cut-edge liners:
 	# a dark lintel above the opening and two jambs that close the raw old-wall
 	# cross-section so the stairwell does not show space through the cut.
 	var backing := _material("wall_common", Color(0.30, 0.34, 0.31), 0.3, 0.78)
 	var edge := _material("brushed_edges", Color(0.45, 0.48, 0.46), 0.6, 0.55)
-	_box(Vector3(0.60, 0.42, 1.55), Vector3(-2.65, 2.61, -0.15), backing, "CutLintel")
+	_box(Vector3(0.60, 0.22, 1.55), Vector3(-2.65, 2.51, -0.15), backing, "CutLintel")
 	_box(Vector3(0.60, 2.42, 0.10), Vector3(-2.65, 1.21, -0.90), edge, "CutJambNorth")
 	_box(Vector3(0.60, 2.42, 0.10), Vector3(-2.65, 1.21, 0.60), edge, "CutJambSouth")
 	# Close the old wall band above the stair, where the old ceiling cut left a
 	# strip of open hull behind the flight.
 	_box(Vector3(0.10, FLOOR - 2.05, 3.10),
-		Vector3(X0 + 0.05, (2.05 + FLOOR) * 0.5, -1.45), backing, "CutStairBackBand")
+		Vector3(X0 - 0.01, (2.05 + FLOOR) * 0.5, -1.45), backing, "CutStairBackBand")
 
 
 func _build_stairs() -> void:
@@ -1280,6 +1297,11 @@ func _build_collision() -> void:
 		Vector3(ATRIUM_X1, FLOOR + 0.5, (ATRIUM_Z0 + ATRIUM_Z1) * 0.5))
 	_add_box(body, Vector3(ATRIUM_X1 - ATRIUM_X0, 1.0, 0.08),
 		Vector3((ATRIUM_X0 + ATRIUM_X1) * 0.5, FLOOR + 0.5, ATRIUM_Z0))
+	# Atrium-side stair wall (the door opening stays clear).
+	_add_box(body, Vector3(0.12, CEIL - 0.02, 2.10),
+		Vector3(ATRIUM_X0, (CEIL + 0.02) * 0.5, -1.95))
+	_add_box(body, Vector3(0.12, CEIL - 2.42, 1.50),
+		Vector3(ATRIUM_X0, (CEIL + 2.42) * 0.5, -0.15))
 	# Smooth ramp collider over the visual treads, aligned to the tread noses:
 	# y=0.217 at z=0, y=2.82 at z=-3. The old collider sat ~0.24 m high, which
 	# made the first step unclimbable and the player float above the treads.
