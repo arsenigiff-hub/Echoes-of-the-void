@@ -91,6 +91,10 @@ func _cache_power_emitters(node: Node) -> void:
 func _add_collision(node: Node) -> void:
 	if node is MeshInstance3D:
 		var mesh_node := node as MeshInstance3D
+		if mesh_node.name == "common amber_indicator":
+			# Thin decorative indicator plate on the galley unit; its own
+			# collision would make floor/support rays hit the plate itself.
+			return
 		mesh_node.create_trimesh_collision()
 		for body in mesh_node.get_children():
 			if body is StaticBody3D:

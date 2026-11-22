@@ -9,6 +9,7 @@ param(
 $tests = @(
 	"test_upper_deck.gd",
 	"test_object_placement.gd",
+	"test_full_spatial.gd",
 	"test_ship_layout_b.gd",
 	"test_eva_oxygen.gd",
 	"test_full_regression.gd"

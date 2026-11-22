@@ -138,6 +138,7 @@ func _relocate_common_counter() -> void:
 			node.position.x += 2.5
 			if label == "common amber_indicator":
 				node.position.y -= 0.31
+				node.position.z = 1.40
 	var base := _material("wall_common", Color(0.30, 0.34, 0.31), 0.3, 0.75)
 	_box(Vector3(0.94, 0.28, 3.28), Vector3(-1.02, 0.14, -1.965), base,
 		"RelocatedCounterBase")
@@ -823,11 +824,11 @@ func _build_props() -> void:
 	_prop(PIPES, "TechPipes", Vector3(2.50, 4.05, -2.55), 0.0)
 	_prop(CABLE, "TechCable", Vector3(1.35, FLOOR + 0.026, -0.92), 12.0)
 	_prop(PAPERS, "TechPapers", Vector3(2.05, FLOOR + 0.77, -2.10), 28.0)
-	# Crates on the floor, clear of the tech-storage door and the bin.
+	# Crates on the floor, clear of the tech-storage door, bin and cable.
 	var crate := _material("detail_cardboard", Color(0.55, 0.45, 0.32), 0.0, 0.9)
 	_box(Vector3(0.62, 0.50, 0.62), Vector3(3.60, FLOOR + 0.25, -2.28), crate, "CrateA")
 	_box(Vector3(0.62, 0.50, 0.62), Vector3(3.60, FLOOR + 0.75, -2.28), crate, "CrateB")
-	_box(Vector3(0.52, 0.42, 0.52), Vector3(0.55, FLOOR + 0.21, -0.55), crate, "CrateC")
+	_box(Vector3(0.52, 0.42, 0.52), Vector3(2.50, FLOOR + 0.21, -0.55), crate, "CrateC")
 	# Hall dressing.
 	_prop(VENT, "HallVent", Vector3(-0.06, 4.30, -3.35), -90.0)
 	_prop(PIPES, "HallPipes", Vector3(-0.09, 4.75, -0.60), -90.0)
