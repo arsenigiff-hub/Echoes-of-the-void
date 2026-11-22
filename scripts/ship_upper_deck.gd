@@ -164,14 +164,14 @@ func _cut_stair_notch() -> void:
 		var trim_removed := _cut_mesh_box(trim,
 			Vector3(-3.90, 0.0, -3.10), Vector3(-3.10, 2.80, 0.20))
 		print("[UpperDeck] stair trim cut removed=", trim_removed)
-	# The airlock wall trim carries a small horizontal bracket that pokes out
-	# exactly at the stair foot (the white stick beside the hazard strip). Cut
-	# just that bracket out of the trim layer; the graphite wall behind stays.
+	# The airlock wall trim carries a low diagonal sill that pokes out exactly
+	# at the stair foot (the white stick beside the hazard strip). Cut the whole
+	# sill out of the trim layer; the graphite wall behind stays.
 	var airlock_trim := rooms.find_child("airlock brushed_edges", true, false) as MeshInstance3D
 	if airlock_trim != null:
-		var bracket_removed := _cut_mesh_box(airlock_trim,
-			Vector3(-4.00, 0.26, 0.85), Vector3(-3.58, 0.44, 1.22))
-		print("[UpperDeck] stair foot bracket cut removed=", bracket_removed)
+		var sill_removed := _cut_mesh_box(airlock_trim,
+			Vector3(-4.30, 0.0, 0.0), Vector3(-3.55, 0.45, 1.25))
+		print("[UpperDeck] stair foot sill cut removed=", sill_removed)
 
 
 func _cut_stair_door() -> void:
