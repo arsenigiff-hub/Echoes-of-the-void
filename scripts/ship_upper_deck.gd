@@ -600,6 +600,15 @@ func _build_stair_door() -> void:
 	_box(Vector3(0.16, 2.42, 0.14), Vector3(-2.62, 1.21, -0.85), frame)
 	_box(Vector3(0.16, 2.42, 0.14), Vector3(-2.62, 1.21, 0.55), frame)
 	_box(Vector3(0.16, 0.14, 1.54), Vector3(-2.62, 2.42, -0.15), frame)
+	# The old ceiling cut leaves a thin open band above the door header; close it
+	# so the doorway never shows space above the frame.
+	var header_fill := _material("wall_common", Color(0.30, 0.34, 0.31), 0.3, 0.75)
+	_box(Vector3(0.50, 0.24, 1.54), Vector3(-2.65, 2.54, -0.15), header_fill)
+	# The old ceiling cut removes the old wall band above 2.05 m along the
+	# stairwell. Close it with a steel-backed panel so the stair never looks
+	# into the gap between the old and new decks.
+	_box(Vector3(0.10, FLOOR - 2.05, 3.10),
+		Vector3(X0 + 0.05, (2.05 + FLOOR) * 0.5, -1.45), header_fill, "StairwellBackBand")
 	_box(Vector3(0.60, 0.02, 1.40), Vector3(-2.62, 0.205, -0.15), hazard)
 	var lamp := _material("lamp_diffuser", Color(0.16, 0.21, 0.25), 0.0, 0.8)
 	lamp.emission_enabled = true
