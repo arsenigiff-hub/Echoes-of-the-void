@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://bobjedrk5hnfh" path="res://scripts/space_stage.gd" id="17_space_stage"]
 [ext_resource type="PackedScene" path="res://scenes/radio_device.tscn" id="18_radio"]
 [ext_resource type="PackedScene" path="res://assetss/ship_exterior/ship_hull_v2_eva_platform_wide_airlock.glb" id="21_exterior"]
+[ext_resource type="PackedScene" path="res://assetss/ship_exterior/ship_upper_superstructure.glb" id="27_upper_super"]
 [ext_resource type="Script" uid="uid://kabomn1kvo0r" path="res://scripts/eva_controller.gd" id="23_eva"]
 [ext_resource type="PackedScene" path="res://assetss/ship_exterior/airlock_hatch_v3_wide.glb" id="25_hatch_v2"]
 [ext_resource type="Script" path="res://scripts/story_progression.gd" id="26_story"]
@@ -142,6 +143,8 @@ script = ExtResource("14_ambient")
 
 [node name="ShipExterior" parent="." unique_id=231952018 instance=ExtResource("21_exterior")]
 visible = false
+
+[node name="UpperSuperstructure" parent="ShipExterior" instance=ExtResource("27_upper_super")]
 
 [node name="AirlockExterior" parent="." unique_id=1362329005 instance=ExtResource("25_hatch_v2")]
 visible = false

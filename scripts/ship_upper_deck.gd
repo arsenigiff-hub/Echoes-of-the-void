@@ -379,6 +379,13 @@ func _build_stairs() -> void:
 		_sloped(Vector3(0.06, 0.18, length), Vector3(x, STAIR_RISE * 0.5, -STAIR_RUN * 0.5),
 			riser, pitch, "StairStringer")
 	_box(Vector3(1.0, 0.02, 0.18), Vector3(-3.6, 0.011, 0.12), hazard, "StairThreshold")
+	# A short side ramp from the lower common onto the first tread. The flight
+	# starts at the old common/airlock wall, so the only approach is the open
+	# east side; without this ramp the capsule cannot step onto the first tread.
+	var side_ramp := _box(Vector3(0.48, 0.05, 0.60), Vector3(-2.90, 0.11, -0.20),
+		tread, "StairSideRamp")
+	side_ramp.rotation.z = -atan2(0.217, 0.40)
+	_box(Vector3(0.46, 0.02, 0.10), Vector3(-2.88, 0.145, 0.12), hazard, "StairSideNose")
 
 
 func _build_railings() -> void:
@@ -519,7 +526,7 @@ func _build_props() -> void:
 	_prop(PIPES, "CabinPipes", Vector3(-3.99, 4.75, 2.00), -90.0)
 	# Observation.
 	_prop(NAV_CONSOLE, "ObservationConsole", Vector3(-2.05, FLOOR, -7.35), 0.0)
-	_prop(BENCH, "ObservationBench", Vector3(-0.45, FLOOR, -5.20), 90.0)
+	_prop(BENCH, "ObservationBench", Vector3(-3.55, FLOOR, -5.20), 90.0)
 	_prop(TABLE, "ObservationTable", Vector3(-0.45, FLOOR, -7.30), 0.0)
 	_prop(VENT, "ObservationVent", Vector3(-0.06, 4.30, -5.20), 90.0)
 	# Tech storage.
@@ -612,7 +619,13 @@ func _build_collision() -> void:
 	body.name = "UpperDeckCollision"
 	body.collision_layer = 1
 	body.collision_mask = 0
+	# The interior is scaled (0.953, 1, 1); Jolt rejects non-uniform body scales
+	# and silently uses an average, which makes ramps and treads disagree with
+	# the visuals. Keep the body un-scaled and pre-scale the shapes instead.
+	body.top_level = true
 	add_child(body)
+	var world := global_transform
+	body.global_transform = Transform3D(world.basis.orthonormalized(), world.origin)
 	for label in ["CabinFloor", "ObservationFloor", "TechFloor", "BackWalkway",
 			"EastWalkway", "CabinBack", "CabinOuter", "CabinInner", "CabinHallWall",
 			"CabinDoorHeader", "ObservationBack", "ObservationInner",
@@ -634,6 +647,8 @@ func _build_collision() -> void:
 	var ramp := _add_box(body, Vector3(1.0, 0.20, run),
 		Vector3(-3.60, STAIR_RISE * 0.5, -STAIR_RUN * 0.5))
 	ramp.rotation.x = atan2(STAIR_RISE, STAIR_RUN)
+	var side_ramp := _add_box(body, Vector3(0.48, 0.05, 0.60), Vector3(-2.90, 0.11, -0.20))
+	side_ramp.rotation.z = -atan2(0.217, 0.40)
 	# The glass is solid; otherwise the player can step through the window.
 	_add_box(body, Vector3(0.06, 1.60, 2.40), Vector3(X0 - 0.02, FLOOR + 1.50, -6.0))
 	for prop_name in ["CabinBunk", "CabinLocker", "CabinTable", "CabinChair",
@@ -656,9 +671,10 @@ func _add_box(body: StaticBody3D, size: Vector3, pos: Vector3,
 		rot := Vector3.ZERO) -> CollisionShape3D:
 	var shape := CollisionShape3D.new()
 	var box := BoxShape3D.new()
-	box.size = size
+	var scale := global_transform.basis.get_scale()
+	box.size = size * scale
 	shape.shape = box
-	shape.position = pos
+	shape.position = pos * scale
 	shape.rotation = rot
 	body.add_child(shape)
 	_collision_shapes.append(shape)

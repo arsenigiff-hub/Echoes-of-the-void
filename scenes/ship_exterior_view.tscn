@@ -18,6 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://cfg4lqswpcfnc" path="res://assetss/ship_exterior/airlock_hatch_v2_rust.png" id="16_2ooif"]
 [ext_resource type="Texture2D" uid="uid://bpgs8ul06x4u8" path="res://assetss/ship_exterior/airlock_hatch_v2_glass_grime.png" id="17_rndi4"]
 [ext_resource type="Texture2D" uid="uid://2xbn8o7pnq1f" path="res://assetss/ship_exterior/airlock_hatch_v2_hazard_k.png" id="18_mret1"]
+[ext_resource type="PackedScene" path="res://assetss/ship_exterior/ship_upper_superstructure.glb" id="19_upper"]
 
 [sub_resource type="Sky" id="Sky_slota"]
 
@@ -706,6 +707,8 @@ omni_range = 70.0
 [node name="ShipHull" parent="." unique_id=81398565 instance=ExtResource("1_pj12w")]
 
 [node name="ShipHull_v3" type="MeshInstance3D" parent="ShipHull" unique_id=1100196260]
+
+[node name="UpperSuperstructure" parent="ShipHull" instance=ExtResource("19_upper")]
 mesh = SubResource("ArrayMesh_mwb6m")
 
 [node name="AirlockHatch" parent="." unique_id=2096286138 instance=ExtResource("10_c3ct1")]
