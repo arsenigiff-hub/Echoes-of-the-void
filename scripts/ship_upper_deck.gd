@@ -534,6 +534,9 @@ func _build_walls() -> void:
 	_box(Vector3(WALL_T, height, ATRIUM_Z1 - HALL_Z0),
 		Vector3(X0 - WALL_T * 0.5, mid, (HALL_Z0 + ATRIUM_Z1) * 0.5),
 		hall, "HallOuterWall")
+	# The hall openings are 1.0 m wide (wall gap and header); the trim below
+	# used the old 0.8 m size, so the left jamb stood 0.2 m inside the opening
+	# and read as a moved door with a white edge. Frames now fill the opening.
 	# Hall / tech wall, door at z -2.2..-1.2, plus outer piece aft of the store.
 	_box(Vector3(WALL_T, height, 1.2), Vector3(X1 + WALL_T * 0.5, mid, -0.6),
 		hall, "HallTechWallFore")
@@ -560,13 +563,9 @@ func _build_walls() -> void:
 		Vector3((X1 + WALL_T * 0.5 + TECH_X1) * 0.5, mid, WALL_T * 0.5),
 		tech, "TechFront")
 	# Heavy frames around each opening.
-	_frame_x(-0.8, 0.0, -WALL_T * 0.5, trim)
-	_frame_x(-0.8, 0.0, HALL_Z0 - WALL_T * 0.5, trim)
-	# The tech doorway gets a dark graphite jamb: the light brushed_edges trim
-	# caught the tech-room lamp and read as a floating white strip.
-	var tech_frame := _material("structural_graphite", Color(0.30, 0.32, 0.31),
-		0.4, 0.66)
-	_frame_z(-2.2, -1.2, X1 + WALL_T * 0.5, tech_frame)
+	_frame_x(-1.0, 0.0, -WALL_T * 0.5, trim)
+	_frame_x(-1.0, 0.0, HALL_Z0 - WALL_T * 0.5, trim)
+	_frame_z(-2.2, -1.2, X1 + WALL_T * 0.5, trim)
 	# Base trim on the visible outer walls.
 	var base := _material("brushed_edges", Color(0.62, 0.64, 0.62), 0.55, 0.55)
 	_box(Vector3(0.04, 0.06, CABIN_Z1), Vector3(X0 + 0.02, FLOOR + 0.03, CABIN_Z1 * 0.5), base)
@@ -575,8 +574,8 @@ func _build_walls() -> void:
 	_box(Vector3(0.04, 0.06, -TECH_Z0), Vector3(TECH_X1 - 0.02, FLOOR + 0.03, TECH_Z0 * 0.5), base)
 	# Hazard thresholds.
 	var hazard := _material("detail_hazard", Color(0.82, 0.62, 0.10), 0.2, 0.6)
-	_box(Vector3(0.84, 0.02, 0.14), Vector3(-0.4, FLOOR + 0.011, -0.07), hazard)
-	_box(Vector3(0.84, 0.02, 0.14), Vector3(-0.4, FLOOR + 0.011, HALL_Z0 + 0.07), hazard)
+	_box(Vector3(1.0, 0.02, 0.14), Vector3(-0.5, FLOOR + 0.011, -0.07), hazard)
+	_box(Vector3(1.0, 0.02, 0.14), Vector3(-0.5, FLOOR + 0.011, HALL_Z0 + 0.07), hazard)
 	_box(Vector3(0.14, 0.02, 1.04), Vector3(X1 - 0.07, FLOOR + 0.011, -1.7), hazard)
 
 
@@ -950,8 +949,8 @@ func _flatten_coplanar_mesh(source: Mesh, offset: float) -> ArrayMesh:
 
 
 func _build_signs() -> void:
-	_sign("ДОП. КАЮТА", Vector3(-0.40, 5.12, -0.01), 180.0)
-	_sign("ОБЗОР", Vector3(-0.40, 5.12, HALL_Z0 + 0.01), 0.0)
+	_sign("ДОП. КАЮТА", Vector3(-0.50, 5.12, -0.01), 180.0)
+	_sign("ОБЗОР", Vector3(-0.50, 5.12, HALL_Z0 + 0.01), 0.0)
 	_sign("ТЕХСКЛАД", Vector3(X1 - 0.01, 5.12, -1.70), -90.0)
 
 
