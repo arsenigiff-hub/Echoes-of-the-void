@@ -91,6 +91,10 @@ func _cache_power_emitters(node: Node) -> void:
 func _add_collision(node: Node) -> void:
 	if node is MeshInstance3D:
 		var mesh_node := node as MeshInstance3D
+		if not mesh_node.visible:
+			# The galley unit is hidden by the upper deck rebuild; it must not
+			# leave an invisible collider in front of the tech passage.
+			return
 		if mesh_node.name == "common amber_indicator":
 			# Thin decorative indicator plate on the galley unit; its own
 			# collision would make floor/support rays hit the plate itself.

@@ -11,7 +11,6 @@ const PROP_NAMES := [
 	"TechShelf", "TechLocker", "TechTable", "TechBin", "TechPipes",
 	"TechCable", "TechPapers", "HallVent", "HallPipes",
 	"CrateA", "CrateB", "CrateC",
-	"common ivory_aged", "common amber_indicator",
 ]
 
 var main: Node3D
@@ -159,7 +158,7 @@ func _audit_counter() -> void:
 	print("=== COUNTER ===")
 	for label in ["common ivory_aged", "common amber_indicator", "common structural_graphite"]:
 		var node := rooms.find_child(label, true, false) as Node3D
-		if node == null:
+		if node == null or not node.is_visible_in_tree():
 			continue
 		var box := _bounds_world(node)
 		print("COUNTER %s aabb=%s floor_gap=%.3f supported=%s" % [

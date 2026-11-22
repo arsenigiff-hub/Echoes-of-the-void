@@ -56,7 +56,7 @@ var _window_time := 0.0
 
 
 func _ready() -> void:
-	_relocate_common_counter()
+	_remove_common_counter()
 	_cut_stair_notch()
 	_cut_stair_door()
 	_cut_old_ceiling()
@@ -125,23 +125,18 @@ func _sloped(size: Vector3, pos: Vector3, material: Material, pitch: float,
 	return node
 
 
-func _relocate_common_counter() -> void:
-	# The old galley counter runs exactly under the new stair flight. Move the
-	# visible unit east and give it a new plinth; the old base is hidden by the
-	# stair. The indicator follows the unit, not the old wall panel.
+func _remove_common_counter() -> void:
+	# The old galley unit stood where the new stair flight rises. During the
+	# rebuild it was moved to the north wall, but there it blocked the tech
+	# passage and hung above the floor, reading as floating white boards.
+	# Remove the unit and its indicator completely.
 	var rooms := get_node_or_null("../Rooms")
 	if rooms == null:
 		return
 	for label in ["common ivory_aged", "common amber_indicator"]:
 		var node := rooms.find_child(label, true, false) as Node3D
 		if node != null:
-			node.position.x += 2.5
-			if label == "common amber_indicator":
-				node.position.y -= 0.31
-				node.position.z = 1.40
-	var base := _material("wall_common", Color(0.30, 0.34, 0.31), 0.3, 0.75)
-	_box(Vector3(0.94, 0.28, 3.28), Vector3(-1.02, 0.14, -1.965), base,
-		"RelocatedCounterBase")
+			node.visible = false
 
 
 func _cut_stair_notch() -> void:
@@ -1277,7 +1272,7 @@ func _build_collision() -> void:
 			"ObservationHeader", "ObservationHallWall", "ObservationDoorHeader",
 			"HallOuterWall", "HallTechWallFore", "HallTechWallAft", "TechDoorHeader",
 			"HallOuterAft", "TechOuter", "TechBack", "TechFront",
-			"RelocatedCounterBase", "CrateA", "CrateB", "CrateC"]:
+			"CrateA", "CrateB", "CrateC"]:
 		_collide_named(body, label)
 	# Invisible barriers along the open east and back atrium edges. The west
 	# edge is now a real stair wall, so it needs no invisible barrier.

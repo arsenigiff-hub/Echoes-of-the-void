@@ -23,7 +23,6 @@ const PROP_NAMES := [
 	"ObservationMug", "ObservationLog", "ObservationPapers",
 	"TechShelf", "TechLocker", "TechTable", "TechBin", "TechCable", "TechPapers",
 	"CrateA", "CrateB", "CrateC",
-	"common ivory_aged", "common amber_indicator",
 ]
 
 func _initialize() -> void:
