@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" path="res://assetss/rooms/quarters/cable_bundle_floor.glb" id="10_cable"]
 [ext_resource type="PackedScene" path="res://assetss/rooms/quarters/personal_toothbrush.glb" id="11_toothbrush"]
 [ext_resource type="PackedScene" path="res://assetss/rooms/quarters/personal_photo_a.glb" id="12_photo"]
+[ext_resource type="Script" path="res://scripts/ship_upper_deck.gd" id="13_upper"]
 
 [node name="ShipInterior" type="Node3D"]
 script = ExtResource("3_script")
@@ -53,3 +54,6 @@ rotation = Vector3(0, 0.82, 0)
 
 [node name="CrewPhotoSlipOnBunk" parent="." instance=ExtResource("12_photo")]
 position = Vector3(-1.72, 0.612, -4.08)
+
+[node name="UpperDeck" type="Node3D" parent="."]
+script = ExtResource("13_upper")

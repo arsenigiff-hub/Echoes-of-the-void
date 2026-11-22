@@ -19,6 +19,10 @@ func _ready() -> void:
 	# Fine clutter pieces and wall-mounted labels are visual set dressing.
 	# Building a trimesh collider for every detail made the narrow EVA route snag.
 	_add_collision($CrewWasteBin)
+	if has_node("UpperDeck"):
+		for shape in (get_node("UpperDeck") as Node).call("get_collision_shapes"):
+			if shape is CollisionShape3D:
+				_shapes.append(shape)
 	_create_airlock_door()
 	_ceiling_lamp("CommonA", Vector3(0,2.48,-1.2), 0.85, 3.8)
 	_ceiling_lamp("CommonB", Vector3(0,2.48,1.2), 0.85, 3.8, false)
