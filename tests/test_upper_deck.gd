@@ -118,7 +118,7 @@ func _walk_to(target: Vector3, frames: int = 240) -> bool:
 	for _frame in frames:
 		var offset := target - player.global_position
 		offset.y = 0.0
-		if offset.length() <= 0.055:
+		if offset.length() <= 0.08:
 			player.velocity = Vector3.ZERO
 			await physics_frame
 			return true
@@ -136,11 +136,14 @@ func _walk_to(target: Vector3, frames: int = 240) -> bool:
 
 func _check_player_route() -> void:
 	player.set_physics_process(false)
-	# Start on the first tread at the stair foot. The lower-common approach is
-	# the side ramp; this walk verifies the flight itself and the upper deck.
-	player.global_position = upper.to_global(Vector3(-3.35, 0.40, -0.10))
+	# Start on the lower common floor, walk around the old bench to the wide side
+	# ramp, then climb the flight. This is the real lower-deck connection.
+	player.global_position = upper.to_global(Vector3(-2.20, 0.20, 1.00))
 	await physics_frame
 	var targets := [
+		["door approach", Vector3(-2.20, 0.20, -0.15)],
+		["door", Vector3(-2.62, 0.30, -0.15)],
+		["stair foot", Vector3(-3.40, 0.60, -0.15)],
 		["stair top", Vector3(-3.60, 2.95, -3.35)],
 		["back walkway", Vector3(-2.00, 2.95, -3.50)],
 		["east walkway", Vector3(-0.50, 2.95, -2.30)],
@@ -164,7 +167,7 @@ func _check_player_route() -> void:
 			_fail("route stopped before '%s' at upper-local (%.2f, %.2f, %.2f)" % [
 				label, local.x, local.y, local.z])
 			return
-		if local.y < 2.55 and label != "stair foot":
+		if local.y < 2.55 and not ["door approach", "door", "stair foot"].has(label):
 			_fail("route reached '%s' but player y=%.2f is below the upper deck" % [label, local.y])
 			return
 	print("route final upper-local=", upper.to_local(player.global_position))

@@ -58,10 +58,12 @@ var _window_time := 0.0
 func _ready() -> void:
 	_relocate_common_counter()
 	_cut_stair_notch()
+	_cut_stair_door()
 	_cut_old_ceiling()
 	_build_floors()
 	_build_walls()
 	_build_stairs()
+	_build_stair_door()
 	_build_railings()
 	_build_atrium_fascia()
 	_build_ceilings()
@@ -136,21 +138,44 @@ func _relocate_common_counter() -> void:
 func _cut_stair_notch() -> void:
 	# A low structural bench/ledge of the old common runs along the outer wall
 	# exactly where the flight lands. Remove only that ledge inside the stair
-	# footprint, keeping the old floor, the wall and the rest of the room.
+	# footprint, keeping the old floor, the outer hull wall and the rest of the room.
 	var rooms := get_node_or_null("../Rooms")
 	if rooms == null:
 		return
 	var node := rooms.find_child("common structural_graphite", true, false) as MeshInstance3D
 	if node == null:
 		return
-	_cut_mesh_volume(node, position, -4.05, -3.10, -3.10, 0.10, 0.20, 2.05)
+	var removed := _cut_mesh_volume(node, position, -4.05, -3.10, -3.10, 0.10, 0.20, 2.05)
+	print("[UpperDeck] stair bench cut removed=", removed)
+
+
+func _cut_stair_door() -> void:
+	# The old bulkhead closes the stair foot from the lower common. Cut a real
+	# doorway (not a hole) through every bulkhead material layer; the frame and
+	# hazard threshold are built in _build_stair_door().
+	var rooms := get_node_or_null("../Rooms")
+	if rooms == null:
+		return
+	for label in ["bulkhead structural_graphite", "bulkhead brushed_edges",
+			"bulkhead wall_common"]:
+		var node := rooms.find_child(label, true, false) as MeshInstance3D
+		if node == null:
+			continue
+		var removed := _cut_mesh_box(node, position, Vector3(-3.10, 0.0, -1.20),
+			Vector3(-2.20, 2.42, 0.90))
+		# The old galley counter base/partition at the stair foot sits further
+		# west than the doorway. Remove the strip that crosses the flight.
+		removed += _cut_mesh_box(node, position, Vector3(-3.80, 0.0, -0.80),
+			Vector3(-3.20, 2.40, 0.60))
+		if removed > 0:
+			print("[UpperDeck] stair doorway cut ", label, " removed=", removed)
 
 
 func _cut_mesh_volume(mesh_node: MeshInstance3D, offset: Vector3, lx0: float, lx1: float,
-		lz0: float, lz1: float, y0: float, y1: float) -> void:
+		lz0: float, lz1: float, y0: float, y1: float) -> int:
 	var source := mesh_node.mesh
 	if source == null:
-		return
+		return 0
 	var result := ArrayMesh.new()
 	var changed := false
 	var removed := 0
@@ -182,6 +207,8 @@ func _cut_mesh_volume(mesh_node: MeshInstance3D, offset: Vector3, lx0: float, lx
 			kept.append(ia)
 			kept.append(ib)
 			kept.append(ic)
+		if kept.is_empty():
+			continue
 		var new_arrays := arrays.duplicate(true)
 		new_arrays[Mesh.ARRAY_INDEX] = PackedInt32Array(kept)
 		result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, new_arrays)
@@ -189,7 +216,170 @@ func _cut_mesh_volume(mesh_node: MeshInstance3D, offset: Vector3, lx0: float, lx
 			source.surface_get_material(surface))
 	if changed:
 		mesh_node.mesh = result
-		print("[UpperDeck] stair bench cut removed=", removed)
+	return removed
+
+
+func _cut_mesh_box(mesh_node: MeshInstance3D, offset: Vector3,
+		box_min: Vector3, box_max: Vector3) -> int:
+	# Exact triangle-vs-box subtraction for a doorway. Whole-triangle removal
+	# leaves a large old wall panel across the opening when its triangle
+	# centroid lies outside the cut; this clips the panel to the box instead.
+	var source := mesh_node.mesh
+	if source == null:
+		return 0
+	var result := ArrayMesh.new()
+	var xform := mesh_node.transform
+	var inv := xform.affine_inverse()
+	var lo := box_min + offset
+	var hi := box_max + offset
+	var planes := [
+		[Vector3(1, 0, 0), lo.x], [Vector3(-1, 0, 0), -hi.x],
+		[Vector3(0, 1, 0), lo.y], [Vector3(0, -1, 0), -hi.y],
+		[Vector3(0, 0, 1), lo.z], [Vector3(0, 0, -1), -hi.z],
+	]
+	var removed := 0
+	for surface in source.get_surface_count():
+		var arrays := source.surface_get_arrays(surface)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+		var uvs: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV]
+		var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+		if indices.is_empty():
+			continue
+		var has_normals := normals.size() == vertices.size()
+		var has_uvs := uvs.size() == vertices.size()
+		var out_v: Array = []
+		var out_n: Array = []
+		var out_uv: Array = []
+		var out_i: Array = []
+		for index in range(0, indices.size(), 3):
+			var ia := indices[index]
+			var ib := indices[index + 1]
+			var ic := indices[index + 2]
+			var pa: Vector3 = vertices[ia]
+			var pb: Vector3 = vertices[ib]
+			var pc: Vector3 = vertices[ic]
+			var wa := xform * pa
+			var wb := xform * pb
+			var wc := xform * pc
+			var tmin := Vector3(minf(wa.x, minf(wb.x, wc.x)), minf(wa.y, minf(wb.y, wc.y)),
+				minf(wa.z, minf(wb.z, wc.z)))
+			var tmax := Vector3(maxf(wa.x, maxf(wb.x, wc.x)), maxf(wa.y, maxf(wb.y, wc.y)),
+				maxf(wa.z, maxf(wb.z, wc.z)))
+			if not _aabb_overlaps(tmin, tmax, lo, hi):
+				_emit_original(out_v, out_n, out_uv, out_i, pa, pb, pc,
+					normals, uvs, ia, ib, ic, has_normals, has_uvs)
+				continue
+			var poly: Array = []
+			for v in [[pa, ia], [pb, ib], [pc, ic]]:
+				var vp: Vector3 = v[0]
+				var vi: int = v[1]
+				poly.append({
+					"p": xform * vp,
+					"n": normals[vi] if has_normals else Vector3.UP,
+					"uv": uvs[vi] if has_uvs else Vector2.ZERO,
+				})
+			var pieces: Array = []
+			var inside := poly
+			for plane in planes:
+				var normal: Vector3 = plane[0]
+				var d: float = plane[1]
+				var outside := _clip_polygon(inside, normal, d, false)
+				inside = _clip_polygon(inside, normal, d, true)
+				if outside.size() >= 3:
+					pieces.append(outside)
+				if inside.size() < 3:
+					break
+			if inside.size() >= 3:
+				# The whole triangle is inside the doorway volume.
+				removed += 1
+				continue
+			if pieces.is_empty():
+				_emit_original(out_v, out_n, out_uv, out_i, pa, pb, pc,
+					normals, uvs, ia, ib, ic, has_normals, has_uvs)
+				continue
+			for piece in pieces:
+				var base := out_v.size()
+				for vertex in piece:
+					out_v.append(inv * (vertex["p"] as Vector3))
+					var normal: Vector3 = vertex["n"]
+					out_n.append((inv.basis.transposed() * normal).normalized())
+					out_uv.append(vertex["uv"] as Vector2)
+				for k in range(1, piece.size() - 1):
+					out_i.append(base)
+					out_i.append(base + k)
+					out_i.append(base + k + 1)
+			removed += 1
+		if out_i.is_empty():
+			continue
+		var new_arrays: Array = []
+		new_arrays.resize(Mesh.ARRAY_MAX)
+		new_arrays[Mesh.ARRAY_VERTEX] = PackedVector3Array(out_v)
+		new_arrays[Mesh.ARRAY_NORMAL] = PackedVector3Array(out_n)
+		new_arrays[Mesh.ARRAY_TEX_UV] = PackedVector2Array(out_uv)
+		new_arrays[Mesh.ARRAY_INDEX] = PackedInt32Array(out_i)
+		result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, new_arrays)
+		result.surface_set_material(result.get_surface_count() - 1,
+			source.surface_get_material(surface))
+	if result.get_surface_count() > 0:
+		mesh_node.mesh = result
+	return removed
+
+
+func _emit_original(out_v: Array, out_n: Array, out_uv: Array, out_i: Array,
+		pa: Vector3, pb: Vector3, pc: Vector3, normals: PackedVector3Array,
+		uvs: PackedVector2Array, ia: int, ib: int, ic: int,
+		has_normals: bool, has_uvs: bool) -> void:
+	var positions := [pa, pb, pc]
+	var ids := [ia, ib, ic]
+	for k in 3:
+		out_v.append(positions[k])
+		out_n.append(normals[ids[k]] if has_normals else Vector3.UP)
+		out_uv.append(uvs[ids[k]] if has_uvs else Vector2.ZERO)
+		out_i.append(out_v.size() - 1)
+
+
+func _aabb_overlaps(a_min: Vector3, a_max: Vector3, b_min: Vector3, b_max: Vector3) -> bool:
+	return a_min.x <= b_max.x and a_max.x >= b_min.x \
+		and a_min.y <= b_max.y and a_max.y >= b_min.y \
+		and a_min.z <= b_max.z and a_max.z >= b_min.z
+
+
+func _clip_polygon(poly: Array, normal: Vector3, d: float, keep_positive: bool) -> Array:
+	if poly.is_empty():
+		return []
+	var out: Array = []
+	var count := poly.size()
+	for i in count:
+		var a: Dictionary = poly[i]
+		var b: Dictionary = poly[(i + 1) % count]
+		var da := normal.dot(a["p"] as Vector3) - d
+		var db := normal.dot(b["p"] as Vector3) - d
+		var ain := da >= 0.0
+		var bin := db >= 0.0
+		if not keep_positive:
+			ain = da <= 0.0
+			bin = db <= 0.0
+		if ain:
+			out.append(a)
+		if ain != bin:
+			var t := da / (da - db)
+			out.append(_lerp_poly_vertex(a, b, t))
+	return out
+
+
+func _lerp_poly_vertex(a: Dictionary, b: Dictionary, t: float) -> Dictionary:
+	var pa: Vector3 = a["p"]
+	var pb: Vector3 = b["p"]
+	var na: Vector3 = a["n"]
+	var nb: Vector3 = b["n"]
+	var ua: Vector2 = a["uv"]
+	var ub: Vector2 = b["uv"]
+	return {
+		"p": pa.lerp(pb, t),
+		"n": na.lerp(nb, t).normalized(),
+		"uv": ua.lerp(ub, t),
+	}
 
 
 func _cut_old_ceiling() -> void:
@@ -392,13 +582,31 @@ func _build_stairs() -> void:
 		_sloped(Vector3(0.06, 0.18, length), Vector3(x, STAIR_RISE * 0.5, -STAIR_RUN * 0.5),
 			riser, pitch, "StairStringer")
 	_box(Vector3(1.0, 0.02, 0.18), Vector3(-3.6, 0.011, 0.12), hazard, "StairThreshold")
-	# A short side ramp from the lower common onto the first tread. The flight
-	# starts at the old common/airlock wall, so the only approach is the open
-	# east side; without this ramp the capsule cannot step onto the first tread.
-	var side_ramp := _box(Vector3(0.48, 0.05, 0.60), Vector3(-2.90, 0.11, -0.20),
+	# The surviving old bench blocks the front of the flight, so the approach is
+	# from the open east side. A wide low ramp bridges the floor and the first
+	# tread; without it a CharacterBody cannot climb the bare 0.217 m riser.
+	var side_ramp := _box(Vector3(1.00, 0.05, 1.20), Vector3(-2.65, 0.243, -0.15),
 		tread, "StairSideRamp")
-	side_ramp.rotation.z = -atan2(0.217, 0.40)
-	_box(Vector3(0.46, 0.02, 0.10), Vector3(-2.88, 0.145, 0.12), hazard, "StairSideNose")
+	side_ramp.rotation.z = -atan2(0.45, 0.90)
+	_box(Vector3(0.10, 0.018, 1.18), Vector3(-2.16, 0.045, -0.15), hazard, "StairSideNose")
+
+
+func _build_stair_door() -> void:
+	# The cut in the old bulkhead is dressed as a real doorway: a steel frame,
+	# hazard threshold and a cold service lamp, so the lower deck reads as a
+	# deliberate connection rather than a hole in the wall.
+	var frame := _material("brushed_edges", Color(0.55, 0.58, 0.56), 0.6, 0.5)
+	var hazard := _material("detail_hazard", Color(0.82, 0.62, 0.10), 0.2, 0.6)
+	_box(Vector3(0.16, 2.42, 0.14), Vector3(-2.62, 1.21, -0.85), frame)
+	_box(Vector3(0.16, 2.42, 0.14), Vector3(-2.62, 1.21, 0.55), frame)
+	_box(Vector3(0.16, 0.14, 1.54), Vector3(-2.62, 2.42, -0.15), frame)
+	_box(Vector3(0.60, 0.02, 1.40), Vector3(-2.62, 0.205, -0.15), hazard)
+	var lamp := _material("lamp_diffuser", Color(0.16, 0.21, 0.25), 0.0, 0.8)
+	lamp.emission_enabled = true
+	lamp.emission = Color(0.55, 0.68, 0.82)
+	lamp.emission_energy_multiplier = 0.55
+	_box(Vector3(0.03, 0.02, 0.56), Vector3(-2.53, 2.36, -0.15), lamp)
+	_omni("StairDoorLamp", Vector3(-2.42, 2.25, -0.15), Color(0.55, 0.68, 0.82), 0.35, 2.2)
 
 
 func _build_railings() -> void:
@@ -494,18 +702,19 @@ func _build_lights() -> void:
 	# the observation window. Warm light is reserved for the old lower deck.
 	_spot("CabinLight", Vector3(-2.05, CEIL - 0.10, 2.0), Color(0.58, 0.70, 0.82), 1.15, 4.6)
 	_spot("ObservationLight", Vector3(-2.05, CEIL - 0.10, -6.0), Color(0.52, 0.68, 0.85), 1.20, 5.0)
-	_spot("HallLight", Vector3(-1.95, CEIL - 0.10, -1.55), Color(0.55, 0.68, 0.80), 1.25, 5.6)
-	_spot("TechLight", Vector3(1.05, CEIL - 0.10, -1.35), Color(0.42, 0.58, 0.55), 0.80, 4.2)
-	_spot("TechLightB", Vector3(3.45, CEIL - 0.10, -1.35), Color(0.42, 0.58, 0.55), 0.70, 3.8)
+	_spot("HallLight", Vector3(-1.95, CEIL - 0.10, -1.55), Color(0.55, 0.68, 0.80), 1.25, 5.6, false)
+	_spot("TechLight", Vector3(1.05, CEIL - 0.10, -1.35), Color(0.42, 0.58, 0.55), 0.80, 4.2, false)
+	_spot("TechLightB", Vector3(3.45, CEIL - 0.10, -1.35), Color(0.42, 0.58, 0.55), 0.70, 3.8, false)
 	_omni("StairFill", Vector3(-3.55, 3.90, -1.60), Color(0.55, 0.66, 0.78), 0.65, 3.4)
 	_omni("StairFoot", Vector3(-3.55, 1.25, -0.15), Color(0.55, 0.66, 0.78), 0.42, 2.4)
 	_omni("WindowGlow", Vector3(-3.95, 4.20, -6.0), Color(0.30, 0.50, 0.78), 0.55, 3.0)
 	_omni("AtriumFill", Vector3(-2.0, 4.60, -1.50), Color(0.55, 0.68, 0.82), 1.00, 6.0)
 	_omni("AtriumLower", Vector3(-2.0, 3.40, -1.50), Color(0.55, 0.68, 0.82), 0.80, 5.0)
-	_spot("AtriumShaft", Vector3(-2.0, 3.45, -1.50), Color(0.55, 0.68, 0.82), 1.00, 4.0)
+	_spot("AtriumShaft", Vector3(-2.0, 3.45, -1.50), Color(0.55, 0.68, 0.82), 1.00, 4.0, false)
 
 
-func _spot(name: String, pos: Vector3, color: Color, energy: float, range_m: float) -> void:
+func _spot(name: String, pos: Vector3, color: Color, energy: float, range_m: float,
+		shadows := true) -> void:
 	var light := SpotLight3D.new()
 	light.name = name
 	light.position = pos
@@ -514,7 +723,7 @@ func _spot(name: String, pos: Vector3, color: Color, energy: float, range_m: flo
 	light.light_energy = energy
 	light.spot_range = range_m
 	light.spot_angle = 72.0
-	light.shadow_enabled = true
+	light.shadow_enabled = shadows
 	light.shadow_bias = 0.15
 	light.shadow_normal_bias = 1.2
 	add_child(light)
@@ -585,14 +794,7 @@ func _build_signs() -> void:
 	_sign("ДОП. КАЮТА", Vector3(-0.40, 5.12, -0.01), 180.0)
 	_sign("ОБЗОР", Vector3(-0.40, 5.12, HALL_Z0 + 0.01), 0.0)
 	_sign("ТЕХСКЛАД", Vector3(X1 - 0.01, 5.12, -1.70), -90.0)
-	_sign("ВЕРХНЯЯ ПАЛУБА", Vector3(-2.90, 2.18, -0.04), 180.0)
-	# A small warm lens over the lower stair sign, matching the old lamp style.
-	var lamp := _material("lamp_diffuser", Color(0.16, 0.21, 0.25), 0.0, 0.8)
-	lamp.emission_enabled = true
-	lamp.emission = Color(0.55, 0.68, 0.82)
-	lamp.emission_energy_multiplier = 0.55
-	_box(Vector3(0.52, 0.02, 0.08), Vector3(-2.90, 2.44, -0.04), lamp)
-	_omni("StairSignFill", Vector3(-2.90, 2.24, -0.35), Color(0.55, 0.68, 0.82), 0.25, 1.8)
+	_sign("ВЕРХНЯЯ ПАЛУБА", Vector3(-2.50, 2.52, -0.15), 90.0)
 
 
 func _sign(text: String, pos: Vector3, yaw: float) -> void:
@@ -880,15 +1082,18 @@ func _build_collision() -> void:
 		Vector3(ATRIUM_X1, FLOOR + 0.5, (ATRIUM_Z0 + ATRIUM_Z1) * 0.5))
 	_add_box(body, Vector3(ATRIUM_X1 - ATRIUM_X0, 1.0, 0.08),
 		Vector3((ATRIUM_X0 + ATRIUM_X1) * 0.5, FLOOR + 0.5, ATRIUM_Z0))
-	_add_box(body, Vector3(0.08, FLOOR + 1.0, ATRIUM_Z1 - ATRIUM_Z0),
-		Vector3(ATRIUM_X0, (FLOOR + 1.0) * 0.5, (ATRIUM_Z0 + ATRIUM_Z1) * 0.5))
-	# Smooth ramp collider over the visual treads.
-	var run := sqrt(STAIR_RUN * STAIR_RUN + STAIR_RISE * STAIR_RISE)
+	_add_box(body, Vector3(0.08, 1.0, ATRIUM_Z1 - ATRIUM_Z0),
+		Vector3(ATRIUM_X0, FLOOR + 0.5, (ATRIUM_Z0 + ATRIUM_Z1) * 0.5))
+	# Smooth ramp collider over the visual treads, aligned to the tread noses:
+	# y=0.217 at z=0, y=2.82 at z=-3. The old collider sat ~0.24 m high, which
+	# made the first step unclimbable and the player float above the treads.
+	var pitch := atan2(STAIR_RISE - 0.217, STAIR_RUN)
+	var run := sqrt(STAIR_RUN * STAIR_RUN + (STAIR_RISE - 0.217) * (STAIR_RISE - 0.217))
 	var ramp := _add_box(body, Vector3(1.0, 0.20, run),
-		Vector3(-3.60, STAIR_RISE * 0.5, -STAIR_RUN * 0.5))
-	ramp.rotation.x = atan2(STAIR_RISE, STAIR_RUN)
-	var side_ramp := _add_box(body, Vector3(0.48, 0.05, 0.60), Vector3(-2.90, 0.11, -0.20))
-	side_ramp.rotation.z = -atan2(0.217, 0.40)
+		Vector3(-3.60, (0.217 + STAIR_RISE) * 0.5 - 0.10 * cos(pitch), -STAIR_RUN * 0.5))
+	ramp.rotation.x = pitch
+	var side_ramp := _add_box(body, Vector3(1.00, 0.05, 1.20), Vector3(-2.65, 0.243, -0.15))
+	side_ramp.rotation.z = -atan2(0.45, 0.90)
 	# The glass is solid; otherwise the player can step through the window.
 	_add_box(body, Vector3(0.06, 1.60, 2.40), Vector3(X0 - 0.02, FLOOR + 1.50, -6.0))
 	for prop_name in ["CabinBunk", "CabinLocker", "CabinTable", "CabinChair",
