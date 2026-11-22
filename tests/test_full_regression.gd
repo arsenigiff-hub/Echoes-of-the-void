@@ -452,7 +452,7 @@ func _world_bounds(root_node: Node) -> AABB:
 	var found := false
 	for mesh_node in root_node.find_children("*", "MeshInstance3D", true, false):
 		var mesh := mesh_node as MeshInstance3D
-		if mesh.mesh == null:
+		if mesh.mesh == null or _inside_subviewport(mesh):
 			continue
 		var bounds := mesh.global_transform * mesh.get_aabb()
 		if not found:
@@ -461,6 +461,15 @@ func _world_bounds(root_node: Node) -> AABB:
 		else:
 			result = result.merge(bounds)
 	return result
+
+
+func _inside_subviewport(node: Node) -> bool:
+	var parent := node.get_parent()
+	while parent != null:
+		if parent is SubViewport:
+			return true
+		parent = parent.get_parent()
+	return false
 
 
 func _node_bounds(node: Node) -> AABB:
