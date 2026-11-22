@@ -198,6 +198,21 @@ func _physics_process(delta: float) -> void:
 		velocity.x = 0.0
 		velocity.z = 0.0
 
+	# Small step-up assist: the stairs no longer have a ramp, and a
+	# CharacterBody cannot climb a bare riser. If horizontal motion is blocked
+	# but the same motion is clear 0.24 m higher, step up instead of stopping.
+	move_horizontal_with_step(delta)
+
+
+func move_horizontal_with_step(delta: float) -> void:
+	if is_on_floor() and velocity.x * velocity.x + velocity.z * velocity.z > 0.0001:
+		var horizontal := Vector3(velocity.x, 0.0, velocity.z)
+		var motion := horizontal * delta
+		if motion.length_squared() > 0.0001 and test_move(global_transform, motion):
+			var raised := global_transform
+			raised.origin.y += 0.40
+			if not test_move(raised, motion):
+				global_position.y += 0.40
 	move_and_slide()
 
 

@@ -129,7 +129,7 @@ func _walk_to(target: Vector3, frames: int = 240) -> bool:
 			player.velocity.y -= 9.8 * FRAME_STEP
 		else:
 			player.velocity.y = 0.0
-		player.move_and_slide()
+		player.move_horizontal_with_step(FRAME_STEP)
 		await physics_frame
 	return false
 

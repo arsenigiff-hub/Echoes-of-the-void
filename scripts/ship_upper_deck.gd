@@ -586,22 +586,12 @@ func _build_atrium_wall() -> void:
 		Vector3(ATRIUM_X0, (CEIL + 0.02) * 0.5, -1.95), wall, "AtriumWallNorth")
 	_box(Vector3(0.12, CEIL - 2.42, 1.50),
 		Vector3(ATRIUM_X0, (CEIL + 2.42) * 0.5, -0.15), wall, "AtriumWallHeader")
-	_box(Vector3(0.10, 2.42, 0.10), Vector3(ATRIUM_X0 - 0.06, 1.21, -0.90),
-		edge, "AtriumWallJambNorth")
-	_box(Vector3(0.10, 2.42, 0.10), Vector3(ATRIUM_X0 - 0.06, 1.21, 0.60),
-		edge, "AtriumWallJambSouth")
-	_box(Vector3(0.05, 0.08, 2.10), Vector3(ATRIUM_X0 - 0.07, 2.62, -1.95), edge)
 
 
 func _build_cut_trim() -> void:
-	# The door itself is intentionally gone. These are only cut-edge liners:
-	# a dark lintel above the opening and two jambs that close the raw old-wall
-	# cross-section so the stairwell does not show space through the cut.
+	# The door frame is intentionally gone. Only the old wall-band backing
+	# remains, so the cut does not open into space above the flight.
 	var backing := _material("wall_common", Color(0.30, 0.34, 0.31), 0.3, 0.78)
-	var edge := _material("brushed_edges", Color(0.45, 0.48, 0.46), 0.6, 0.55)
-	_box(Vector3(0.60, 0.22, 1.55), Vector3(-2.65, 2.51, -0.15), backing, "CutLintel")
-	_box(Vector3(0.60, 2.42, 0.10), Vector3(-2.65, 1.21, -0.90), edge, "CutJambNorth")
-	_box(Vector3(0.60, 2.42, 0.10), Vector3(-2.65, 1.21, 0.60), edge, "CutJambSouth")
 	# Close the old wall band above the stair, where the old ceiling cut left a
 	# strip of open hull behind the flight.
 	_box(Vector3(0.10, FLOOR - 2.05, 3.10),
@@ -630,13 +620,6 @@ func _build_stairs() -> void:
 		_sloped(Vector3(0.06, 0.18, length), Vector3(x, STAIR_RISE * 0.5, -STAIR_RUN * 0.5),
 			riser, pitch, "StairStringer")
 	_box(Vector3(1.0, 0.02, 0.18), Vector3(-3.6, 0.032, 0.12), hazard, "StairThreshold")
-	# The surviving old bench blocks the front of the flight, so the approach is
-	# from the open east side. A wide low ramp bridges the floor and the first
-	# tread; without it a CharacterBody cannot climb the bare 0.217 m riser.
-	var side_ramp := _box(Vector3(1.00, 0.05, 1.20), Vector3(-2.65, 0.171, -0.15),
-		tread, "StairSideRamp")
-	side_ramp.rotation.z = -atan2(0.31, 0.90)
-	_box(Vector3(0.06, 0.012, 1.18), Vector3(-2.10, 0.050, -0.15), hazard, "StairSideNose")
 
 
 func _build_railings() -> void:
@@ -1310,8 +1293,6 @@ func _build_collision() -> void:
 	var ramp := _add_box(body, Vector3(1.0, 0.20, run),
 		Vector3(-3.60, (0.217 + STAIR_RISE) * 0.5 - 0.10 * cos(pitch) - 0.030, -STAIR_RUN * 0.5))
 	ramp.rotation.x = pitch
-	var side_ramp := _add_box(body, Vector3(1.00, 0.05, 1.20), Vector3(-2.65, 0.171, -0.15))
-	side_ramp.rotation.z = -atan2(0.31, 0.90)
 	# The glass is solid; otherwise the player can step through the window.
 	_add_box(body, Vector3(0.06, 1.60, 2.40), Vector3(X0 - 0.02, FLOOR + 1.50, -6.0))
 	for prop_name in ["CabinBunk", "CabinLocker", "CabinTable", "CabinChair",
