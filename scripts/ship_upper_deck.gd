@@ -550,18 +550,23 @@ func _build_walls() -> void:
 	# Tech storage shell.
 	_box(Vector3(WALL_T, height, -TECH_Z0), Vector3(TECH_X1 + WALL_T * 0.5, mid, TECH_Z0 * 0.5),
 		tech, "TechOuter")
-	# Start the tech store's back/front walls behind the hall wall, not on its
-	# visible face: a flush left end at x=0 z-fought with the hall wall and
-	# produced the black vertical stripe beside the vent.
-	_box(Vector3(TECH_X1 - X1 - WALL_T, height, WALL_T),
-		Vector3((X1 + WALL_T + TECH_X1) * 0.5, mid, TECH_Z0 - WALL_T * 0.5),
+	# Bury the tech store's back/front wall ends inside the hall wall. Flush at
+	# x=0 they z-fought with its visible face (black stripe); flush at x=0.12
+	# they left a lit end face visible around the corner (white stripe).
+	_box(Vector3(TECH_X1 - X1 - WALL_T * 0.5, height, WALL_T),
+		Vector3((X1 + WALL_T * 0.5 + TECH_X1) * 0.5, mid, TECH_Z0 - WALL_T * 0.5),
 		tech, "TechBack")
-	_box(Vector3(TECH_X1 - X1 - WALL_T, height, WALL_T),
-		Vector3((X1 + WALL_T + TECH_X1) * 0.5, mid, WALL_T * 0.5), tech, "TechFront")
+	_box(Vector3(TECH_X1 - X1 - WALL_T * 0.5, height, WALL_T),
+		Vector3((X1 + WALL_T * 0.5 + TECH_X1) * 0.5, mid, WALL_T * 0.5),
+		tech, "TechFront")
 	# Heavy frames around each opening.
 	_frame_x(-0.8, 0.0, -WALL_T * 0.5, trim)
 	_frame_x(-0.8, 0.0, HALL_Z0 - WALL_T * 0.5, trim)
-	_frame_z(-2.2, -1.2, X1 + WALL_T * 0.5, trim)
+	# The tech doorway gets a dark graphite jamb: the light brushed_edges trim
+	# caught the tech-room lamp and read as a floating white strip.
+	var tech_frame := _material("structural_graphite", Color(0.30, 0.32, 0.31),
+		0.4, 0.66)
+	_frame_z(-2.2, -1.2, X1 + WALL_T * 0.5, tech_frame)
 	# Base trim on the visible outer walls.
 	var base := _material("brushed_edges", Color(0.62, 0.64, 0.62), 0.55, 0.55)
 	_box(Vector3(0.04, 0.06, CABIN_Z1), Vector3(X0 + 0.02, FLOOR + 0.03, CABIN_Z1 * 0.5), base)
