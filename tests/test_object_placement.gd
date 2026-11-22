@@ -17,6 +17,12 @@ const PROP_NAMES := [
 	"SolarArrayRepair", "OxygenServiceInteractable",
 	"NavigationConsoleInteractable", "SleepStationInteractable",
 	"AirlockInnerPressureLampFixture", "AirlockOuterPressureLampFixture",
+	"CabinBunk", "CabinLocker", "CabinTable", "CabinChair",
+	"CabinMug", "CabinNotebook", "CabinPhoto", "CabinBoots", "CabinPapers",
+	"ObservationConsole", "ObservationBench", "ObservationTable",
+	"ObservationMug", "ObservationLog", "ObservationPapers",
+	"TechShelf", "TechLocker", "TechTable", "TechBin", "TechCable", "TechPapers",
+	"CrateA", "CrateB", "CrateC",
 ]
 
 func _initialize() -> void:
@@ -90,7 +96,7 @@ func _run() -> void:
 	if details != null:
 		for mesh_node in details.find_children("*", "MeshInstance3D", true, false):
 			var mesh := mesh_node as MeshInstance3D
-			if mesh.mesh == null:
+			if mesh.mesh == null or not mesh.is_visible_in_tree():
 				continue
 			var b := mesh.global_transform * mesh.get_aabb()
 			if b.size.length() < 0.005:

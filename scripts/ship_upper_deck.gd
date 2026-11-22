@@ -70,6 +70,7 @@ func _ready() -> void:
 	_build_lights()
 	_build_props()
 	_build_signs()
+	_hide_stale_details()
 	_build_collision()
 	# The parent ShipInterior applies ship_pixel_materials to the whole interior,
 	# including this deck, once. Do not apply them twice here.
@@ -147,6 +148,14 @@ func _cut_stair_notch() -> void:
 		return
 	var removed := _cut_mesh_volume(node, position, -4.05, -3.10, -3.10, 0.10, 0.20, 2.05)
 	print("[UpperDeck] stair bench cut removed=", removed)
+	# The old bench trim (brushed_edges) still crosses the aligned ramp even
+	# after the structural bench is cut. Remove only the part inside the stair
+	# envelope, keeping the outer hull wall at x=-4.1 intact.
+	var trim := rooms.find_child("common brushed_edges", true, false) as MeshInstance3D
+	if trim != null:
+		var trim_removed := _cut_mesh_box(trim, position,
+			Vector3(-3.90, 0.0, -3.10), Vector3(-3.10, 2.80, 0.20))
+		print("[UpperDeck] stair trim cut removed=", trim_removed)
 
 
 func _cut_stair_door() -> void:
@@ -578,17 +587,17 @@ func _build_stairs() -> void:
 			Vector3(-3.6, top + 0.009, z0 - 0.02), hazard, "StairNose_%02d" % i)
 	var length := sqrt(STAIR_RUN * STAIR_RUN + STAIR_RISE * STAIR_RISE)
 	var pitch := atan2(STAIR_RISE, STAIR_RUN)
-	for x in [-4.04, -3.16]:
+	for x in [-4.04, -3.20]:
 		_sloped(Vector3(0.06, 0.18, length), Vector3(x, STAIR_RISE * 0.5, -STAIR_RUN * 0.5),
 			riser, pitch, "StairStringer")
-	_box(Vector3(1.0, 0.02, 0.18), Vector3(-3.6, 0.011, 0.12), hazard, "StairThreshold")
+	_box(Vector3(1.0, 0.02, 0.18), Vector3(-3.6, 0.032, 0.12), hazard, "StairThreshold")
 	# The surviving old bench blocks the front of the flight, so the approach is
 	# from the open east side. A wide low ramp bridges the floor and the first
 	# tread; without it a CharacterBody cannot climb the bare 0.217 m riser.
-	var side_ramp := _box(Vector3(1.00, 0.05, 1.20), Vector3(-2.65, 0.243, -0.15),
+	var side_ramp := _box(Vector3(1.00, 0.05, 1.20), Vector3(-2.65, 0.171, -0.15),
 		tread, "StairSideRamp")
-	side_ramp.rotation.z = -atan2(0.45, 0.90)
-	_box(Vector3(0.10, 0.018, 1.18), Vector3(-2.16, 0.045, -0.15), hazard, "StairSideNose")
+	side_ramp.rotation.z = -atan2(0.31, 0.90)
+	_box(Vector3(0.06, 0.012, 1.18), Vector3(-2.10, 0.050, -0.15), hazard, "StairSideNose")
 
 
 func _build_stair_door() -> void:
@@ -609,12 +618,11 @@ func _build_stair_door() -> void:
 	# into the gap between the old and new decks.
 	_box(Vector3(0.10, FLOOR - 2.05, 3.10),
 		Vector3(X0 + 0.05, (2.05 + FLOOR) * 0.5, -1.45), header_fill, "StairwellBackBand")
-	_box(Vector3(0.60, 0.02, 1.40), Vector3(-2.62, 0.205, -0.15), hazard)
 	var lamp := _material("lamp_diffuser", Color(0.16, 0.21, 0.25), 0.0, 0.8)
 	lamp.emission_enabled = true
 	lamp.emission = Color(0.55, 0.68, 0.82)
 	lamp.emission_energy_multiplier = 0.55
-	_box(Vector3(0.03, 0.02, 0.56), Vector3(-2.53, 2.36, -0.15), lamp)
+	_box(Vector3(0.03, 0.02, 0.56), Vector3(-2.37, 2.36, -0.15), lamp)
 	_omni("StairDoorLamp", Vector3(-2.42, 2.25, -0.15), Color(0.55, 0.68, 0.82), 0.35, 2.2)
 
 
@@ -656,13 +664,14 @@ func _build_atrium_fascia() -> void:
 		Vector3((ATRIUM_X0 + ATRIUM_X1) * 0.5, y, ATRIUM_Z0), fascia, "AtriumFasciaBack")
 	_box(Vector3(ATRIUM_X1 - ATRIUM_X0, h, 0.08),
 		Vector3((ATRIUM_X0 + ATRIUM_X1) * 0.5, y, ATRIUM_Z1), fascia, "AtriumFasciaFront")
-	# Top trim outlining the void.
-	_box(Vector3(0.10, 0.04, ATRIUM_Z1 - ATRIUM_Z0),
-		Vector3(ATRIUM_X0, OLD_CEIL + h + 0.02, (ATRIUM_Z0 + ATRIUM_Z1) * 0.5), trim)
-	_box(Vector3(0.10, 0.04, ATRIUM_Z1 - ATRIUM_Z0),
-		Vector3(ATRIUM_X1, OLD_CEIL + h + 0.02, (ATRIUM_Z0 + ATRIUM_Z1) * 0.5), trim)
+	# Top trim outlining the void. The corner trim sits a little higher than the
+	# long trims so their coplanar faces cannot z-fight at the corners.
+	_box(Vector3(0.10, 0.04, ATRIUM_Z1 - ATRIUM_Z0 - 0.04),
+		Vector3(ATRIUM_X0, OLD_CEIL + h + 0.035, (ATRIUM_Z0 + ATRIUM_Z1) * 0.5), trim)
+	_box(Vector3(0.10, 0.04, ATRIUM_Z1 - ATRIUM_Z0 - 0.04),
+		Vector3(ATRIUM_X1, OLD_CEIL + h + 0.035, (ATRIUM_Z0 + ATRIUM_Z1) * 0.5), trim)
 	_box(Vector3(ATRIUM_X1 - ATRIUM_X0, 0.04, 0.10),
-		Vector3((ATRIUM_X0 + ATRIUM_X1) * 0.5, OLD_CEIL + h + 0.02, ATRIUM_Z0), trim)
+		Vector3((ATRIUM_X0 + ATRIUM_X1) * 0.5, OLD_CEIL + h + 0.015, ATRIUM_Z0 - 0.06), trim)
 
 
 func _build_ceilings() -> void:
@@ -754,15 +763,16 @@ func _build_props() -> void:
 	# Cabin.
 	_prop(BUNK, "CabinBunk", Vector3(-3.55, FLOOR, 2.20), 90.0)
 	_prop(LOCKER, "CabinLocker", Vector3(-3.55, FLOOR, 3.65), 180.0)
-	_prop(TABLE, "CabinTable", Vector3(-0.45, FLOOR, 3.20), 0.0)
-	_prop(CHAIR, "CabinChair", Vector3(-0.90, FLOOR, 2.20), 0.0)
+	_prop(TABLE, "CabinTable", Vector3(-0.65, FLOOR, 3.20), 0.0)
+	var cabin_chair := _prop(CHAIR, "CabinChair", Vector3(-0.02, FLOOR, 3.15), -90.0)
+	cabin_chair.rotation.z = -0.12
 	_prop(PIPES, "CabinPipes", Vector3(-3.99, 4.75, 2.00), -90.0)
 	# Crew traces: the deck was left in a hurry, not staged.
-	_prop(MUG, "CabinMug", Vector3(-0.24, FLOOR + 0.754, 3.04), 24.0)
-	_prop(NOTEBOOK, "CabinNotebook", Vector3(-0.66, FLOOR + 0.754, 3.10), -12.0)
-	_prop(PHOTO, "CabinPhoto", Vector3(-0.42, FLOOR + 0.754, 3.43), 8.0)
-	_prop(BOOTS, "CabinBoots", Vector3(-3.02, FLOOR + 0.026, 1.52), 24.0)
-	_prop(PAPERS, "CabinPapers", Vector3(-1.12, FLOOR + 0.026, 3.56), 20.0)
+	_prop(MUG, "CabinMug", Vector3(-0.44, FLOOR + 0.754, 3.04), 24.0)
+	_prop(NOTEBOOK, "CabinNotebook", Vector3(-0.86, FLOOR + 0.754, 3.10), -12.0)
+	_prop(PHOTO, "CabinPhoto", Vector3(-0.62, FLOOR + 0.754, 3.43), 8.0)
+	_prop(BOOTS, "CabinBoots", Vector3(-2.85, FLOOR + 0.026, 1.10), 24.0)
+	_prop(PAPERS, "CabinPapers", Vector3(-1.60, FLOOR + 0.026, 3.55), 20.0)
 	# Observation.
 	_prop(NAV_CONSOLE, "ObservationConsole", Vector3(-2.05, FLOOR, -7.35), 0.0)
 	_prop(BENCH, "ObservationBench", Vector3(-3.55, FLOOR, -5.20), 90.0)
@@ -770,20 +780,20 @@ func _build_props() -> void:
 	_prop(VENT, "ObservationVent", Vector3(-0.06, 4.30, -5.20), 90.0)
 	_prop(MUG, "ObservationMug", Vector3(-0.62, FLOOR + 0.754, -7.18), -18.0)
 	_prop(NOTEBOOK, "ObservationLog", Vector3(-0.28, FLOOR + 0.754, -7.42), 12.0)
-	_prop(PAPERS, "ObservationPapers", Vector3(-1.42, FLOOR + 0.026, -6.72), -14.0)
+	_prop(PAPERS, "ObservationPapers", Vector3(-1.55, FLOOR + 0.026, -5.65), -14.0)
 	# Tech storage.
 	_prop(SHELF, "TechShelf", Vector3(4.20, FLOOR, -1.30), 90.0)
 	_prop(LOCKER, "TechLocker", Vector3(3.70, FLOOR, -0.42), 180.0)
 	_prop(TABLE, "TechTable", Vector3(2.00, FLOOR, -2.28), 0.0)
-	_prop(TRASH, "TechBin", Vector3(3.25, FLOOR, -2.30), 0.0)
+	_prop(TRASH, "TechBin", Vector3(2.85, FLOOR, -2.35), 0.0)
 	_prop(PIPES, "TechPipes", Vector3(2.50, 4.05, -2.55), 0.0)
 	_prop(CABLE, "TechCable", Vector3(1.35, FLOOR + 0.026, -0.92), 12.0)
-	_prop(PAPERS, "TechPapers", Vector3(2.82, FLOOR + 0.026, -2.05), 28.0)
-	# Crates on the floor, clear of the tech-storage door.
+	_prop(PAPERS, "TechPapers", Vector3(2.05, FLOOR + 0.77, -2.10), 28.0)
+	# Crates on the floor, clear of the tech-storage door and the bin.
 	var crate := _material("detail_cardboard", Color(0.55, 0.45, 0.32), 0.0, 0.9)
-	_box(Vector3(0.62, 0.50, 0.62), Vector3(3.50, FLOOR + 0.25, -2.18), crate, "CrateA")
-	_box(Vector3(0.62, 0.50, 0.62), Vector3(3.50, FLOOR + 0.75, -2.18), crate, "CrateB")
-	_box(Vector3(0.52, 0.42, 0.52), Vector3(0.35, FLOOR + 0.21, -0.60), crate, "CrateC")
+	_box(Vector3(0.62, 0.50, 0.62), Vector3(3.60, FLOOR + 0.25, -2.28), crate, "CrateA")
+	_box(Vector3(0.62, 0.50, 0.62), Vector3(3.60, FLOOR + 0.75, -2.28), crate, "CrateB")
+	_box(Vector3(0.52, 0.42, 0.52), Vector3(0.55, FLOOR + 0.21, -0.55), crate, "CrateC")
 	# Hall dressing.
 	_prop(VENT, "HallVent", Vector3(-0.06, 4.30, -3.35), -90.0)
 	_prop(PIPES, "HallPipes", Vector3(-0.09, 4.75, -0.60), -90.0)
@@ -803,7 +813,22 @@ func _build_signs() -> void:
 	_sign("ДОП. КАЮТА", Vector3(-0.40, 5.12, -0.01), 180.0)
 	_sign("ОБЗОР", Vector3(-0.40, 5.12, HALL_Z0 + 0.01), 0.0)
 	_sign("ТЕХСКЛАД", Vector3(X1 - 0.01, 5.12, -1.70), -90.0)
-	_sign("ВЕРХНЯЯ ПАЛУБА", Vector3(-2.50, 2.52, -0.15), 90.0)
+	_sign("ВЕРХНЯЯ ПАЛУБА", Vector3(-2.36, 2.52, -0.15), 90.0)
+
+
+func _hide_stale_details() -> void:
+	# The old ceiling/bench Details batches stay in the lower ship, but two of
+	# their merged meshes hang in the new atrium: the acoustic panel strip and
+	# the hazard trim that used to sit on the removed bench. Hiding them keeps
+	# the old ship intact and removes the floating leftovers.
+	var details := get_node_or_null("../Details")
+	if details == null:
+		return
+	for mesh_name in ["export_detail_acoustic", "export_detail_hazard"]:
+		var mesh := details.find_child(mesh_name, true, false) as MeshInstance3D
+		if mesh != null:
+			mesh.visible = false
+			print("[UpperDeck] hidden stale detail ", mesh_name)
 
 
 func _sign(text: String, pos: Vector3, yaw: float) -> void:
@@ -1099,10 +1124,10 @@ func _build_collision() -> void:
 	var pitch := atan2(STAIR_RISE - 0.217, STAIR_RUN)
 	var run := sqrt(STAIR_RUN * STAIR_RUN + (STAIR_RISE - 0.217) * (STAIR_RISE - 0.217))
 	var ramp := _add_box(body, Vector3(1.0, 0.20, run),
-		Vector3(-3.60, (0.217 + STAIR_RISE) * 0.5 - 0.10 * cos(pitch), -STAIR_RUN * 0.5))
+		Vector3(-3.60, (0.217 + STAIR_RISE) * 0.5 - 0.10 * cos(pitch) - 0.030, -STAIR_RUN * 0.5))
 	ramp.rotation.x = pitch
-	var side_ramp := _add_box(body, Vector3(1.00, 0.05, 1.20), Vector3(-2.65, 0.243, -0.15))
-	side_ramp.rotation.z = -atan2(0.45, 0.90)
+	var side_ramp := _add_box(body, Vector3(1.00, 0.05, 1.20), Vector3(-2.65, 0.171, -0.15))
+	side_ramp.rotation.z = -atan2(0.31, 0.90)
 	# The glass is solid; otherwise the player can step through the window.
 	_add_box(body, Vector3(0.06, 1.60, 2.40), Vector3(X0 - 0.02, FLOOR + 1.50, -6.0))
 	for prop_name in ["CabinBunk", "CabinLocker", "CabinTable", "CabinChair",

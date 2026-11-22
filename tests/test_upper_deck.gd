@@ -89,7 +89,7 @@ func _check_hull_alignment() -> void:
 func _check_atrium_floor() -> void:
 	for point in [Vector2(-2.0, -1.5), Vector2(-2.5, -1.5),
 			Vector2(-2.0, -0.5), Vector2(-3.0, -1.5)]:
-		var from := upper.to_global(Vector3(point.x, 7.0, point.y))
+		var from := upper.to_global(Vector3(point.x, 5.0, point.y))
 		var to := upper.to_global(Vector3(point.x, -1.0, point.y))
 		var query := PhysicsRayQueryParameters3D.create(from, to)
 		query.collision_mask = 1
