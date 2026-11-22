@@ -799,7 +799,7 @@ func _build_props() -> void:
 	_prop(BUNK, "CabinBunk", Vector3(-3.55, FLOOR, 2.20), 90.0)
 	_prop(LOCKER, "CabinLocker", Vector3(-3.55, FLOOR, 3.65), 180.0)
 	_prop(TABLE, "CabinTable", Vector3(-0.65, FLOOR, 3.20), 0.0)
-	var cabin_chair := _prop(CHAIR, "CabinChair", Vector3(-0.02, FLOOR, 3.15), -90.0)
+	var cabin_chair := _prop(CHAIR, "CabinChair", Vector3(-0.02, FLOOR + 0.03, 3.15), -90.0)
 	cabin_chair.rotation.z = -0.12
 	_prop(PIPES, "CabinPipes", Vector3(-3.99, 4.75, 2.00), -90.0)
 	# Crew traces: the deck was left in a hurry, not staged.

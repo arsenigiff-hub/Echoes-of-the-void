@@ -214,6 +214,20 @@ func _sign(text: String, pos: Vector3, yaw: float) -> void:
 	sign_node.rotation_degrees.y = yaw
 	sign_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(sign_node)
+	# Opaque backing on the rear face: from the other room the old sign reads
+	# as a dark plate instead of mirrored text.
+	var text_bounds := text_mesh.get_aabb()
+	var back := MeshInstance3D.new()
+	var back_mesh := BoxMesh.new()
+	back_mesh.size = Vector3(text_bounds.size.x + 0.08, text_bounds.size.y + 0.04, 0.02)
+	back.mesh = back_mesh
+	var back_material := StandardMaterial3D.new()
+	back_material.albedo_color = Color(0.055, 0.065, 0.065)
+	back_material.roughness = 0.86
+	back.material_override = back_material
+	back.position = text_bounds.get_center() + Vector3(0.0, 0.0, -0.02)
+	back.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	sign_node.add_child(back)
 
 
 func _build_bridge_connector() -> void:
