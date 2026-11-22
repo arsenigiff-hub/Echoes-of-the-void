@@ -13,12 +13,10 @@ func _run() -> void:
 	var player := main.get_node("Player") as Player
 	var eva := main.get_node("EVA")	
 	var story := main.get_node("StoryProgression")
-	var repair_hands := player.camera.get_node_or_null("SolarRepairHands") as Node3D
-	var solar := main.get_node("SolarArrayRepair") as StaticBody3D
+	var solar := main.find_child("SolarArrayRepair_fore", true, false) as StaticBody3D
 	var interior := main.get_node("ShipInterior") as Node3D
 	assert(not player.is_interacting, "Wake sequence must restore control before the EVA test")
-	assert(repair_hands != null and not repair_hands.visible,
-		"Repair hands must stay hidden outside manual repair actions")
+	assert(solar != null, "The fore solar wing must be present")
 
 	# Enter the outside state through the same explicit E action used in play.
 	eva.set("_airlock_state", "vacuum")
@@ -31,16 +29,8 @@ func _run() -> void:
 	story.call("_update_targets")
 	story.call("toggle_repair", "solar", solar, player)
 	assert(player.is_interacting, "Solar repair must start while outside")
-	for code: Key in [KEY_W, KEY_D]:
-		var event := InputEventKey.new()
-		event.physical_keycode = code
-		event.pressed = true
-		story.call("focus_story_target", "solar", event)
-	story.call("toggle_repair", "solar", solar, player)
-	assert(repair_hands != null and repair_hands.visible,
-		"Suit-gloved hands must appear for manual solar repair")
-	story.call("toggle_repair", "solar", solar, player) # open cover, leave repair incomplete
-	assert(int(story.get("_solar_repair_step")) == 1, "The test must leave the repair partially complete")
+	assert(player.camera_position_managed, "Solar repair must take camera control")
+	# Leave the solar sequence active; oxygen depletion must cancel it.
 
 	var checkpoint := interior.to_global(eva.get("return_pos"))
 	eva.set("oxygen_remaining_seconds", 0.1)
@@ -50,9 +40,11 @@ func _run() -> void:
 	assert(not bool(eva.get("is_outside")), "Oxygen depletion must return the player inside")
 	assert(not player.eva_mode, "Checkpoint return must restore normal movement")
 	assert(int(story.get("stage")) == 0, "Oxygen failure must preserve the current story stage")
-	assert(int(story.get("_solar_repair_step")) == 0, "Oxygen failure must reset the incomplete EVA repair")
-	assert(repair_hands != null and not repair_hands.visible,
-		"Repair hands must hide when EVA repair is interrupted")
+	assert(not player.is_interacting, "Oxygen failure must release the solar interaction")
+	assert(story.get("_operating_solar_wing") == null,
+		"Oxygen failure must reset the incomplete EVA repair")
+	assert(not player.camera_position_managed,
+		"Oxygen failure must restore the player camera")
 	assert(player.global_position.distance_to(checkpoint) < 1.0, "Player must return to the hatch checkpoint")
 	assert(not bool(eva.get("_outer_hatch_open")), "Outer hatch must close after checkpoint return")
 	assert(not bool(eva.get("_interior_door_open")), "Inner pressure door must close after checkpoint return")

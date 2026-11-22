@@ -34,6 +34,31 @@
 * Перед коммитом: `--headless --quit` без ошибок + профильный тест из `tests/`.
   Политика коммитов — `docs/AI_CHAT_RULES.md` §6.1.
 
+## Godot MCP (живой редактор)
+
+Подключён `godot-mcp-toolkit` v1.1.2: аддон в `addons/godot_mcp_toolkit`,
+сервер `@npgamedev/godot-mcp-server@1.1.2` в глобальном
+`~/.config/opencode/opencode.json`; `.mcp.json` в корне проекта пишет сам плагин.
+В opencode инструменты лежат в `tools["godot-mcp-toolkit"].<имя>`.
+
+* MCP отвечает, только пока открыт GUI-редактор. Быстрая проверка:
+  `editor_get_console` или `project_get_settings`. Порты: редактор —
+  `127.0.0.1:6550`, runtime запущенной игры — `6570+`.
+* Доступно: дерево сцен и ноды, свойства, скрипты, настройки проекта, импорт
+  ассетов, `editor_screenshot` (вьюпорт редактора) и `runtime_screenshot`
+  (кадр из игры), `game_start` / `game_stop`, живое состояние нод, эмуляция
+  ввода, `execute_code` (GDScript в редакторе и в игре). Специализированные
+  группы (3d, animation, lsp, debugger и т.д.) включаются через `discover_tools`.
+* Импорт новых текстур: GUI-редактор падает на GPU-сжатии s3tc/BPTC
+  (Intel Iris Xe). Сначала прогнать импорт headless, потом открывать GUI:
+  `D:\Godot_v4.7.2-stable_win64.exe --headless --editor --quit-after 40 --path D:\Echoes-of-the-void-main`.
+  Кэш `.godot` (в нём `uid_cache.bin`) не удалять.
+* `audio/buses/default_bus_layout` намеренно задан `res://`-путём, а не `uid://`:
+  при пустом `.godot` uid не резолвится и редактор выдаёт
+  «Can't save resource to empty path». Не возвращать uid.
+* Autoload `MCPRuntimeServer` в `project.godot` добавлен плагином — это норма,
+  пока аддон включён, удалять не нужно.
+
 ## Технические соглашения проекта
 
 * Модели: Blender (`D:\Steam\steamapps\common\Blender\blender.exe`, headless

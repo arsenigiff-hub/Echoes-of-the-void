@@ -3,35 +3,30 @@ extends Node
 const REPAIR_SCRIPT := preload("res://scripts/story_repair_interactable.gd")
 const SHORT_UI_FONT := preload("res://assetss/ui/fonts/RussoOne-Regular.ttf")
 const READABLE_UI_FONT := preload("res://assetss/ui/fonts/CascadiaMono.ttf")
-const OXYGEN_PROP := "res://assetss/rooms/airlock/airlock_oxygen.glb"
+const OXYGEN_GENERATOR := preload("res://scripts/oxygen_generator.gd")
 const REPAIR_HANDS_SCENE := preload("res://assetss/first_person_arms/drillimpact_psx/arms_rig.glb")
 const REPAIR_GLOVE_TEXTURE := preload("res://assetss/first_person_arms/drillimpact_psx/arms_suit_gloves.png")
 const REPAIR_HANDS_SHADER := preload("res://shaders/repair_hands_suit.gdshader")
-const SOLAR_REPAIR_HANDS := preload("res://scripts/solar_repair_hands.gd")
-const SOLAR_REPAIR_FOCUS := preload("res://scripts/solar_repair_focus.gd")
-const SOLAR_DAMAGE_SPARKS := preload("res://scripts/solar_damage_sparks.gd")
 const SOLAR_WINGS_PREVIEW_SCENE := "res://scenes/solar_wing_placement_preview.tscn"
+const SOLAR_WING_REPAIR := preload("res://scripts/solar_wing_repair.gd")
 const EVENTS_FILE := "res://data/story_events.json"
 
-# Repair target follows the user-placed starboard array in the preview scene.
-const SOLAR_POSITION := Vector3(9.0, 3.8, 20.5)
-const SOLAR_COLLISION_CENTER := Vector3.ZERO
-const SOLAR_COLLISION_SIZE := Vector3(6.2, 1.4, 9.0)
-# Mount the service unit inside the EVA bay on its +X bulkhead. The old
-# world-space placement ended up behind the bay wall after the interior moved.
-const OXYGEN_POSITION := Vector3(1.35, 0.024, 3.0)
-const REPAIR_SECONDS := {"solar": 6.0, "oxygen": 5.0}
+# The two large wings are separate interactive targets; the layout of each wing
+# lives in scripts/solar_cell_grid.gd.
+# Service wall in the passage, opposite the bunk. The generator front faces +X,
+# so the player can work from the passage without entering the bunk furniture.
+const OXYGEN_POSITION := Vector3(-0.73, 0.024, 3.68)
+const REPAIR_SECONDS := {"oxygen": 5.0}
 
 var stage := 0
 var _player: Player
 var _eva: Node
 var _interior: Node3D
 var _environment: WorldEnvironment
-var _solar: StaticBody3D
 var _solar_visual: Node3D
-var _solar_damage_sparks: Node3D
-var _solar_focus: Node3D
-var _solar_hands: Node3D
+var _solar_wings: Array[Node] = []
+var _active_solar_wing: Node = null
+var _operating_solar_wing: Node = null
 var _oxygen: StaticBody3D
 var _navigation: StaticBody3D
 var _sleep_station: StaticBody3D
@@ -41,15 +36,9 @@ var _action_mode := ""
 var _repair_hands: Node3D
 var _repair_hands_animation: AnimationPlayer
 var _repair_elapsed := 0.0
-var _solar_repair_step := 0
-var _solar_contact_index := 1
 var _oxygen_repair_step := 0
 var _oxygen_pressure_index := 0
-var _oxygen_needle: MeshInstance3D
-var _oxygen_filter: MeshInstance3D
-var _oxygen_valve_handle: Node3D
-var _oxygen_filter_rest := Vector3.ZERO
-var _oxygen_needle_material: StandardMaterial3D
+var _oxygen_generator: Node3D
 var _canvas: CanvasLayer
 var _status: Label
 var _meter: ProgressBar
@@ -159,9 +148,6 @@ func _setup_repair_hands() -> void:
 		return
 	_repair_hands.name = "RepairHandsViewmodel"
 	_player.camera.add_child(_repair_hands)
-	_solar_hands = SOLAR_REPAIR_HANDS.new()
-	_solar_hands.name = "SolarRepairHands"
-	_player.camera.add_child(_solar_hands)
 	await get_tree().process_frame
 
 	var skeleton := _repair_hands.find_child("Skeleton3D", true, false) as Skeleton3D
@@ -216,8 +202,6 @@ func _play_repair_hands_action(animation_name: String) -> void:
 
 
 func _hide_repair_hands() -> void:
-	if _solar_hands != null:
-		_solar_hands.call("stop")
 	if _repair_hands_animation != null and _repair_hands_animation.is_playing():
 		_repair_hands_animation.stop()
 	if _repair_hands != null:
@@ -228,7 +212,7 @@ func _on_repair_hands_animation_finished(_animation_name: StringName) -> void:
 	if _repair_hands == null or _repair_hands_animation == null:
 		return
 	if _action_mode == "repair" and _active_target != null \
-			and String(_active_target.get("repair_id")) in ["solar", "oxygen"]:
+			and String(_active_target.get("repair_id")) == "oxygen":
 		_repair_hands_animation.play("relax", 0.10)
 	else:
 		_repair_hands.visible = false
@@ -238,22 +222,38 @@ func toggle_repair(repair_id: String, target: StaticBody3D, player_body: Charact
 	if _active_target != null:
 		if _action_mode == "navigation":
 			_confirm_navigation()
-		elif _action_mode == "solar_select":
-			_confirm_solar_sector()
+		elif _action_mode == "solar_repair":
+			if _operating_solar_wing != null:
+				_operating_solar_wing.call("confirm")
 		elif _action_mode == "repair":
-			if String(_active_target.get("repair_id")) == "solar":
-				_advance_solar_repair()
-			elif String(_active_target.get("repair_id")) == "oxygen":
+			if String(_active_target.get("repair_id")) == "oxygen":
 				_advance_oxygen_repair()
 			else:
 				cancel_repair()
 		return
 	if _player == null or player_body != _player or not _is_target_available(repair_id):
 		return
-	if repair_id == "solar" and not bool(_solar_focus.call("can_repair_from", _player.camera.global_position)):
-		_player.interacting_object = null
-		_status.text = "ОБОЙДИТЕ КРЫЛО · ДОСТУП С ОБРАТНОЙ СТОРОНЫ"
-		_event_timer = 2.5
+	if repair_id == "solar":
+		var wing := _solar_wing_for_target(target)
+		if wing == null:
+			return
+		if not bool(wing.call("can_repair_from", _player.camera.global_position)):
+			_player.interacting_object = null
+			_status.text = "ОБОЙДИТЕ КРЫЛО · ДОСТУП С ОБРАТНОЙ СТОРОНЫ"
+			_event_timer = 2.5
+			return
+		_active_target = target
+		_action_mode = "solar_repair"
+		_active_player = _player
+		_operating_solar_wing = wing
+		_repair_elapsed = 0.0
+		_event_timer = 0.0
+		_active_player.is_interacting = true
+		_active_player.set("interacting_object", target)
+		_player.camera_position_managed = true
+		_meter.hide()
+		if not bool(wing.call("begin", _player.camera)):
+			cancel_repair()
 		return
 	if repair_id == "navigation":
 		_begin_navigation(target)
@@ -268,87 +268,74 @@ func toggle_repair(repair_id: String, target: StaticBody3D, player_body: Charact
 	_event_timer = 0.0
 	_active_player.is_interacting = true
 	_active_player.set("interacting_object", target)
-	if repair_id == "solar":
-		_action_mode = "solar_select"
-		_solar_repair_step = 0
-		_solar_contact_index = 0
-		_meter.hide()
-		_player.camera_position_managed = true
-		_solar_focus.call("begin", _player.camera)
-		_update_solar_sector_prompt()
-	elif repair_id == "oxygen":
+	if repair_id == "oxygen":
 		_show_repair_hands()
 		_oxygen_repair_step = 0
 		_oxygen_pressure_index = 0
 		_meter.hide()
-		if _oxygen_needle != null:
-			_oxygen_needle.rotation_degrees.x = 40.0
-		if _oxygen_needle_material != null:
-			_oxygen_needle_material.albedo_color = Color(0.56, 0.08, 0.045)
-		if _oxygen_filter != null:
-			_oxygen_filter.position = _oxygen_filter_rest
-			var filter_material := _oxygen_filter.material_override as StandardMaterial3D
-			if filter_material != null:
-				filter_material.albedo_color = Color(0.29, 0.26, 0.20)
-		if _oxygen_valve_handle != null:
-			_oxygen_valve_handle.rotation_degrees.x = 0.0
+		if _oxygen_generator != null:
+			_oxygen_generator.call("reset_repair")
+			_oxygen_generator.call("set_fan_speed", 140.0)
 		_update_oxygen_repair_prompt()
 	else:
 		_meter.show()
 		_status.text = "РЕМОНТ НАЧАТ…  E — ПРЕРВАТЬ"
 
 
-func _update_solar_sector_prompt(healthy: bool = false) -> void:
-	var sector := int(_solar_focus.call("displayed_sector"))
-	var label := "СЕКТОР %02d ИСПРАВЕН" % sector if healthy else "СЕКТОР %02d" % sector
-	_status.text = label + "  ·  WASD — ВЫБРАТЬ  ·  E — ПРОВЕРИТЬ  ·  ESC — ОТОЙТИ"
+func _solar_wing_for_target(target: StaticBody3D) -> Node:
+	for wing in _solar_wings:
+		if wing != null and wing.get("target") == target:
+			return wing
+	return null
 
 
-func _confirm_solar_sector() -> void:
-	if not bool(_solar_focus.call("is_damaged_selected")):
-		_update_solar_sector_prompt(true)
+func set_status(text: String, seconds: float = 0.0) -> void:
+	if _status == null:
 		return
-	_action_mode = "repair"
-	var point := _solar_damage_sparks.global_position if _solar_damage_sparks != null else _solar.global_position
-	_solar_focus.call("focus_fault", point)
-	_solar_hands.call("begin")
-	_update_solar_repair_prompt()
+	_status.text = text
+	_event_timer = seconds
 
 
-func _advance_solar_repair() -> void:
-	match _solar_repair_step:
-		0:
-			_solar_hands.call("gesture", "open")
-			_solar_repair_step = 1
-			_update_solar_repair_prompt()
-		1:
-			if _solar_contact_index != 1:
-				_status.text = "КОНТАКТ НЕ СОВПАЛ  ·  A/D — СДВИНУТЬ КЛЕММУ"
-				return
-			_solar_hands.call("gesture", "clamp")
-			_solar_repair_step = 2
-			_update_solar_repair_prompt()
-		2:
-			_finish_solar_repair()
+func save_solar_progress() -> void:
+	_save_progress()
 
 
-func _finish_solar_repair() -> void:
-	_action_mode = "solar_finishing"
-	_solar_hands.call("gesture", "close")
-	await get_tree().create_timer(0.45).timeout
-	if _action_mode == "solar_finishing" and _active_target == _solar:
-		_complete_repair()
+func on_solar_wing_completed(_completed_wing_id: String) -> void:
+	_end_solar_session()
+	_active_solar_wing = _next_incomplete_solar_wing()
+	_update_targets()
+	if _active_solar_wing == null:
+		stage = 1
+		_apply_power(stage)
+		_update_targets()
+		if _eva != null and _eva.has_method("stop_emergency_alarm"):
+			_eva.call("stop_emergency_alarm")
+		_show_event("solar_power", 7.0)
+	else:
+		_status.text = "КРЫЛО ВОССТАНОВЛЕНО · ПЕРЕЙДИТЕ КО ВТОРОМУ"
+		_event_timer = 5.0
+	_save_progress()
 
 
-func _update_solar_repair_prompt() -> void:
-	match _solar_repair_step:
-		0:
-			_status.text = "СНЯТЬ ЗАЩИТНЫЙ КОЖУХ  ·  E — ОТКРЫТЬ  ·  ESC — ОТОЙТИ"
-		1:
-			var contacts := ["ЛЕВЫЙ", "ЦЕНТРАЛЬНЫЙ", "ПРАВЫЙ"]
-			_status.text = "СОЕДИНИТЬ КАБЕЛЬ  ·  A/D — КЛЕММА: %s  ·  E — ЗАЖАТЬ" % contacts[_solar_contact_index]
-		2:
-			_status.text = "ЗАКРЫТЬ КОЖУХ И ПРОВЕРИТЬ ПИТАНИЕ  ·  E — ЗАФИКСИРОВАТЬ"
+func _next_incomplete_solar_wing() -> Node:
+	for wing in _solar_wings:
+		if wing != null and not bool(wing.call("is_complete")):
+			return wing
+	return null
+
+
+func _end_solar_session() -> void:
+	if _active_player != null:
+		_active_player.is_interacting = false
+		_active_player.interacting_object = null
+		_active_player.camera_position_managed = false
+		_active_player = null
+	_operating_solar_wing = null
+	_active_target = null
+	_action_mode = ""
+	_repair_elapsed = 0.0
+	_meter.value = 0.0
+	_meter.hide()
 
 
 func _advance_oxygen_repair() -> void:
@@ -356,39 +343,30 @@ func _advance_oxygen_repair() -> void:
 		0:
 			_play_repair_hands_action("grab_R")
 			_oxygen_repair_step = 1
-			if _oxygen_valve_handle != null:
-				var valve_turn := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-				valve_turn.tween_property(_oxygen_valve_handle, "rotation_degrees:x", 90.0, 0.55)
+			if _oxygen_generator != null:
+				_oxygen_generator.call("set_valve_closed", true)
 			_update_oxygen_repair_prompt()
 		1:
 			if _oxygen_pressure_index != 2:
 				_status.text = "ДАВЛЕНИЕ ВНЕ ДОПУСКА  ·  A/D — ОТРЕГУЛИРОВАТЬ"
 				return
-			if _oxygen_needle_material != null:
-				_oxygen_needle_material.albedo_color = Color(0.44, 0.58, 0.38)
+			if _oxygen_generator != null:
+				_oxygen_generator.call("set_gauge_color", Color(0.44, 0.58, 0.38))
 			_play_repair_hands_action("push_R")
 			_oxygen_repair_step = 2
 			_update_oxygen_repair_prompt()
 		2:
 			_play_repair_hands_action("grab_L")
 			_oxygen_repair_step = 3
-			if _oxygen_filter != null:
-				var tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-				tween.tween_property(_oxygen_filter, "position:x", _oxygen_filter_rest.x - 0.22, 0.45)
+			if _oxygen_generator != null:
+				_oxygen_generator.call("remove_filter")
 			_update_oxygen_repair_prompt()
 		3:
 			_play_repair_hands_action("grab_R")
 			_oxygen_repair_step = 4
-			if _oxygen_filter != null:
-				_oxygen_filter.position = _oxygen_filter_rest + Vector3(0.20, 0.0, 0.0)
-				var replacement_material := _oxygen_filter.material_override as StandardMaterial3D
-				if replacement_material != null:
-					replacement_material.albedo_color = Color(0.34, 0.39, 0.39)
-				var tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-				tween.tween_property(_oxygen_filter, "position:x", _oxygen_filter_rest.x, 0.45)
-			if _oxygen_valve_handle != null:
-				var valve_turn := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-				valve_turn.tween_property(_oxygen_valve_handle, "rotation_degrees:x", 0.0, 0.55)
+			if _oxygen_generator != null:
+				_oxygen_generator.call("insert_filter")
+				_oxygen_generator.call("set_valve_closed", false)
 			_update_oxygen_repair_prompt()
 		4:
 			_complete_repair()
@@ -412,28 +390,24 @@ func _update_oxygen_repair_prompt() -> void:
 func _adjust_oxygen_pressure(direction: int) -> void:
 	_oxygen_pressure_index = posmod(_oxygen_pressure_index + direction, 5)
 	_play_repair_hands_action("grab_R")
-	if _oxygen_needle != null:
-		_oxygen_needle.rotation_degrees.x = float(2 - _oxygen_pressure_index) * 20.0
+	if _oxygen_generator != null:
+		_oxygen_generator.call("set_gauge_index", _oxygen_pressure_index)
 	_update_oxygen_repair_prompt()
 
 
 func cancel_repair() -> void:
-	if _active_target == _solar and _solar_focus != null:
-		_reset_solar_focus()
+	if _operating_solar_wing != null:
+		_operating_solar_wing.call("cancel")
+		_end_solar_session()
+		_status.text = "РЕМОНТ ПРЕРВАН"
+		_event_timer = 2.0
+		return
 	if _active_target != null and String(_active_target.get("repair_id")) == "oxygen":
 		_oxygen_repair_step = 0
 		_oxygen_pressure_index = 0
-		if _oxygen_needle != null:
-			_oxygen_needle.rotation_degrees.x = 40.0
-		if _oxygen_needle_material != null:
-			_oxygen_needle_material.albedo_color = Color(0.56, 0.08, 0.045)
-		if _oxygen_filter != null:
-			_oxygen_filter.position = _oxygen_filter_rest
-			var filter_material := _oxygen_filter.material_override as StandardMaterial3D
-			if filter_material != null:
-				filter_material.albedo_color = Color(0.29, 0.26, 0.20)
-		if _oxygen_valve_handle != null:
-			_oxygen_valve_handle.rotation_degrees.x = 0.0
+		if _oxygen_generator != null:
+			_oxygen_generator.call("reset_repair")
+			_oxygen_generator.call("set_fan_speed", 90.0)
 	if _active_player != null:
 		_active_player.is_interacting = false
 		_active_player.interacting_object = null
@@ -448,17 +422,11 @@ func cancel_repair() -> void:
 	_event_timer = 2.0
 
 
-func _reset_solar_focus() -> void:
-	_solar_focus.call("reset")
-	_player.camera_position_managed = false
-
-
 func reset_incomplete_eva_repair() -> void:
-	if _active_target == null or String(_active_target.get("repair_id")) != "solar":
+	if _operating_solar_wing == null:
 		return
-	cancel_repair()
-	_solar_repair_step = 0
-	_solar_contact_index = 0
+	_operating_solar_wing.call("reset_incomplete")
+	_end_solar_session()
 
 
 func notify_eva_oxygen_depleted() -> void:
@@ -468,10 +436,7 @@ func notify_eva_oxygen_depleted() -> void:
 
 func _complete_repair() -> void:
 	var completed := String(_active_target.get("repair_id"))
-	if completed == "solar":
-		_reset_solar_focus()
-		_hide_repair_hands()
-	elif completed == "oxygen":
+	if completed == "oxygen":
 		_play_repair_hands_action("push_R")
 	if _active_player != null:
 		_active_player.is_interacting = false
@@ -485,19 +450,15 @@ func _complete_repair() -> void:
 	stage += 1
 	_apply_power(stage)
 	_update_targets()
-	if completed == "solar":
-		if _eva != null and _eva.has_method("stop_emergency_alarm"):
-			_eva.call("stop_emergency_alarm")
-		_show_event("solar_power", 7.0)
-	else:
-		_show_event("oxygen_repaired", 6.0)
+	_show_event("oxygen_repaired", 6.0)
 	_save_progress()
 
 
 func _is_target_available(repair_id: String) -> bool:
 	if repair_id == "solar":
 		return stage == 0 and _eva != null and bool(_eva.get("is_outside")) \
-			and _solar_focus != null and bool(_solar_focus.call("is_surface_bound"))
+			and _active_solar_wing != null \
+			and not bool(_active_solar_wing.call("is_complete"))
 	if repair_id == "oxygen":
 		return stage == 1 and _eva != null and not bool(_eva.get("is_outside"))
 	if repair_id == "navigation":
@@ -508,19 +469,23 @@ func _is_target_available(repair_id: String) -> bool:
 
 
 func _update_targets() -> void:
-	if _solar == null or _oxygen == null or _navigation == null or _sleep_station == null:
+	if _oxygen == null or _navigation == null or _sleep_station == null:
 		return
 	var is_outside := _eva != null and bool(_eva.get("is_outside"))
-	var solar_available := _is_target_available("solar")
 	var oxygen_available := stage == 1 and _eva != null and not bool(_eva.get("is_outside"))
-	# Исправленная панель остаётся видимой снаружи после ремонта, но больше
-	# не перехватывает луч и не запускает повторный ремонт.
-	_solar.visible = is_outside
+	# Wings stay visible outside after repair, but only the current incomplete
+	# wing accepts the interaction ray.
 	if _solar_visual != null:
 		_solar_visual.visible = is_outside
-	_solar.collision_layer = 2 if solar_available else 0
-	if _solar_damage_sparks != null:
-		_solar_damage_sparks.call("set_active", solar_available)
+	for wing in _solar_wings:
+		if wing == null:
+			continue
+		var wing_target := wing.get("target") as StaticBody3D
+		if wing_target == null:
+			continue
+		var wing_available := stage == 0 and is_outside and wing == _active_solar_wing \
+			and not bool(wing.call("is_complete"))
+		wing_target.collision_layer = 2 if wing_available else 0
 	_oxygen.visible = oxygen_available
 	_oxygen.collision_layer = 2 if oxygen_available else 0
 	var navigation_available := stage == 3 and _eva != null and not bool(_eva.get("is_outside"))
@@ -550,7 +515,20 @@ func _save_progress() -> void:
 		return
 	var found_signals := 1 if stage >= 3 else 0
 	_profile_db.call("save_progress", 0, stage, float(_profile_db.get("session_playtime")), found_signals,
-		{"journal": _journal_entries.duplicate(), "run_recorded": _run_recorded})
+		{
+			"journal": _journal_entries.duplicate(),
+			"run_recorded": _run_recorded,
+			"solar_repaired": _solar_repaired_state(),
+		})
+
+
+func _solar_repaired_state() -> Dictionary:
+	var state := {}
+	for wing in _solar_wings:
+		if wing == null:
+			continue
+		state[String(wing.get("wing_id"))] = wing.call("repaired_keys")
+	return state
 
 
 func _restore_profile_progress() -> void:
@@ -569,6 +547,23 @@ func _restore_profile_progress() -> void:
 		for entry in journal:
 			_journal_entries.append(String(entry))
 	_run_recorded = bool(payload.get("run_recorded", false))
+	var solar_state: Variant = payload.get("solar_repaired", {})
+	if stage >= 1:
+		for wing in _solar_wings:
+			if wing != null:
+				wing.call("force_complete")
+	elif solar_state is Dictionary:
+		for wing in _solar_wings:
+			if wing == null:
+				continue
+			var keys: Variant = (solar_state as Dictionary).get(String(wing.get("wing_id")), [])
+			if keys is Array:
+				wing.call("restore", keys)
+	_active_solar_wing = _next_incomplete_solar_wing()
+	if stage == 0 and _active_solar_wing == null:
+		# Defensive: a save with every cell repaired but stage 0 still means the
+		# power repair is done.
+		stage = 1
 	if stage >= 5 and _space_stage != null and _space_stage.has_method("set_stage"):
 		_space_stage.call("set_stage", 1, true)
 
@@ -633,10 +628,10 @@ func focus_story_target(target_id: String, event: InputEvent) -> void:
 	if key.keycode == KEY_ESCAPE or key.physical_keycode == KEY_ESCAPE:
 		if _action_mode == "navigation":
 			_cancel_navigation()
-		elif _action_mode in ["repair", "solar_select", "solar_finishing"]:
+		elif _action_mode in ["repair", "solar_repair"]:
 			cancel_repair()
 		return
-	if _action_mode == "solar_select" and target_id == "solar":
+	if _action_mode == "solar_repair" and target_id == "solar":
 		var direction := Vector2i.ZERO
 		if _is_key(key, KEY_W) or _is_key(key, KEY_UP):
 			direction = Vector2i.UP
@@ -646,19 +641,8 @@ func focus_story_target(target_id: String, event: InputEvent) -> void:
 			direction = Vector2i.LEFT
 		elif _is_key(key, KEY_D) or _is_key(key, KEY_RIGHT):
 			direction = Vector2i.RIGHT
-		if direction != Vector2i.ZERO:
-			_solar_focus.call("move_selection", direction)
-			_update_solar_sector_prompt()
-		return
-	if _action_mode == "repair" and target_id == "solar":
-		if _solar_repair_step == 1:
-			if _is_key(key, KEY_D) or _is_key(key, KEY_RIGHT):
-				_solar_contact_index = posmod(_solar_contact_index + 1, 3)
-				_solar_hands.call("gesture", "align", _solar_contact_index)
-			elif _is_key(key, KEY_A) or _is_key(key, KEY_LEFT):
-				_solar_contact_index = posmod(_solar_contact_index - 1, 3)
-				_solar_hands.call("gesture", "align", _solar_contact_index)
-			_update_solar_repair_prompt()
+		if direction != Vector2i.ZERO and _operating_solar_wing != null:
+			_operating_solar_wing.call("move_selection", direction)
 		return
 	if _action_mode == "repair" and target_id == "oxygen":
 		if _oxygen_repair_step == 1:
@@ -994,36 +978,46 @@ func _play_wake_intro() -> void:
 
 
 func _create_solar_array(host: Node) -> void:
-	_solar = StaticBody3D.new()
-	_solar.set_script(REPAIR_SCRIPT)
-	_solar.name = "SolarArrayRepair"
-	_solar.set("repair_id", "solar")
-	_solar.set("progression", self)
-	_solar.position = SOLAR_POSITION
-	_solar.collision_layer = 0
-	_solar.collision_mask = 0
-	var collision := CollisionShape3D.new()
-	var shape := BoxShape3D.new()
-	shape.size = SOLAR_COLLISION_SIZE
-	collision.shape = shape
-	collision.position = SOLAR_COLLISION_CENTER
-	_solar.add_child(collision)
+	_solar_wings.clear()
 	_solar_visual = _make_solar_visual(host)
-	host.add_child(_solar)
-	_solar_focus = SOLAR_REPAIR_FOCUS.new()
-	_solar_focus.name = "SolarRepairFocus"
-	_solar.add_child(_solar_focus)
-	if _solar_visual != null:
-		var cells := _solar_visual.find_child("solar-array-wing-deployed_3_001", true, false) as MeshInstance3D
-		_solar_focus.call("bind_surface", cells)
-		_solar_damage_sparks = SOLAR_DAMAGE_SPARKS.new()
-		_solar_damage_sparks.name = "SolarDamageSparks"
-		# Place the source just above the fault on the service face.
-		_solar_damage_sparks.position = Vector3(0.07, 0.43, 0.0)
-		_solar.add_child(_solar_damage_sparks)
-	_solar.visible = false
-	if _solar_visual != null:
-		_solar_visual.visible = false
+	if _solar_visual == null:
+		return
+	_solar_visual.visible = false
+	var surfaces := {
+		"fore": _solar_visual.find_child("solar-array-wing-deployed_3_001", true, false) as MeshInstance3D,
+		"aft": _solar_visual.find_child("solar-array-wing-deployed_3_002", true, false) as MeshInstance3D,
+	}
+	for wing_id in ["fore", "aft"]:
+		var surface := surfaces[wing_id] as MeshInstance3D
+		if surface == null:
+			push_warning("Solar wing surface missing: " + String(wing_id))
+			continue
+		var aabb := surface.mesh.get_aabb()
+		var solar_target := StaticBody3D.new()
+		solar_target.set_script(REPAIR_SCRIPT)
+		solar_target.name = "SolarArrayRepair_" + String(wing_id)
+		solar_target.set("repair_id", "solar")
+		solar_target.set("progression", self)
+		solar_target.collision_layer = 0
+		solar_target.collision_mask = 0
+		host.add_child(solar_target)
+		solar_target.global_transform = Transform3D(
+			surface.global_basis.orthonormalized(),
+			surface.to_global(aabb.get_center()))
+		var collision := CollisionShape3D.new()
+		var shape := BoxShape3D.new()
+		shape.size = Vector3(
+			aabb.size.x * surface.global_basis.x.length() + 0.4,
+			0.8,
+			aabb.size.z * surface.global_basis.z.length() + 0.4)
+		collision.shape = shape
+		solar_target.add_child(collision)
+		var wing := SOLAR_WING_REPAIR.new()
+		wing.name = "SolarWingRepair_" + String(wing_id)
+		host.add_child(wing)
+		wing.call("setup", String(wing_id), self, solar_target, surface)
+		_solar_wings.append(wing)
+	_active_solar_wing = _next_incomplete_solar_wing()
 
 
 func _make_solar_visual(host: Node) -> Node3D:
@@ -1052,149 +1046,18 @@ func _create_oxygen_station(host: Node) -> void:
 	_oxygen.set("repair_id", "oxygen")
 	_oxygen.set("progression", self)
 	_oxygen.position = OXYGEN_POSITION
+	_oxygen.rotation_degrees.y = 90.0
 	_oxygen.collision_layer = 0
 	_oxygen.collision_mask = 0
 	var collision := CollisionShape3D.new()
 	var shape := BoxShape3D.new()
-	shape.size = Vector3(0.8, 1.5, 0.8)
+	shape.size = Vector3(2.3, 1.5, 1.2)
 	collision.shape = shape
-	collision.position.y = 1.1
+	collision.position.y = 0.75
 	_oxygen.add_child(collision)
-	var scene := load(OXYGEN_PROP) as PackedScene
-	if scene != null:
-		var prop := scene.instantiate() as Node3D
-		prop.name = "OxygenServiceAssembly"
-		prop.scale = Vector3.ONE * 1.35
-		_oxygen.add_child(prop)
-	var pipe_mat := _material(Color(0.32, 0.36, 0.34), 0.55, 0.62)
-	var gauge_mat := _material(Color(0.43, 0.42, 0.35), 0.10, 0.72)
-	var pipe := MeshInstance3D.new()
-	var pipe_mesh := CylinderMesh.new()
-	pipe_mesh.top_radius = 0.045
-	pipe_mesh.bottom_radius = 0.045
-	pipe_mesh.height = 1.2
-	pipe.mesh = pipe_mesh
-	pipe.material_override = pipe_mat
-	pipe.position = Vector3(0.36, 0.68, 0.1)
-	_oxygen.add_child(pipe)
-	# Give the service pressure gauge a real bezel, inset face, index marks and
-	# hardware. A single bright cylinder read as a glowing blank disc in the
-	# flashlight, which obscured both the needle and the repair state.
-	var gauge_bezel := MeshInstance3D.new()
-	gauge_bezel.name = "PressureGaugeBezel"
-	var bezel_mesh := CylinderMesh.new()
-	bezel_mesh.top_radius = 0.158
-	bezel_mesh.bottom_radius = 0.158
-	bezel_mesh.height = 0.068
-	bezel_mesh.radial_segments = 20
-	gauge_bezel.mesh = bezel_mesh
-	var bezel_mat := _material(Color(0.16, 0.19, 0.19), 0.72, 0.58)
-	gauge_bezel.material_override = bezel_mat
-	gauge_bezel.rotation_degrees.z = 90.0
-	gauge_bezel.position = Vector3(-0.405, 1.07, 0.0)
-	_oxygen.add_child(gauge_bezel)
-	var gauge := MeshInstance3D.new()
-	gauge.name = "PressureGaugeFace"
-	var gauge_mesh := CylinderMesh.new()
-	gauge_mesh.top_radius = 0.128
-	gauge_mesh.bottom_radius = 0.128
-	gauge_mesh.height = 0.012
-	gauge_mesh.radial_segments = 24
-	gauge.mesh = gauge_mesh
-	gauge.material_override = gauge_mat
-	gauge.rotation_degrees.z = 90.0
-	gauge.position = Vector3(-0.448, 1.07, 0.0)
-	_oxygen.add_child(gauge)
-	var index_mat := _material(Color(0.12, 0.15, 0.14), 0.05, 0.86)
-	for index in range(9):
-		var tick := MeshInstance3D.new()
-		tick.name = "PressureGaugeIndex%02d" % index
-		var tick_mesh := BoxMesh.new()
-		tick_mesh.size = Vector3(0.005, 0.016 if index % 2 == 0 else 0.010, 0.004)
-		tick.mesh = tick_mesh
-		tick.material_override = index_mat
-		var angle := deg_to_rad(-120.0 + float(index) * 30.0)
-		tick.position = Vector3(-0.459, 1.07 + cos(angle) * 0.101, sin(angle) * 0.101)
-		tick.rotation_degrees.x = rad_to_deg(angle)
-		_oxygen.add_child(tick)
-	var screw_mat := _material(Color(0.25, 0.28, 0.27), 0.68, 0.64)
-	for screw_index in 4:
-		var screw := MeshInstance3D.new()
-		screw.name = "PressureGaugeScrew%02d" % screw_index
-		var screw_mesh := CylinderMesh.new()
-		screw_mesh.top_radius = 0.009
-		screw_mesh.bottom_radius = 0.009
-		screw_mesh.height = 0.008
-		screw_mesh.radial_segments = 8
-		screw.mesh = screw_mesh
-		screw.material_override = screw_mat
-		screw.rotation_degrees.z = 90.0
-		var screw_angle := deg_to_rad(45.0 + float(screw_index) * 90.0)
-		screw.position = Vector3(-0.459, 1.07 + cos(screw_angle) * 0.142, sin(screw_angle) * 0.142)
-		_oxygen.add_child(screw)
-	var needle := MeshInstance3D.new()
-	needle.name = "PressureGaugeNeedle"
-	var needle_mesh := BoxMesh.new()
-	needle_mesh.size = Vector3(0.006, 0.086, 0.006)
-	needle.mesh = needle_mesh
-	_oxygen_needle_material = StandardMaterial3D.new()
-	_oxygen_needle_material.albedo_color = Color(0.48, 0.12, 0.09)
-	_oxygen_needle_material.roughness = 0.86
-	needle.material_override = _oxygen_needle_material
-	needle.position = Vector3(-0.463, 1.08, 0.0)
-	needle.rotation_degrees.x = 40.0
-	_oxygen.add_child(needle)
-	_oxygen_needle = needle
-	var needle_hub := MeshInstance3D.new()
-	needle_hub.name = "PressureGaugeHub"
-	var hub_mesh := SphereMesh.new()
-	hub_mesh.radius = 0.011
-	hub_mesh.height = 0.018
-	hub_mesh.radial_segments = 8
-	hub_mesh.rings = 4
-	needle_hub.mesh = hub_mesh
-	needle_hub.material_override = screw_mat
-	needle_hub.position = Vector3(-0.467, 1.08, 0.0)
-	_oxygen.add_child(needle_hub)
-	_oxygen_valve_handle = Node3D.new()
-	_oxygen_valve_handle.name = "OxygenIsolationValve"
-	_oxygen_valve_handle.position = Vector3(-0.42, 0.68, 0.0)
-	var wheel_mat := _material(Color(0.34, 0.37, 0.34), 0.55, 0.74)
-	var wheel := MeshInstance3D.new()
-	var wheel_mesh := CylinderMesh.new()
-	wheel_mesh.top_radius = 0.078
-	wheel_mesh.bottom_radius = 0.078
-	wheel_mesh.height = 0.022
-	wheel_mesh.radial_segments = 10
-	wheel.mesh = wheel_mesh
-	wheel.material_override = wheel_mat
-	wheel.rotation_degrees.z = 90.0
-	_oxygen_valve_handle.add_child(wheel)
-	for spoke_index in 4:
-		var spoke := MeshInstance3D.new()
-		var spoke_mesh := BoxMesh.new()
-		spoke_mesh.size = Vector3(0.012, 0.14, 0.012) if spoke_index % 2 == 0 else Vector3(0.012, 0.012, 0.14)
-		spoke.mesh = spoke_mesh
-		spoke.material_override = wheel_mat
-		spoke.rotation_degrees.x = 45.0 if spoke_index % 2 == 1 else 0.0
-		spoke.position.x = -0.015
-		_oxygen_valve_handle.add_child(spoke)
-	_oxygen.add_child(_oxygen_valve_handle)
-	var filter_mesh := CylinderMesh.new()
-	filter_mesh.top_radius = 0.075
-	filter_mesh.bottom_radius = 0.075
-	filter_mesh.height = 0.28
-	filter_mesh.radial_segments = 8
-	_oxygen_filter = MeshInstance3D.new()
-	_oxygen_filter.name = "ReplaceableOxygenFilter"
-	_oxygen_filter.mesh = filter_mesh
-	var filter_mat := StandardMaterial3D.new()
-	filter_mat.albedo_color = Color(0.29, 0.26, 0.20)
-	filter_mat.roughness = 0.88
-	_oxygen_filter.material_override = filter_mat
-	_oxygen_filter.position = Vector3(-0.42, 0.48, 0.0)
-	_oxygen.add_child(_oxygen_filter)
-	_oxygen_filter_rest = _oxygen_filter.position
+	_oxygen_generator = OXYGEN_GENERATOR.new()
+	_oxygen_generator.name = "OxygenGeneratorAssembly"
+	_oxygen.add_child(_oxygen_generator)
 	host.add_child(_oxygen)
 	_oxygen.visible = false
 
