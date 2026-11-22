@@ -64,6 +64,7 @@ func _ready() -> void:
 	_build_walls()
 	_build_stairs()
 	_build_stair_door()
+	_build_stair_wall()
 	_build_railings()
 	_build_atrium_fascia()
 	_build_ceilings()
@@ -126,7 +127,8 @@ func _sloped(size: Vector3, pos: Vector3, material: Material, pitch: float,
 
 func _relocate_common_counter() -> void:
 	# The old galley counter runs exactly under the new stair flight. Move the
-	# counter and its indicator east, preserving the model instead of deleting it.
+	# visible unit east and give it a new plinth; the old base is hidden by the
+	# stair. The indicator follows the unit, not the old wall panel.
 	var rooms := get_node_or_null("../Rooms")
 	if rooms == null:
 		return
@@ -134,6 +136,11 @@ func _relocate_common_counter() -> void:
 		var node := rooms.find_child(label, true, false) as Node3D
 		if node != null:
 			node.position.x += 2.5
+			if label == "common amber_indicator":
+				node.position.y -= 0.31
+	var base := _material("wall_common", Color(0.30, 0.34, 0.31), 0.3, 0.75)
+	_box(Vector3(0.94, 0.28, 3.28), Vector3(-1.02, 0.14, -1.965), base,
+		"RelocatedCounterBase")
 
 
 func _cut_stair_notch() -> void:
@@ -626,6 +633,31 @@ func _build_stair_door() -> void:
 	_omni("StairDoorLamp", Vector3(-2.42, 2.25, -0.15), Color(0.55, 0.68, 0.82), 0.35, 2.2)
 
 
+func _build_stair_wall() -> void:
+	# Instead of an invisible barrier, the stair now has a real wall on its
+	# atrium side. You enter through the lower doorway, turn, and climb in a
+	# closed shaft; you cannot see or jump into the atrium beyond the turn.
+	var wall := _material("wall_common", Color(0.30, 0.34, 0.31), 0.3, 0.78)
+	var trim := _material("brushed_edges", Color(0.55, 0.58, 0.56), 0.6, 0.5)
+	var bottom := 0.02
+	var wall_h := CEIL
+	var height := wall_h - bottom
+	_box(Vector3(0.12, height, 2.10), Vector3(ATRIUM_X0, bottom + height * 0.5, -1.95),
+		wall, "StairWallNorth")
+	_box(Vector3(0.12, wall_h - 2.42, 1.50),
+		Vector3(ATRIUM_X0, (2.42 + wall_h) * 0.5, -0.15), wall, "StairWallHeader")
+	for z in [-2.65, -1.75, -1.05]:
+		_box(Vector3(0.04, height - 0.10, 0.06),
+			Vector3(ATRIUM_X0 - 0.08, bottom + height * 0.5, z), trim)
+		_box(Vector3(0.03, height - 0.10, 0.06),
+			Vector3(ATRIUM_X0 + 0.08, bottom + height * 0.5, z), trim)
+	_box(Vector3(0.10, 2.42, 0.10), Vector3(ATRIUM_X0 - 0.06, 1.21, -0.90),
+		trim, "StairWallJambNorth")
+	_box(Vector3(0.10, 2.42, 0.10), Vector3(ATRIUM_X0 - 0.06, 1.21, 0.60),
+		trim, "StairWallJambSouth")
+	_box(Vector3(0.05, 0.08, 2.10), Vector3(ATRIUM_X0 - 0.07, 2.62, -1.95), trim)
+
+
 func _build_railings() -> void:
 	var rail := _material("brushed_edges", Color(0.66, 0.68, 0.66), 0.6, 0.48)
 	var post := Vector3(0.04, 0.95, 0.04)
@@ -640,15 +672,6 @@ func _build_railings() -> void:
 	_box(Vector3(ATRIUM_X1 - ATRIUM_X0, 0.05, 0.05),
 		Vector3((ATRIUM_X0 + ATRIUM_X1) * 0.5, FLOOR + 0.95, ATRIUM_Z0), rail)
 	_box(post, Vector3(ATRIUM_X1, FLOOR + 0.475, ATRIUM_Z0), rail)
-	# Sloped rail on the open side of the flight.
-	var length := sqrt(STAIR_RUN * STAIR_RUN + STAIR_RISE * STAIR_RISE)
-	var pitch := atan2(STAIR_RISE, STAIR_RUN)
-	_sloped(Vector3(0.05, 0.05, length), Vector3(ATRIUM_X0, STAIR_RISE * 0.5 + 0.95, -STAIR_RUN * 0.5),
-		rail, pitch, "StairRail")
-	for i in range(0, STEP_COUNT, 2):
-		var z := -float(i) * (STAIR_RUN / float(STEP_COUNT)) - 0.12
-		var y := float(i + 1) * (STAIR_RISE / float(STEP_COUNT)) + 0.45
-		_box(post, Vector3(ATRIUM_X0, y, z), rail)
 
 
 func _build_atrium_fascia() -> void:
@@ -672,6 +695,17 @@ func _build_atrium_fascia() -> void:
 		Vector3(ATRIUM_X1, OLD_CEIL + h + 0.035, (ATRIUM_Z0 + ATRIUM_Z1) * 0.5), trim)
 	_box(Vector3(ATRIUM_X1 - ATRIUM_X0, 0.04, 0.10),
 		Vector3((ATRIUM_X0 + ATRIUM_X1) * 0.5, OLD_CEIL + h + 0.015, ATRIUM_Z0 - 0.06), trim)
+	# Close the raw old-ceiling cut edges on the remaining three sides. The
+	# fourth side is the new stair wall.
+	_box(Vector3(0.08, 0.10, ATRIUM_Z1 - ATRIUM_Z0),
+		Vector3(ATRIUM_X1, OLD_CEIL - 0.04, (ATRIUM_Z0 + ATRIUM_Z1) * 0.5), trim,
+		"AtriumCutEdgeEast")
+	_box(Vector3(ATRIUM_X1 - ATRIUM_X0, 0.10, 0.08),
+		Vector3((ATRIUM_X0 + ATRIUM_X1) * 0.5, OLD_CEIL - 0.04, ATRIUM_Z0), trim,
+		"AtriumCutEdgeBack")
+	_box(Vector3(ATRIUM_X1 - ATRIUM_X0, 0.10, 0.08),
+		Vector3((ATRIUM_X0 + ATRIUM_X1) * 0.5, OLD_CEIL - 0.04, ATRIUM_Z1), trim,
+		"AtriumCutEdgeFront")
 
 
 func _build_ceilings() -> void:
@@ -850,6 +884,29 @@ func _sign(text: String, pos: Vector3, yaw: float) -> void:
 	sign.rotation_degrees.y = yaw
 	sign.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(sign)
+	# Closed backing plate: from the rear the sign reads as a dark metal plate,
+	# not as mirrored text floating in the doorway.
+	var back := MeshInstance3D.new()
+	var back_mesh := BoxMesh.new()
+	var text_bounds := text_mesh.get_aabb()
+	back_mesh.size = Vector3(text_bounds.size.x + 0.08, text_bounds.size.y + 0.04, 0.02)
+	back.mesh = back_mesh
+	var back_material := StandardMaterial3D.new()
+	back_material.albedo_color = Color(0.055, 0.065, 0.065)
+	back_material.roughness = 0.86
+	back.material_override = back_material
+	back.position = text_bounds.get_center() + Vector3(0.0, 0.0, -0.02)
+	back.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	sign.add_child(back)
+	# Second face: from the other room the plate reads correctly instead of
+	# showing mirrored text through the mesh.
+	var back_sign := MeshInstance3D.new()
+	back_sign.mesh = text_mesh
+	back_sign.material_override = material
+	back_sign.position = text_bounds.get_center() + Vector3(0.0, 0.0, -0.032)
+	back_sign.rotation_degrees.y = 180.0
+	back_sign.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	sign.add_child(back_sign)
 
 
 func _build_window() -> void:
@@ -1109,15 +1166,18 @@ func _build_collision() -> void:
 			"ObservationHeader", "ObservationHallWall", "ObservationDoorHeader",
 			"HallOuterWall", "HallTechWallFore", "HallTechWallAft", "TechDoorHeader",
 			"HallOuterAft", "TechOuter", "TechBack", "TechFront",
-			"CrateA", "CrateB", "CrateC"]:
+			"RelocatedCounterBase", "CrateA", "CrateB", "CrateC"]:
 		_collide_named(body, label)
-	# Invisible barriers along the open atrium. The visual railings sit on them.
+	# Invisible barriers along the open east and back atrium edges. The west
+	# edge is now a real stair wall, so it needs no invisible barrier.
 	_add_box(body, Vector3(0.08, 1.0, ATRIUM_Z1 - ATRIUM_Z0),
 		Vector3(ATRIUM_X1, FLOOR + 0.5, (ATRIUM_Z0 + ATRIUM_Z1) * 0.5))
 	_add_box(body, Vector3(ATRIUM_X1 - ATRIUM_X0, 1.0, 0.08),
 		Vector3((ATRIUM_X0 + ATRIUM_X1) * 0.5, FLOOR + 0.5, ATRIUM_Z0))
-	_add_box(body, Vector3(0.08, 1.0, ATRIUM_Z1 - ATRIUM_Z0),
-		Vector3(ATRIUM_X0, FLOOR + 0.5, (ATRIUM_Z0 + ATRIUM_Z1) * 0.5))
+	_add_box(body, Vector3(0.12, CEIL - 0.02, 2.10),
+		Vector3(ATRIUM_X0, (CEIL + 0.02) * 0.5, -1.95))
+	_add_box(body, Vector3(0.12, CEIL - 2.42, 1.50),
+		Vector3(ATRIUM_X0, (2.42 + CEIL) * 0.5, -0.15))
 	# Smooth ramp collider over the visual treads, aligned to the tread noses:
 	# y=0.217 at z=0, y=2.82 at z=-3. The old collider sat ~0.24 m high, which
 	# made the first step unclimbable and the player float above the treads.
