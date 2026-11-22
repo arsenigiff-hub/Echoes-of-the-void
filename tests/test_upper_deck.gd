@@ -52,7 +52,7 @@ func _bounds(node: Node) -> AABB:
 	var has := false
 	for child in node.find_children("*", "MeshInstance3D", true, false):
 		var mi := child as MeshInstance3D
-		if mi.mesh == null:
+		if mi.mesh == null or _inside_subviewport(mi):
 			continue
 		var box: AABB = mi.global_transform * mi.mesh.get_aabb()
 		if not has:
@@ -61,6 +61,15 @@ func _bounds(node: Node) -> AABB:
 		else:
 			result = result.merge(box)
 	return result
+
+
+func _inside_subviewport(node: Node) -> bool:
+	var parent := node.get_parent()
+	while parent != null:
+		if parent is SubViewport:
+			return true
+		parent = parent.get_parent()
+	return false
 
 
 func _check_hull_alignment() -> void:

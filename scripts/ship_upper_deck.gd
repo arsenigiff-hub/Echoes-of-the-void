@@ -15,6 +15,12 @@ const BENCH := preload("res://assetss/rooms/airlock/airlock_bench.glb")
 const TRASH := preload("res://assetss/ship_clutter_external/trash_bin_lowpoly.glb")
 const PIPES := preload("res://assetss/rooms/quarters/wall_pipes_small.glb")
 const VENT := preload("res://assetss/rooms/quarters/vent_grille.glb")
+const PAPERS := preload("res://assetss/rooms/quarters/papers_scattered.glb")
+const MUG := preload("res://assetss/rooms/quarters/personal_mug.glb")
+const NOTEBOOK := preload("res://assetss/rooms/quarters/personal_notebook.glb")
+const PHOTO := preload("res://assetss/rooms/quarters/personal_photo_a.glb")
+const BOOTS := preload("res://assetss/rooms/quarters/personal_boots.glb")
+const CABLE := preload("res://assetss/rooms/quarters/cable_bundle_floor.glb")
 
 const OLD_CEIL := 2.60
 const FLOOR := 2.82
@@ -40,6 +46,13 @@ const STAIR_RISE := FLOOR
 var roof_nodes: Array = []
 var _materials := {}
 var _collision_shapes: Array[CollisionShape3D] = []
+var _window_viewport: SubViewport
+var _window_camera: Camera3D
+var _window_planet: MeshInstance3D
+var _window_ring: MeshInstance3D
+var _window_blackhole: MeshInstance3D
+var _window_tween: Tween
+var _window_time := 0.0
 
 
 func _ready() -> void:
@@ -440,10 +453,10 @@ func _build_ceilings() -> void:
 	var beam := _material("brushed_edges", Color(0.54, 0.56, 0.54), 0.55, 0.52)
 	var lamp := StandardMaterial3D.new()
 	lamp.resource_name = "lamp_diffuser"
-	lamp.albedo_color = Color(0.45, 0.50, 0.44)
+	lamp.albedo_color = Color(0.16, 0.21, 0.25)
 	lamp.emission_enabled = true
-	lamp.emission = Color(1.0, 0.82, 0.58)
-	lamp.emission_energy_multiplier = 1.1
+	lamp.emission = Color(0.55, 0.68, 0.82)
+	lamp.emission_energy_multiplier = 0.65
 	# Roof slabs.
 	_box(Vector3(X1 - X0, ROOF - CEIL, CABIN_Z1 - OBS_Z0),
 		Vector3((X0 + X1) * 0.5, (CEIL + ROOF) * 0.5, (OBS_Z0 + CABIN_Z1) * 0.5),
@@ -477,17 +490,19 @@ func _ceiling_panel(material: Material, pos: Vector3, size: Vector3) -> void:
 
 
 func _build_lights() -> void:
-	_spot("CabinLight", Vector3(-2.05, CEIL - 0.10, 2.0), Color(1.0, 0.80, 0.56), 1.7, 4.6)
-	_spot("ObservationLight", Vector3(-2.05, CEIL - 0.10, -6.0), Color(0.60, 0.76, 0.94), 1.6, 5.0)
-	_spot("HallLight", Vector3(-1.95, CEIL - 0.10, -1.55), Color(1.0, 0.78, 0.52), 2.2, 6.0)
-	_spot("TechLight", Vector3(1.05, CEIL - 0.10, -1.35), Color(0.58, 0.88, 0.68), 1.4, 4.4)
-	_spot("TechLightB", Vector3(3.45, CEIL - 0.10, -1.35), Color(0.58, 0.88, 0.68), 1.2, 4.0)
-	_omni("StairFill", Vector3(-3.55, 3.90, -1.60), Color(1.0, 0.80, 0.56), 0.7, 3.2)
-	_omni("StairFoot", Vector3(-3.55, 1.25, -0.15), Color(1.0, 0.80, 0.56), 0.45, 2.2)
-	_omni("WindowGlow", Vector3(-3.95, 4.20, -6.0), Color(0.32, 0.52, 0.80), 0.5, 2.6)
-	_omni("AtriumFill", Vector3(-2.0, 4.60, -1.50), Color(1.0, 0.78, 0.52), 1.8, 6.0)
-	_omni("AtriumLower", Vector3(-2.0, 3.40, -1.50), Color(1.0, 0.78, 0.52), 2.5, 5.0)
-	_spot("AtriumShaft", Vector3(-2.0, 3.45, -1.50), Color(1.0, 0.78, 0.52), 2.5, 3.8)
+	# Dim cold deck lighting: the deck is abandoned, the only strong source is
+	# the observation window. Warm light is reserved for the old lower deck.
+	_spot("CabinLight", Vector3(-2.05, CEIL - 0.10, 2.0), Color(0.58, 0.70, 0.82), 1.15, 4.6)
+	_spot("ObservationLight", Vector3(-2.05, CEIL - 0.10, -6.0), Color(0.52, 0.68, 0.85), 1.20, 5.0)
+	_spot("HallLight", Vector3(-1.95, CEIL - 0.10, -1.55), Color(0.55, 0.68, 0.80), 1.25, 5.6)
+	_spot("TechLight", Vector3(1.05, CEIL - 0.10, -1.35), Color(0.42, 0.58, 0.55), 0.80, 4.2)
+	_spot("TechLightB", Vector3(3.45, CEIL - 0.10, -1.35), Color(0.42, 0.58, 0.55), 0.70, 3.8)
+	_omni("StairFill", Vector3(-3.55, 3.90, -1.60), Color(0.55, 0.66, 0.78), 0.65, 3.4)
+	_omni("StairFoot", Vector3(-3.55, 1.25, -0.15), Color(0.55, 0.66, 0.78), 0.42, 2.4)
+	_omni("WindowGlow", Vector3(-3.95, 4.20, -6.0), Color(0.30, 0.50, 0.78), 0.55, 3.0)
+	_omni("AtriumFill", Vector3(-2.0, 4.60, -1.50), Color(0.55, 0.68, 0.82), 1.00, 6.0)
+	_omni("AtriumLower", Vector3(-2.0, 3.40, -1.50), Color(0.55, 0.68, 0.82), 0.80, 5.0)
+	_spot("AtriumShaft", Vector3(-2.0, 3.45, -1.50), Color(0.55, 0.68, 0.82), 1.00, 4.0)
 
 
 func _spot(name: String, pos: Vector3, color: Color, energy: float, range_m: float) -> void:
@@ -524,17 +539,28 @@ func _build_props() -> void:
 	_prop(TABLE, "CabinTable", Vector3(-0.45, FLOOR, 3.20), 0.0)
 	_prop(CHAIR, "CabinChair", Vector3(-0.90, FLOOR, 2.20), 0.0)
 	_prop(PIPES, "CabinPipes", Vector3(-3.99, 4.75, 2.00), -90.0)
+	# Crew traces: the deck was left in a hurry, not staged.
+	_prop(MUG, "CabinMug", Vector3(-0.24, FLOOR + 0.754, 3.04), 24.0)
+	_prop(NOTEBOOK, "CabinNotebook", Vector3(-0.66, FLOOR + 0.754, 3.10), -12.0)
+	_prop(PHOTO, "CabinPhoto", Vector3(-0.42, FLOOR + 0.754, 3.43), 8.0)
+	_prop(BOOTS, "CabinBoots", Vector3(-3.02, FLOOR + 0.026, 1.52), 24.0)
+	_prop(PAPERS, "CabinPapers", Vector3(-1.12, FLOOR + 0.026, 3.56), 20.0)
 	# Observation.
 	_prop(NAV_CONSOLE, "ObservationConsole", Vector3(-2.05, FLOOR, -7.35), 0.0)
 	_prop(BENCH, "ObservationBench", Vector3(-3.55, FLOOR, -5.20), 90.0)
 	_prop(TABLE, "ObservationTable", Vector3(-0.45, FLOOR, -7.30), 0.0)
 	_prop(VENT, "ObservationVent", Vector3(-0.06, 4.30, -5.20), 90.0)
+	_prop(MUG, "ObservationMug", Vector3(-0.62, FLOOR + 0.754, -7.18), -18.0)
+	_prop(NOTEBOOK, "ObservationLog", Vector3(-0.28, FLOOR + 0.754, -7.42), 12.0)
+	_prop(PAPERS, "ObservationPapers", Vector3(-1.42, FLOOR + 0.026, -6.72), -14.0)
 	# Tech storage.
 	_prop(SHELF, "TechShelf", Vector3(4.20, FLOOR, -1.30), 90.0)
 	_prop(LOCKER, "TechLocker", Vector3(3.70, FLOOR, -0.42), 180.0)
 	_prop(TABLE, "TechTable", Vector3(2.00, FLOOR, -2.28), 0.0)
 	_prop(TRASH, "TechBin", Vector3(3.25, FLOOR, -2.30), 0.0)
 	_prop(PIPES, "TechPipes", Vector3(2.50, 4.05, -2.55), 0.0)
+	_prop(CABLE, "TechCable", Vector3(1.35, FLOOR + 0.026, -0.92), 12.0)
+	_prop(PAPERS, "TechPapers", Vector3(2.82, FLOOR + 0.026, -2.05), 28.0)
 	# Crates on the floor, clear of the tech-storage door.
 	var crate := _material("detail_cardboard", Color(0.55, 0.45, 0.32), 0.0, 0.9)
 	_box(Vector3(0.62, 0.50, 0.62), Vector3(3.50, FLOOR + 0.25, -2.18), crate, "CrateA")
@@ -561,12 +587,12 @@ func _build_signs() -> void:
 	_sign("ТЕХСКЛАД", Vector3(X1 - 0.01, 5.12, -1.70), -90.0)
 	_sign("ВЕРХНЯЯ ПАЛУБА", Vector3(-2.90, 2.18, -0.04), 180.0)
 	# A small warm lens over the lower stair sign, matching the old lamp style.
-	var lamp := _material("lamp_diffuser", Color(0.35, 0.40, 0.35), 0.0, 0.8)
+	var lamp := _material("lamp_diffuser", Color(0.16, 0.21, 0.25), 0.0, 0.8)
 	lamp.emission_enabled = true
-	lamp.emission = Color(1.0, 0.78, 0.52)
-	lamp.emission_energy_multiplier = 0.9
+	lamp.emission = Color(0.55, 0.68, 0.82)
+	lamp.emission_energy_multiplier = 0.55
 	_box(Vector3(0.52, 0.02, 0.08), Vector3(-2.90, 2.44, -0.04), lamp)
-	_omni("StairSignFill", Vector3(-2.90, 2.24, -0.35), Color(1.0, 0.80, 0.56), 0.5, 2.0)
+	_omni("StairSignFill", Vector3(-2.90, 2.24, -0.35), Color(0.55, 0.68, 0.82), 0.25, 1.8)
 
 
 func _sign(text: String, pos: Vector3, yaw: float) -> void:
@@ -591,27 +617,241 @@ func _sign(text: String, pos: Vector3, yaw: float) -> void:
 
 
 func _build_window() -> void:
-	var frame := _material("brushed_edges", Color(0.52, 0.55, 0.53), 0.6, 0.48)
+	# The observation window is a live SubViewport: a nearby gas giant with its
+	# ring, parallax against the real panorama sky, and the black hole that the
+	# ship is travelling toward. It follows SpaceStage so the room always shows
+	# the current chapter of the voyage, not a static star sticker.
+	var viewport := SubViewport.new()
+	viewport.name = "ObservationViewport"
+	viewport.size = Vector2i(600, 400)
+	viewport.own_world_3d = true
+	viewport.transparent_bg = false
+	viewport.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE
+	viewport.msaa_3d = Viewport.MSAA_DISABLED
+	add_child(viewport)
+	_window_viewport = viewport
+	_build_window_space(viewport)
+
 	var glass := StandardMaterial3D.new()
 	glass.resource_name = "observation_glass"
-	glass.albedo_color = Color(0.008, 0.016, 0.035)
-	glass.albedo_texture = load("res://assetss/space/starfield_pano.png")
-	glass.emission_enabled = true
-	glass.emission = Color(0.75, 0.85, 1.0)
-	glass.emission_texture = load("res://assetss/space/starfield_pano.png")
-	glass.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
-	glass.emission_energy_multiplier = 1.6
-	glass.roughness = 0.08
-	glass.uv1_scale = Vector3(0.5, 0.5, 1.0)
-	_box(Vector3(0.03, 1.60, 2.40), Vector3(X0 - 0.02, FLOOR + 1.50, -6.0),
-		glass, "ObservationGlass")
+	glass.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	glass.albedo_texture = viewport.get_texture()
+	glass.albedo_color = Color(0.82, 0.90, 1.0)
+	glass.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
+	glass.disable_receive_shadows = true
+	var glass_node := MeshInstance3D.new()
+	glass_node.name = "ObservationGlass"
+	var glass_mesh := QuadMesh.new()
+	glass_mesh.size = Vector2(2.40, 1.60)
+	glass_node.mesh = glass_mesh
+	glass_node.material_override = glass
+	glass_node.position = Vector3(X0 + 0.015, FLOOR + 1.50, -6.0)
+	glass_node.rotation_degrees.y = 90.0
+	glass_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(glass_node)
+
+	# Dust, salt and old condensation on the inside of the glass.
+	var grime := StandardMaterial3D.new()
+	grime.resource_name = "observation_grime"
+	grime.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	grime.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	grime.albedo_texture = load("res://assetss/space/glass_grime.png")
+	grime.albedo_color = Color(0.42, 0.52, 0.62, 0.22)
+	grime.uv1_scale = Vector3(0.85, 0.85, 1.0)
+	grime.disable_receive_shadows = true
+	var grime_node := MeshInstance3D.new()
+	grime_node.name = "ObservationGrime"
+	var grime_mesh := QuadMesh.new()
+	grime_mesh.size = Vector2(2.38, 1.58)
+	grime_node.mesh = grime_mesh
+	grime_node.material_override = grime
+	grime_node.position = Vector3(X0 + 0.035, FLOOR + 1.50, -6.0)
+	grime_node.rotation_degrees.y = 90.0
+	grime_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(grime_node)
+
 	# Frame and mullions.
+	var frame := _material("brushed_edges", Color(0.52, 0.55, 0.53), 0.6, 0.48)
 	_box(Vector3(0.10, 1.72, 0.10), Vector3(X0 + 0.04, FLOOR + 1.50, -7.20), frame)
 	_box(Vector3(0.10, 1.72, 0.10), Vector3(X0 + 0.04, FLOOR + 1.50, -4.80), frame)
 	_box(Vector3(0.10, 0.10, 2.50), Vector3(X0 + 0.04, FLOOR + 2.30, -6.0), frame)
 	_box(Vector3(0.10, 0.10, 2.50), Vector3(X0 + 0.04, FLOOR + 0.70, -6.0), frame)
 	_box(Vector3(0.06, 1.64, 0.06), Vector3(X0 + 0.06, FLOOR + 1.50, -6.0), frame)
-	_box(Vector3(0.06, 0.06, 2.40), Vector3(X0 + 0.00, FLOOR + 1.50, -6.0), frame)
+
+
+func _build_window_space(viewport: SubViewport) -> void:
+	var env := Environment.new()
+	env.background_mode = Environment.BG_SKY
+	env.sky = load("res://scenes/sky_space.tres")
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_DISABLED
+	var world_env := WorldEnvironment.new()
+	world_env.name = "WindowEnvironment"
+	world_env.environment = env
+	viewport.add_child(world_env)
+
+	_window_camera = Camera3D.new()
+	_window_camera.name = "WindowCamera"
+	_window_camera.position = Vector3(0.0, 1.55, 0.0)
+	_window_camera.fov = 62.0
+	_window_camera.current = true
+	viewport.add_child(_window_camera)
+
+	var planet_material := StandardMaterial3D.new()
+	planet_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	planet_material.albedo_texture = load("res://assetss/space/planet_gas.png")
+	planet_material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	planet_material.disable_fog = true
+	planet_material.disable_receive_shadows = true
+	planet_material.emission_enabled = true
+	planet_material.emission = Color(0.55, 0.60, 0.70)
+	planet_material.emission_texture = planet_material.albedo_texture
+	planet_material.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
+	planet_material.emission_energy_multiplier = 0.45
+	var sphere := SphereMesh.new()
+	sphere.radius = 1.0
+	sphere.height = 2.0
+	sphere.radial_segments = 48
+	sphere.rings = 24
+	_window_planet = MeshInstance3D.new()
+	_window_planet.name = "WindowGasGiant"
+	_window_planet.mesh = sphere
+	_window_planet.material_override = planet_material
+	_window_planet.position = Vector3(-3.0, 3.2, -52.0)
+	_window_planet.scale = Vector3.ONE * 19.0
+	_window_planet.rotation.y = 3.05
+	_window_planet.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	viewport.add_child(_window_planet)
+
+	var ring_material := StandardMaterial3D.new()
+	ring_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ring_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ring_material.vertex_color_use_as_albedo = true
+	ring_material.albedo_color = Color(0.64, 0.62, 0.58, 0.82)
+	ring_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	ring_material.disable_fog = true
+	ring_material.disable_receive_shadows = true
+	_window_ring = MeshInstance3D.new()
+	_window_ring.name = "WindowPlanetRing"
+	_window_ring.mesh = _make_window_ring_mesh(23.0, 35.0)
+	_window_ring.material_override = ring_material
+	_window_ring.position = Vector3(-3.0, 3.2, -53.0)
+	_window_ring.rotation_degrees = Vector3(0.0, 0.0, 14.0)
+	_window_ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	viewport.add_child(_window_ring)
+
+	var hole_material := StandardMaterial3D.new()
+	hole_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	hole_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	hole_material.albedo_texture = load("res://assetss/space/planet_blackhole.png")
+	hole_material.albedo_color = Color(0.75, 0.72, 0.82, 0.95)
+	hole_material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	hole_material.disable_fog = true
+	hole_material.disable_receive_shadows = true
+	var hole_mesh := QuadMesh.new()
+	hole_mesh.size = Vector2(34.0, 34.0)
+	_window_blackhole = MeshInstance3D.new()
+	_window_blackhole.name = "WindowBlackHole"
+	_window_blackhole.mesh = hole_mesh
+	_window_blackhole.material_override = hole_material
+	_window_blackhole.position = Vector3(-16.0, 8.0, -148.0)
+	_window_blackhole.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	viewport.add_child(_window_blackhole)
+
+	var stage_node := get_tree().root.find_child("SpaceStage", true, false)
+	if stage_node != null and stage_node.has_signal("stage_changed"):
+		stage_node.stage_changed.connect(_apply_window_stage)
+		_apply_window_stage(int(stage_node.get("initial_stage")), true)
+	else:
+		_apply_window_stage(0, true)
+
+
+func _make_window_ring_mesh(inner_radius: float, outer_radius: float) -> ArrayMesh:
+	var vertices := PackedVector3Array()
+	var normals := PackedVector3Array()
+	var uvs := PackedVector2Array()
+	var colors := PackedColorArray()
+	var indices := PackedInt32Array()
+	var radial_steps := 6
+	var angular_steps := 128
+	for radial_index in range(radial_steps + 1):
+		var radial_t := float(radial_index) / float(radial_steps)
+		var radius := lerpf(inner_radius, outer_radius, radial_t)
+		for angular_index in range(angular_steps + 1):
+			var angle := TAU * float(angular_index) / float(angular_steps)
+			vertices.append(Vector3(cos(angle) * radius, sin(angle) * radius * 0.30, 0.0))
+			normals.append(Vector3.BACK)
+			uvs.append(Vector2(radial_t, float(angular_index) / float(angular_steps)))
+			var density := clampf(0.60 + sin(radial_t * TAU * 9.0 + sin(angle * 9.0) * 0.35) * 0.22
+				+ sin(angle * 37.0 + radial_t * 14.0) * 0.05, 0.18, 0.94)
+			var color := Color(0.30, 0.30, 0.29).lerp(Color(0.93, 0.87, 0.74), density)
+			var edge_fade := clampf(radial_t / 0.10, 0.0, 1.0) \
+				* clampf((1.0 - radial_t) / 0.10, 0.0, 1.0)
+			colors.append(Color(color.r, color.g, color.b, edge_fade * 0.85))
+	for radial_index in range(radial_steps):
+		for angular_index in range(angular_steps):
+			var inner := radial_index * (angular_steps + 1) + angular_index
+			var outer := (radial_index + 1) * (angular_steps + 1) + angular_index
+			indices.append(inner)
+			indices.append(outer)
+			indices.append(outer + 1)
+			indices.append(inner)
+			indices.append(outer + 1)
+			indices.append(inner + 1)
+	var arrays: Array = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_NORMAL] = normals
+	arrays[Mesh.ARRAY_TEX_UV] = uvs
+	arrays[Mesh.ARRAY_COLOR] = colors
+	arrays[Mesh.ARRAY_INDEX] = indices
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	return mesh
+
+
+func _apply_window_stage(index: int, instant := false) -> void:
+	if _window_planet == null:
+		return
+	var planet_visible := index < 2
+	var planet_scale := 19.0 if index == 0 else 11.0
+	var ring_visible := index < 2
+	var ring_scale := 1.0 if index == 0 else 0.72
+	var hole_visible := index > 0
+	var hole_scale := 2.2 if index == 1 else 4.2
+	if _window_tween != null:
+		_window_tween.kill()
+	if instant:
+		_window_planet.visible = planet_visible
+		_window_planet.scale = Vector3.ONE * planet_scale
+		_window_ring.visible = ring_visible
+		_window_ring.scale = Vector3.ONE * ring_scale
+		_window_blackhole.visible = hole_visible
+		_window_blackhole.scale = Vector3.ONE * hole_scale
+		return
+	_window_tween = create_tween().set_parallel(true)
+	_window_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_window_tween.tween_property(_window_planet, "scale",
+		Vector3.ONE * planet_scale, 4.0)
+	_window_tween.tween_property(_window_planet, "visible", planet_visible, 0.8)
+	_window_tween.tween_property(_window_ring, "scale",
+		Vector3.ONE * ring_scale, 4.0)
+	_window_tween.tween_property(_window_ring, "visible", ring_visible, 0.8)
+	_window_tween.tween_property(_window_blackhole, "scale",
+		Vector3.ONE * hole_scale, 4.0)
+	_window_tween.tween_property(_window_blackhole, "visible", hole_visible, 0.8)
+	_window_tween.finished.connect(func() -> void: _window_tween = null)
+
+
+func _process(delta: float) -> void:
+	if _window_planet == null:
+		return
+	_window_time += delta
+	# Slow planetary rotation and a barely perceptible camera drift keep the
+	# window alive without turning the observation room into an attraction.
+	_window_planet.rotation.y = wrapf(_window_planet.rotation.y + delta * 0.018, -PI, PI)
+	if _window_camera != null:
+		_window_camera.position.x = sin(_window_time * 0.055) * 0.55
+		_window_camera.position.y = 1.55 + sin(_window_time * 0.11) * 0.10
 
 
 func _build_collision() -> void:
