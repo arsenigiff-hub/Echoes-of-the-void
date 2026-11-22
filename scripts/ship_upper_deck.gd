@@ -550,10 +550,14 @@ func _build_walls() -> void:
 	# Tech storage shell.
 	_box(Vector3(WALL_T, height, -TECH_Z0), Vector3(TECH_X1 + WALL_T * 0.5, mid, TECH_Z0 * 0.5),
 		tech, "TechOuter")
-	_box(Vector3(TECH_X1 - X1, height, WALL_T),
-		Vector3((X1 + TECH_X1) * 0.5, mid, TECH_Z0 - WALL_T * 0.5), tech, "TechBack")
-	_box(Vector3(TECH_X1 - X1, height, WALL_T),
-		Vector3((X1 + TECH_X1) * 0.5, mid, WALL_T * 0.5), tech, "TechFront")
+	# Start the tech store's back/front walls behind the hall wall, not on its
+	# visible face: a flush left end at x=0 z-fought with the hall wall and
+	# produced the black vertical stripe beside the vent.
+	_box(Vector3(TECH_X1 - X1 - WALL_T, height, WALL_T),
+		Vector3((X1 + WALL_T + TECH_X1) * 0.5, mid, TECH_Z0 - WALL_T * 0.5),
+		tech, "TechBack")
+	_box(Vector3(TECH_X1 - X1 - WALL_T, height, WALL_T),
+		Vector3((X1 + WALL_T + TECH_X1) * 0.5, mid, WALL_T * 0.5), tech, "TechFront")
 	# Heavy frames around each opening.
 	_frame_x(-0.8, 0.0, -WALL_T * 0.5, trim)
 	_frame_x(-0.8, 0.0, HALL_Z0 - WALL_T * 0.5, trim)
