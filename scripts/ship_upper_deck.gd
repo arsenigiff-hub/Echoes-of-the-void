@@ -63,8 +63,7 @@ func _ready() -> void:
 	_build_floors()
 	_build_walls()
 	_build_stairs()
-	_build_stair_door()
-	_build_stair_wall()
+	_build_cut_trim()
 	_build_railings()
 	_build_atrium_fascia()
 	_build_ceilings()
@@ -161,15 +160,15 @@ func _cut_stair_notch() -> void:
 	# envelope, keeping the outer hull wall at x=-4.1 intact.
 	var trim := rooms.find_child("common brushed_edges", true, false) as MeshInstance3D
 	if trim != null:
-		var trim_removed := _cut_mesh_box(trim, position,
+		var trim_removed := _cut_mesh_box(trim,
 			Vector3(-3.90, 0.0, -3.10), Vector3(-3.10, 2.80, 0.20))
 		print("[UpperDeck] stair trim cut removed=", trim_removed)
 
 
 func _cut_stair_door() -> void:
 	# The old bulkhead closes the stair foot from the lower common. Cut a real
-	# doorway (not a hole) through every bulkhead material layer; the frame and
-	# hazard threshold are built in _build_stair_door().
+	# doorway (not a hole) through every bulkhead material layer; the user asked
+	# to leave the opening without a door/frame.
 	var rooms := get_node_or_null("../Rooms")
 	if rooms == null:
 		return
@@ -178,12 +177,10 @@ func _cut_stair_door() -> void:
 		var node := rooms.find_child(label, true, false) as MeshInstance3D
 		if node == null:
 			continue
-		var removed := _cut_mesh_box(node, position, Vector3(-2.95, 0.0, -0.90),
-			Vector3(-2.35, 2.42, 0.60))
-		# The old galley counter base/partition at the stair foot sits further
-		# west than the doorway. Remove the strip that crosses the flight.
-		removed += _cut_mesh_box(node, position, Vector3(-3.80, 0.0, -0.80),
-			Vector3(-3.20, 2.40, 0.60))
+		var removed := _cut_mesh_box(node,
+			Vector3(-2.95, 0.0, -0.90), Vector3(-2.35, 2.42, 0.60))
+		removed += _cut_mesh_box(node,
+			Vector3(-3.80, 0.0, -0.80), Vector3(-3.20, 2.40, 0.60))
 		if removed > 0:
 			print("[UpperDeck] stair doorway cut ", label, " removed=", removed)
 
@@ -236,19 +233,21 @@ func _cut_mesh_volume(mesh_node: MeshInstance3D, offset: Vector3, lx0: float, lx
 	return removed
 
 
-func _cut_mesh_box(mesh_node: MeshInstance3D, offset: Vector3,
-		box_min: Vector3, box_max: Vector3) -> int:
-	# Exact triangle-vs-box subtraction for a doorway. Whole-triangle removal
-	# leaves a large old wall panel across the opening when its triangle
-	# centroid lies outside the cut; this clips the panel to the box instead.
+func _cut_mesh_box(mesh_node: MeshInstance3D, box_min: Vector3,
+		box_max: Vector3) -> int:
+	# Exact triangle-vs-box subtraction in UpperDeck local space. Using the
+	# global transform chain matters for Details: its GLB root has its own
+	# transform, unlike the Rooms meshes.
 	var source := mesh_node.mesh
 	if source == null:
 		return 0
 	var result := ArrayMesh.new()
-	var xform := mesh_node.transform
-	var inv := xform.affine_inverse()
-	var lo := box_min + offset
-	var hi := box_max + offset
+	var upper_from_mesh := global_transform.affine_inverse() * mesh_node.global_transform
+	var mesh_from_upper := upper_from_mesh.affine_inverse()
+	var upper_normal_basis := upper_from_mesh.basis.inverse().transposed()
+	var mesh_normal_basis := mesh_from_upper.basis.inverse().transposed()
+	var lo := box_min
+	var hi := box_max
 	var planes := [
 		[Vector3(1, 0, 0), lo.x], [Vector3(-1, 0, 0), -hi.x],
 		[Vector3(0, 1, 0), lo.y], [Vector3(0, -1, 0), -hi.y],
@@ -276,9 +275,9 @@ func _cut_mesh_box(mesh_node: MeshInstance3D, offset: Vector3,
 			var pa: Vector3 = vertices[ia]
 			var pb: Vector3 = vertices[ib]
 			var pc: Vector3 = vertices[ic]
-			var wa := xform * pa
-			var wb := xform * pb
-			var wc := xform * pc
+			var wa := upper_from_mesh * pa
+			var wb := upper_from_mesh * pb
+			var wc := upper_from_mesh * pc
 			var tmin := Vector3(minf(wa.x, minf(wb.x, wc.x)), minf(wa.y, minf(wb.y, wc.y)),
 				minf(wa.z, minf(wb.z, wc.z)))
 			var tmax := Vector3(maxf(wa.x, maxf(wb.x, wc.x)), maxf(wa.y, maxf(wb.y, wc.y)),
@@ -292,7 +291,7 @@ func _cut_mesh_box(mesh_node: MeshInstance3D, offset: Vector3,
 				var vp: Vector3 = v[0]
 				var vi: int = v[1]
 				poly.append({
-					"p": xform * vp,
+					"p": upper_from_mesh * vp,
 					"n": normals[vi] if has_normals else Vector3.UP,
 					"uv": uvs[vi] if has_uvs else Vector2.ZERO,
 				})
@@ -318,9 +317,9 @@ func _cut_mesh_box(mesh_node: MeshInstance3D, offset: Vector3,
 			for piece in pieces:
 				var base := out_v.size()
 				for vertex in piece:
-					out_v.append(inv * (vertex["p"] as Vector3))
+					out_v.append(mesh_from_upper * (vertex["p"] as Vector3))
 					var normal: Vector3 = vertex["n"]
-					out_n.append((inv.basis.transposed() * normal).normalized())
+					out_n.append((mesh_normal_basis * normal).normalized())
 					out_uv.append(vertex["uv"] as Vector2)
 				for k in range(1, piece.size() - 1):
 					out_i.append(base)
@@ -338,7 +337,7 @@ func _cut_mesh_box(mesh_node: MeshInstance3D, offset: Vector3,
 		result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, new_arrays)
 		result.surface_set_material(result.get_surface_count() - 1,
 			source.surface_get_material(surface))
-	if result.get_surface_count() > 0:
+	if removed > 0:
 		mesh_node.mesh = result
 	return removed
 
@@ -577,6 +576,21 @@ func _frame_z(z0: float, z1: float, x: float, material: Material) -> void:
 		Vector3(x, FLOOR + 2.14, (z0 + z1) * 0.5), material)
 
 
+func _build_cut_trim() -> void:
+	# The door itself is intentionally gone. These are only cut-edge liners:
+	# a dark lintel above the opening and two jambs that close the raw old-wall
+	# cross-section so the stairwell does not show space through the cut.
+	var backing := _material("wall_common", Color(0.30, 0.34, 0.31), 0.3, 0.78)
+	var edge := _material("brushed_edges", Color(0.45, 0.48, 0.46), 0.6, 0.55)
+	_box(Vector3(0.60, 0.42, 1.55), Vector3(-2.65, 2.61, -0.15), backing, "CutLintel")
+	_box(Vector3(0.60, 2.42, 0.10), Vector3(-2.65, 1.21, -0.90), edge, "CutJambNorth")
+	_box(Vector3(0.60, 2.42, 0.10), Vector3(-2.65, 1.21, 0.60), edge, "CutJambSouth")
+	# Close the old wall band above the stair, where the old ceiling cut left a
+	# strip of open hull behind the flight.
+	_box(Vector3(0.10, FLOOR - 2.05, 3.10),
+		Vector3(X0 + 0.05, (2.05 + FLOOR) * 0.5, -1.45), backing, "CutStairBackBand")
+
+
 func _build_stairs() -> void:
 	var tread := _material("deck_plate", Color(0.40, 0.41, 0.39), 0.35, 0.72)
 	var riser := _material("structural_graphite", Color(0.34, 0.36, 0.34), 0.4, 0.66)
@@ -606,57 +620,6 @@ func _build_stairs() -> void:
 		tread, "StairSideRamp")
 	side_ramp.rotation.z = -atan2(0.31, 0.90)
 	_box(Vector3(0.06, 0.012, 1.18), Vector3(-2.10, 0.050, -0.15), hazard, "StairSideNose")
-
-
-func _build_stair_door() -> void:
-	# The cut in the old bulkhead is dressed as a real doorway: a steel frame,
-	# hazard threshold and a cold service lamp, so the lower deck reads as a
-	# deliberate connection rather than a hole in the wall.
-	var frame := _material("brushed_edges", Color(0.55, 0.58, 0.56), 0.6, 0.5)
-	var hazard := _material("detail_hazard", Color(0.82, 0.62, 0.10), 0.2, 0.6)
-	_box(Vector3(0.16, 2.42, 0.14), Vector3(-2.62, 1.21, -0.85), frame)
-	_box(Vector3(0.16, 2.42, 0.14), Vector3(-2.62, 1.21, 0.55), frame)
-	_box(Vector3(0.16, 0.14, 1.54), Vector3(-2.62, 2.42, -0.15), frame)
-	# The old ceiling cut leaves a thin open band above the door header; close it
-	# so the doorway never shows space above the frame.
-	var header_fill := _material("wall_common", Color(0.30, 0.34, 0.31), 0.3, 0.75)
-	_box(Vector3(0.50, 0.24, 1.54), Vector3(-2.65, 2.54, -0.15), header_fill)
-	# The old ceiling cut removes the old wall band above 2.05 m along the
-	# stairwell. Close it with a steel-backed panel so the stair never looks
-	# into the gap between the old and new decks.
-	_box(Vector3(0.10, FLOOR - 2.05, 3.10),
-		Vector3(X0 + 0.05, (2.05 + FLOOR) * 0.5, -1.45), header_fill, "StairwellBackBand")
-	var lamp := _material("lamp_diffuser", Color(0.16, 0.21, 0.25), 0.0, 0.8)
-	lamp.emission_enabled = true
-	lamp.emission = Color(0.55, 0.68, 0.82)
-	lamp.emission_energy_multiplier = 0.55
-	_box(Vector3(0.03, 0.02, 0.56), Vector3(-2.37, 2.36, -0.15), lamp)
-	_omni("StairDoorLamp", Vector3(-2.42, 2.25, -0.15), Color(0.55, 0.68, 0.82), 0.35, 2.2)
-
-
-func _build_stair_wall() -> void:
-	# Instead of an invisible barrier, the stair now has a real wall on its
-	# atrium side. You enter through the lower doorway, turn, and climb in a
-	# closed shaft; you cannot see or jump into the atrium beyond the turn.
-	var wall := _material("wall_common", Color(0.30, 0.34, 0.31), 0.3, 0.78)
-	var trim := _material("brushed_edges", Color(0.55, 0.58, 0.56), 0.6, 0.5)
-	var bottom := 0.02
-	var wall_h := CEIL
-	var height := wall_h - bottom
-	_box(Vector3(0.12, height, 2.10), Vector3(ATRIUM_X0, bottom + height * 0.5, -1.95),
-		wall, "StairWallNorth")
-	_box(Vector3(0.12, wall_h - 2.42, 1.50),
-		Vector3(ATRIUM_X0, (2.42 + wall_h) * 0.5, -0.15), wall, "StairWallHeader")
-	for z in [-2.65, -1.75, -1.05]:
-		_box(Vector3(0.04, height - 0.10, 0.06),
-			Vector3(ATRIUM_X0 - 0.08, bottom + height * 0.5, z), trim)
-		_box(Vector3(0.03, height - 0.10, 0.06),
-			Vector3(ATRIUM_X0 + 0.08, bottom + height * 0.5, z), trim)
-	_box(Vector3(0.10, 2.42, 0.10), Vector3(ATRIUM_X0 - 0.06, 1.21, -0.90),
-		trim, "StairWallJambNorth")
-	_box(Vector3(0.10, 2.42, 0.10), Vector3(ATRIUM_X0 - 0.06, 1.21, 0.60),
-		trim, "StairWallJambSouth")
-	_box(Vector3(0.05, 0.08, 2.10), Vector3(ATRIUM_X0 - 0.07, 2.62, -1.95), trim)
 
 
 func _build_railings() -> void:
@@ -799,7 +762,7 @@ func _build_props() -> void:
 	_prop(BUNK, "CabinBunk", Vector3(-3.55, FLOOR, 2.20), 90.0)
 	_prop(LOCKER, "CabinLocker", Vector3(-3.55, FLOOR, 3.65), 180.0)
 	_prop(TABLE, "CabinTable", Vector3(-0.65, FLOOR, 3.20), 0.0)
-	var cabin_chair := _prop(CHAIR, "CabinChair", Vector3(-0.02, FLOOR + 0.03, 3.15), -90.0)
+	var cabin_chair := _prop(CHAIR, "CabinChair", Vector3(-0.34, FLOOR + 0.03, 2.52), -90.0)
 	cabin_chair.rotation.z = -0.12
 	_prop(PIPES, "CabinPipes", Vector3(-3.99, 4.75, 2.00), -90.0)
 	# Crew traces: the deck was left in a hurry, not staged.
@@ -848,22 +811,164 @@ func _build_signs() -> void:
 	_sign("ДОП. КАЮТА", Vector3(-0.40, 5.12, -0.01), 180.0)
 	_sign("ОБЗОР", Vector3(-0.40, 5.12, HALL_Z0 + 0.01), 0.0)
 	_sign("ТЕХСКЛАД", Vector3(X1 - 0.01, 5.12, -1.70), -90.0)
-	_sign("ВЕРХНЯЯ ПАЛУБА", Vector3(-2.36, 2.52, -0.15), 90.0)
+
 
 
 func _hide_stale_details() -> void:
-	# The old ceiling/bench Details batches stay in the lower ship, but two of
-	# their merged meshes hang in the new atrium: the acoustic panel strip and
-	# the hazard trim that used to sit on the removed bench. Hiding them keeps
-	# the old ship intact and removes the floating leftovers.
+	# The old Details GLB is merged by material and still contains ceiling,
+	# bench and stair-level geometry above the lower room. Keeping only the
+	# sub-2.15 m part preserves the lower-ship clutter while removing every old
+	# detail that intersects the new deck, stair flight and relocated counter.
 	var details := get_node_or_null("../Details")
 	if details == null:
 		return
-	for mesh_name in ["export_detail_acoustic", "export_detail_hazard"]:
-		var mesh := details.find_child(mesh_name, true, false) as MeshInstance3D
-		if mesh != null:
+	for mesh_node in details.find_children("*", "MeshInstance3D", true, false):
+		var mesh := mesh_node as MeshInstance3D
+		if mesh.mesh == null:
+			continue
+		_strip_mesh_above(mesh, 2.15)
+		if mesh.name in ["export_detail_acoustic", "export_detail_hazard"]:
 			mesh.visible = false
-			print("[UpperDeck] hidden stale detail ", mesh_name)
+			print("[UpperDeck] hidden stale detail ", mesh.name)
+		else:
+			_split_details_mesh(mesh, 2.0)
+
+
+func _strip_mesh_above(mesh_node: MeshInstance3D, cut_y: float) -> void:
+	var source := mesh_node.mesh
+	if source == null:
+		return
+	var upper_from_mesh := global_transform.affine_inverse() * mesh_node.global_transform
+	var result := ArrayMesh.new()
+	var changed := false
+	for surface in source.get_surface_count():
+		var arrays := source.surface_get_arrays(surface)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+		if indices.is_empty():
+			indices = PackedInt32Array()
+			for i in range(0, vertices.size(), 3):
+				indices.append(i)
+		var kept: Array[int] = []
+		for index in range(0, indices.size(), 3):
+			var ia := indices[index]
+			var ib := indices[index + 1]
+			var ic := indices[index + 2]
+			var ya := (upper_from_mesh * vertices[ia]).y
+			var yb := (upper_from_mesh * vertices[ib]).y
+			var yc := (upper_from_mesh * vertices[ic]).y
+			var centroid := upper_from_mesh * ((vertices[ia] + vertices[ib] + vertices[ic]) / 3.0)
+			var drop := maxf(ya, maxf(yb, yc)) > cut_y
+			if not drop:
+				for box in [
+					[Vector3(-4.20, 0.0, -3.20), Vector3(-3.00, 2.90, 0.30)],
+					[Vector3(-3.20, 0.0, -1.20), Vector3(-2.20, 2.60, 0.80)],
+					[Vector3(-1.70, 0.0, -3.80), Vector3(-0.40, 0.50, -0.20)],
+				]:
+					if centroid.x > box[0].x and centroid.x < box[1].x \
+							and centroid.y > box[0].y and centroid.y < box[1].y \
+							and centroid.z > box[0].z and centroid.z < box[1].z:
+						drop = true
+						break
+			if drop:
+				changed = true
+				continue
+			kept.append(ia)
+			kept.append(ib)
+			kept.append(ic)
+		if kept.is_empty():
+			continue
+		var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+		var uvs: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV]
+		var has_normals := normals.size() == vertices.size()
+		var has_uvs := uvs.size() == vertices.size()
+		var out_v: Array = []
+		var out_n: Array = []
+		var out_uv: Array = []
+		var out_i: Array = []
+		for vi in kept:
+			out_v.append(vertices[vi])
+			out_n.append(normals[vi] if has_normals else Vector3.UP)
+			out_uv.append(uvs[vi] if has_uvs else Vector2.ZERO)
+			out_i.append(out_v.size() - 1)
+		var new_arrays: Array = []
+		new_arrays.resize(Mesh.ARRAY_MAX)
+		new_arrays[Mesh.ARRAY_VERTEX] = PackedVector3Array(out_v)
+		new_arrays[Mesh.ARRAY_NORMAL] = PackedVector3Array(out_n)
+		new_arrays[Mesh.ARRAY_TEX_UV] = PackedVector2Array(out_uv)
+		new_arrays[Mesh.ARRAY_INDEX] = PackedInt32Array(out_i)
+		result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, new_arrays)
+		result.surface_set_material(result.get_surface_count() - 1,
+			source.surface_get_material(surface))
+	if changed:
+		mesh_node.mesh = result
+
+
+func _split_details_mesh(mesh_node: MeshInstance3D, cell_size: float) -> void:
+	# Split the merged Details material groups into coarse spatial cells so an
+	# old pipe in the aft room no longer shares an AABB with the new stair at the
+	# bow. Visual triangles are preserved; only the node partition changes.
+	var source := mesh_node.mesh
+	if source == null:
+		return
+	var upper_from_mesh := global_transform.affine_inverse() * mesh_node.global_transform
+	var parent := mesh_node.get_parent()
+	var made := false
+	var base_name := String(mesh_node.name)
+	for surface in source.get_surface_count():
+		var arrays := source.surface_get_arrays(surface)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+		var uvs: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV]
+		var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+		if indices.is_empty():
+			indices = PackedInt32Array()
+			for i in range(0, vertices.size(), 3):
+				indices.append(i)
+		var has_normals := normals.size() == vertices.size()
+		var has_uvs := uvs.size() == vertices.size()
+		var groups: Dictionary = {}
+		for index in range(0, indices.size(), 3):
+			var ia := indices[index]
+			var ib := indices[index + 1]
+			var ic := indices[index + 2]
+			var center := upper_from_mesh * ((vertices[ia] + vertices[ib] + vertices[ic]) / 3.0)
+			var key := Vector2i(int(floor(center.x / cell_size)), int(floor(center.z / cell_size)))
+			if not groups.has(key):
+				groups[key] = []
+			groups[key].append(ia)
+			groups[key].append(ib)
+			groups[key].append(ic)
+		for key in groups:
+			var tri_indices: Array = groups[key]
+			var out_v: Array = []
+			var out_n: Array = []
+			var out_uv: Array = []
+			var out_i: Array = []
+			for vi in tri_indices:
+				out_v.append(vertices[vi])
+				out_n.append(normals[vi] if has_normals else Vector3.UP)
+				out_uv.append(uvs[vi] if has_uvs else Vector2.ZERO)
+				out_i.append(out_v.size() - 1)
+			var cell_arrays: Array = []
+			cell_arrays.resize(Mesh.ARRAY_MAX)
+			cell_arrays[Mesh.ARRAY_VERTEX] = PackedVector3Array(out_v)
+			cell_arrays[Mesh.ARRAY_NORMAL] = PackedVector3Array(out_n)
+			cell_arrays[Mesh.ARRAY_TEX_UV] = PackedVector2Array(out_uv)
+			cell_arrays[Mesh.ARRAY_INDEX] = PackedInt32Array(out_i)
+			var cell_mesh := ArrayMesh.new()
+			cell_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, cell_arrays)
+			cell_mesh.surface_set_material(0, source.surface_get_material(surface))
+			var cell := MeshInstance3D.new()
+			cell.name = "%s_cell_%d_%d_s%d" % [base_name, key.x, key.y, surface]
+			cell.transform = mesh_node.transform
+			cell.mesh = cell_mesh
+			cell.material_override = mesh_node.material_override
+			cell.cast_shadow = mesh_node.cast_shadow
+			parent.add_child(cell)
+			made = true
+	if made:
+		mesh_node.visible = false
 
 
 func _sign(text: String, pos: Vector3, yaw: float) -> void:
@@ -1175,10 +1280,6 @@ func _build_collision() -> void:
 		Vector3(ATRIUM_X1, FLOOR + 0.5, (ATRIUM_Z0 + ATRIUM_Z1) * 0.5))
 	_add_box(body, Vector3(ATRIUM_X1 - ATRIUM_X0, 1.0, 0.08),
 		Vector3((ATRIUM_X0 + ATRIUM_X1) * 0.5, FLOOR + 0.5, ATRIUM_Z0))
-	_add_box(body, Vector3(0.12, CEIL - 0.02, 2.10),
-		Vector3(ATRIUM_X0, (CEIL + 0.02) * 0.5, -1.95))
-	_add_box(body, Vector3(0.12, CEIL - 2.42, 1.50),
-		Vector3(ATRIUM_X0, (2.42 + CEIL) * 0.5, -0.15))
 	# Smooth ramp collider over the visual treads, aligned to the tread noses:
 	# y=0.217 at z=0, y=2.82 at z=-3. The old collider sat ~0.24 m high, which
 	# made the first step unclimbable and the player float above the treads.

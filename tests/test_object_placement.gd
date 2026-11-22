@@ -99,6 +99,10 @@ func _run() -> void:
 			var mesh := mesh_node as MeshInstance3D
 			if mesh.mesh == null or not mesh.is_visible_in_tree():
 				continue
+			# Spatial cells are fragments of wall/ceiling detail, not floor props;
+			# their support is checked by the full spatial audit.
+			if "_cell_" in String(mesh.name):
+				continue
 			var b := mesh.global_transform * mesh.get_aabb()
 			if b.size.length() < 0.005:
 				continue
