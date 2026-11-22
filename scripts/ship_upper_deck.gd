@@ -70,6 +70,7 @@ func _ready() -> void:
 	_build_ceilings()
 	_build_lights()
 	_build_props()
+	_clean_vent_meshes()
 	_build_signs()
 	_hide_stale_details()
 	_build_collision()
@@ -805,6 +806,134 @@ func _prop(scene: PackedScene, name: String, pos: Vector3, yaw: float) -> Node3D
 	node.rotation_degrees.y = yaw
 	add_child(node)
 	return node
+
+
+func _clean_vent_meshes() -> void:
+	# vent_grille.glb is built from overlapping torn-metal shards. Hundreds of
+	# its triangles lie in exactly the same plane, so the frame and slats fight
+	# for depth and flicker. Push one triangle of every coplanar pair a few
+	# millimetres along its normal; the worn shape stays, the flicker does not.
+	var source: Mesh = null
+	for label in ["HallVent", "ObservationVent"]:
+		var vent := find_child(label, true, false) as Node3D
+		if vent == null:
+			continue
+		var grille := vent.find_child("vent_grille", true, false) as MeshInstance3D
+		if grille == null:
+			continue
+		if source == null:
+			source = grille.mesh
+			var passes := 0
+			for iteration in 8:
+				var cleaned := _flatten_coplanar_mesh(source, 0.004)
+				if cleaned == null:
+					break
+				source = cleaned
+				passes += 1
+			if passes > 0:
+				print("[UpperDeck] vent mesh flattened for ", label, " passes=", passes)
+		grille.mesh = source
+
+
+func _flatten_coplanar_mesh(source: Mesh, offset: float) -> ArrayMesh:
+	var triangles: Array = []
+	var has_uv: Array[bool] = []
+	for surface in source.get_surface_count():
+		var arrays := source.surface_get_arrays(surface)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var normals := PackedVector3Array()
+		if arrays[Mesh.ARRAY_NORMAL] != null:
+			normals = arrays[Mesh.ARRAY_NORMAL]
+		var uvs := PackedVector2Array()
+		if arrays[Mesh.ARRAY_TEX_UV] != null:
+			uvs = arrays[Mesh.ARRAY_TEX_UV]
+		has_uv.append(uvs.size() == vertices.size())
+		var triples: Array = []
+		var indices := PackedInt32Array()
+		if arrays[Mesh.ARRAY_INDEX] != null:
+			indices = arrays[Mesh.ARRAY_INDEX]
+		if indices.is_empty():
+			for index in range(0, vertices.size(), 3):
+				triples.append([index, index + 1, index + 2])
+		else:
+			for index in range(0, indices.size(), 3):
+				triples.append([indices[index], indices[index + 1], indices[index + 2]])
+		for triple in triples:
+			var ia: int = triple[0]
+			var ib: int = triple[1]
+			var ic: int = triple[2]
+			var a := vertices[ia]
+			var b := vertices[ib]
+			var c := vertices[ic]
+			var normal := (b - a).cross(c - a)
+			if normal.length() < 1e-9:
+				continue
+			normal = normal.normalized()
+			var na := normal
+			var nb := normal
+			var nc := normal
+			if normals.size() == vertices.size():
+				na = normals[ia]
+				nb = normals[ib]
+				nc = normals[ic]
+			var ua := Vector2.ZERO
+			var ub := Vector2.ZERO
+			var uc := Vector2.ZERO
+			if uvs.size() == vertices.size():
+				ua = uvs[ia]
+				ub = uvs[ib]
+				uc = uvs[ic]
+			triangles.append({
+				"surface": surface, "a": a, "b": b, "c": c, "normal": normal,
+				"plane": normal.dot(a), "na": na, "nb": nb, "nc": nc,
+				"ua": ua, "ub": ub, "uc": uc, "offset": false,
+			})
+	var marked := 0
+	for i in triangles.size():
+		var first: Dictionary = triangles[i]
+		for j in range(i + 1, triangles.size()):
+			var second: Dictionary = triangles[j]
+			if absf(first["normal"].dot(second["normal"])) < 0.9995:
+				continue
+			if absf(first["plane"] - second["plane"]) > 0.002:
+				continue
+			var ca: Vector3 = (first["a"] + first["b"] + first["c"]) / 3.0
+			var cb: Vector3 = (second["a"] + second["b"] + second["c"]) / 3.0
+			if ca.distance_to(cb) > 0.06:
+				continue
+			if not second["offset"]:
+				second["offset"] = true
+				marked += 1
+	if marked == 0:
+		return null
+	var result := ArrayMesh.new()
+	for surface in source.get_surface_count():
+		var out_vertices := PackedVector3Array()
+		var out_normals := PackedVector3Array()
+		var out_uvs := PackedVector2Array()
+		for triangle in triangles:
+			if triangle["surface"] != surface:
+				continue
+			var shift: Vector3 = triangle["normal"] * offset if triangle["offset"] else Vector3.ZERO
+			out_vertices.append(triangle["a"] + shift)
+			out_vertices.append(triangle["b"] + shift)
+			out_vertices.append(triangle["c"] + shift)
+			out_normals.append(triangle["na"])
+			out_normals.append(triangle["nb"])
+			out_normals.append(triangle["nc"])
+			out_uvs.append(triangle["ua"])
+			out_uvs.append(triangle["ub"])
+			out_uvs.append(triangle["uc"])
+		var arrays := []
+		arrays.resize(Mesh.ARRAY_MAX)
+		arrays[Mesh.ARRAY_VERTEX] = out_vertices
+		arrays[Mesh.ARRAY_NORMAL] = out_normals
+		if has_uv[surface]:
+			arrays[Mesh.ARRAY_TEX_UV] = out_uvs
+		result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+		result.surface_set_material(result.get_surface_count() - 1,
+			source.surface_get_material(surface))
+	return result
 
 
 func _build_signs() -> void:
