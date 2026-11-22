@@ -5,7 +5,6 @@ extends Node3D
 ## The GLB on disk is untouched: only the common-room ceiling over the atrium
 ## and stair opening is removed at runtime.
 
-const PIXEL := preload("res://scripts/ship_pixel_materials.gd")
 const BUNK := preload("res://assetss/rooms/quarters/bunk_bed.glb")
 const LOCKER := preload("res://assetss/rooms/quarters/locker.glb")
 const SHELF := preload("res://assetss/rooms/quarters/shelf_rack.glb")
@@ -44,6 +43,8 @@ var _collision_shapes: Array[CollisionShape3D] = []
 
 
 func _ready() -> void:
+	_relocate_common_counter()
+	_cut_stair_notch()
 	_cut_old_ceiling()
 	_build_floors()
 	_build_walls()
@@ -54,9 +55,9 @@ func _ready() -> void:
 	_build_lights()
 	_build_props()
 	_build_signs()
-	var used := PIXEL.apply_to(self)
 	_build_collision()
-	print("[UpperDeck] pixel_textures=", used.keys())
+	# The parent ShipInterior applies ship_pixel_materials to the whole interior,
+	# including this deck, once. Do not apply them twice here.
 
 
 func get_collision_shapes() -> Array:
@@ -71,7 +72,7 @@ func set_roof_visible(value: bool) -> void:
 
 func _material(label: String, color: Color, metallic := 0.2, roughness := 0.82,
 		uv := Vector3.ONE) -> StandardMaterial3D:
-	var key := "%s|%s" % [label, str(uv)]
+	var key := "%s|%s|%s" % [label, str(uv), color.to_html()]
 	if _materials.has(key):
 		return _materials[key]
 	var material := StandardMaterial3D.new()
@@ -107,25 +108,43 @@ func _sloped(size: Vector3, pos: Vector3, material: Material, pitch: float,
 	return node
 
 
-func _cut_old_ceiling() -> void:
+func _relocate_common_counter() -> void:
+	# The old galley counter runs exactly under the new stair flight. Move the
+	# counter and its indicator east, preserving the model instead of deleting it.
 	var rooms := get_node_or_null("../Rooms")
 	if rooms == null:
-		push_warning("[UpperDeck] Rooms not found, atrium ceiling stays closed")
 		return
-	# GLB import names mesh nodes "<object> <material>", e.g.
-	# "common structural_graphite". Cut the top faces of both the outer shell
-	# and the bulkhead liner inside the atrium/stair opening.
-	for node in rooms.find_children("common *", "MeshInstance3D", true, false):
-		_cut_mesh_top(node as MeshInstance3D)
-	for node in rooms.find_children("bulkhead *", "MeshInstance3D", true, false):
-		_cut_mesh_top(node as MeshInstance3D)
+	for label in ["common ivory_aged", "common amber_indicator"]:
+		var node := rooms.find_child(label, true, false) as Node3D
+		if node != null:
+			node.position.x += 2.5
 
 
-func _cut_mesh_top(mesh_node: MeshInstance3D) -> void:
+func _cut_stair_notch() -> void:
+	# A low structural bench/ledge of the old common runs along the outer wall
+	# exactly where the flight lands. Remove only that ledge inside the stair
+	# footprint, keeping the old floor, the wall and the rest of the room.
+	var rooms := get_node_or_null("../Rooms")
+	if rooms == null:
+		return
+	var node := rooms.find_child("common structural_graphite", true, false) as MeshInstance3D
+	if node == null:
+		return
+	_cut_mesh_volume(node, position, -4.05, -3.10, -3.10, 0.10, 0.20, 2.05)
+
+
+func _cut_mesh_volume(mesh_node: MeshInstance3D, offset: Vector3, lx0: float, lx1: float,
+		lz0: float, lz1: float, y0: float, y1: float) -> void:
 	var source := mesh_node.mesh
+	if source == null:
+		return
 	var result := ArrayMesh.new()
 	var changed := false
 	var removed := 0
+	var hx0 := lx0 + offset.x
+	var hx1 := lx1 + offset.x
+	var hz0 := lz0 + offset.z
+	var hz1 := lz1 + offset.z
 	for surface in source.get_surface_count():
 		var arrays := source.surface_get_arrays(surface)
 		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
@@ -140,10 +159,74 @@ func _cut_mesh_top(mesh_node: MeshInstance3D) -> void:
 			var a := mesh_node.transform * vertices[ia]
 			var b := mesh_node.transform * vertices[ib]
 			var c := mesh_node.transform * vertices[ic]
-			if a.y > 2.50 and b.y > 2.50 and c.y > 2.50:
+			var centroid := (a + b + c) / 3.0
+			if centroid.x > hx0 and centroid.x < hx1 \
+					and centroid.z > hz0 and centroid.z < hz1 \
+					and centroid.y > y0 and centroid.y < y1:
+				changed = true
+				removed += 1
+				continue
+			kept.append(ia)
+			kept.append(ib)
+			kept.append(ic)
+		var new_arrays := arrays.duplicate(true)
+		new_arrays[Mesh.ARRAY_INDEX] = PackedInt32Array(kept)
+		result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, new_arrays)
+		result.surface_set_material(result.get_surface_count() - 1,
+			source.surface_get_material(surface))
+	if changed:
+		mesh_node.mesh = result
+		print("[UpperDeck] stair bench cut removed=", removed)
+
+
+func _cut_old_ceiling() -> void:
+	var rooms := get_node_or_null("../Rooms")
+	if rooms == null:
+		push_warning("[UpperDeck] Rooms not found, atrium ceiling stays closed")
+		return
+	# The UpperDeck node is offset relative to Rooms; the opening must be cut in
+	# Rooms space, not in the deck's own local space. Only the shell/ceiling and
+	# wall band are cut; furniture, lamps and floor plates stay.
+	var offset := position
+	var targets := [
+		"common structural_graphite", "common brushed_edges", "common wall_common",
+		"bulkhead structural_graphite", "bulkhead brushed_edges", "bulkhead wall_common"
+	]
+	for label in targets:
+		var node := rooms.find_child(label, true, false) as MeshInstance3D
+		if node != null:
+			_cut_mesh_top(node, offset)
+
+
+func _cut_mesh_top(mesh_node: MeshInstance3D, offset: Vector3) -> void:
+	var source := mesh_node.mesh
+	var result := ArrayMesh.new()
+	var changed := false
+	var removed := 0
+	var hx0 := X0 - 0.05 + offset.x
+	var hx1 := ATRIUM_X1 + 0.05 + offset.x
+	var hz0 := ATRIUM_Z0 - 0.05 + offset.z
+	var hz1 := ATRIUM_Z1 + 0.05 + offset.z
+	for surface in source.get_surface_count():
+		var arrays := source.surface_get_arrays(surface)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+		if indices.is_empty():
+			continue
+		var kept: Array[int] = []
+		for index in range(0, indices.size(), 3):
+			var ia := indices[index]
+			var ib := indices[index + 1]
+			var ic := indices[index + 2]
+			var a := mesh_node.transform * vertices[ia]
+			var b := mesh_node.transform * vertices[ib]
+			var c := mesh_node.transform * vertices[ic]
+			# Remove the ceiling, beams and the low soffit/wall band above the
+			# lower room; keep walls below head height and all floors.
+			if a.y > 2.05 and b.y > 2.05 and c.y > 2.05:
 				var centroid := (a + b + c) / 3.0
-				if centroid.x > X0 - 0.05 and centroid.x < ATRIUM_X1 + 0.05 \
-						and centroid.z > ATRIUM_Z0 - 0.05 and centroid.z < ATRIUM_Z1 + 0.05:
+				if centroid.x > hx0 and centroid.x < hx1 \
+						and centroid.z > hz0 and centroid.z < hz1:
 					changed = true
 					removed += 1
 					continue
@@ -432,11 +515,10 @@ func _build_props() -> void:
 	_prop(BUNK, "CabinBunk", Vector3(-3.55, FLOOR, 2.20), 90.0)
 	_prop(LOCKER, "CabinLocker", Vector3(-3.55, FLOOR, 3.65), 180.0)
 	_prop(TABLE, "CabinTable", Vector3(-0.45, FLOOR, 3.20), 0.0)
-	_prop(CHAIR, "CabinChair", Vector3(-1.15, FLOOR, 2.45), 0.0)
+	_prop(CHAIR, "CabinChair", Vector3(-0.90, FLOOR, 2.20), 0.0)
 	_prop(PIPES, "CabinPipes", Vector3(-3.99, 4.75, 2.00), -90.0)
 	# Observation.
 	_prop(NAV_CONSOLE, "ObservationConsole", Vector3(-2.05, FLOOR, -7.35), 0.0)
-	_prop(CHAIR, "ObservationChair", Vector3(-2.05, FLOOR, -6.05), 180.0)
 	_prop(BENCH, "ObservationBench", Vector3(-0.45, FLOOR, -5.20), 90.0)
 	_prop(TABLE, "ObservationTable", Vector3(-0.45, FLOOR, -7.30), 0.0)
 	_prop(VENT, "ObservationVent", Vector3(-0.06, 4.30, -5.20), 90.0)
@@ -445,15 +527,15 @@ func _build_props() -> void:
 	_prop(LOCKER, "TechLocker", Vector3(3.70, FLOOR, -0.42), 180.0)
 	_prop(TABLE, "TechTable", Vector3(2.00, FLOOR, -2.28), 0.0)
 	_prop(TRASH, "TechBin", Vector3(3.25, FLOOR, -2.30), 0.0)
-	_prop(PIPES, "TechPipes", Vector3(2.50, 4.05, -2.62), 0.0)
-	# Crates on the floor.
+	_prop(PIPES, "TechPipes", Vector3(2.50, 4.05, -2.55), 0.0)
+	# Crates on the floor, clear of the tech-storage door.
 	var crate := _material("detail_cardboard", Color(0.55, 0.45, 0.32), 0.0, 0.9)
-	_box(Vector3(0.62, 0.50, 0.62), Vector3(0.95, FLOOR + 0.25, -2.18), crate, "CrateA")
-	_box(Vector3(0.62, 0.50, 0.62), Vector3(0.95, FLOOR + 0.75, -2.18), crate, "CrateB")
+	_box(Vector3(0.62, 0.50, 0.62), Vector3(3.50, FLOOR + 0.25, -2.18), crate, "CrateA")
+	_box(Vector3(0.62, 0.50, 0.62), Vector3(3.50, FLOOR + 0.75, -2.18), crate, "CrateB")
 	_box(Vector3(0.52, 0.42, 0.52), Vector3(0.35, FLOOR + 0.21, -0.60), crate, "CrateC")
 	# Hall dressing.
 	_prop(VENT, "HallVent", Vector3(-0.06, 4.30, -3.35), -90.0)
-	_prop(PIPES, "HallPipes", Vector3(-0.06, 4.75, -0.60), -90.0)
+	_prop(PIPES, "HallPipes", Vector3(-0.09, 4.75, -0.60), -90.0)
 	# A small worktop at the cabin door is omitted: the visible decals/labels come next.
 
 
@@ -467,17 +549,17 @@ func _prop(scene: PackedScene, name: String, pos: Vector3, yaw: float) -> Node3D
 
 
 func _build_signs() -> void:
-	_sign("ДОП. КАЮТА", Vector3(-0.40, 4.72, -0.01), 180.0)
-	_sign("ОБЗОР", Vector3(-0.40, 4.72, HALL_Z0 + 0.01), 0.0)
-	_sign("ТЕХСКЛАД", Vector3(X1 - 0.01, 4.72, -1.70), -90.0)
-	_sign("ВЕРХНЯЯ ПАЛУБА", Vector3(-3.10, 2.18, -0.04), 180.0)
+	_sign("ДОП. КАЮТА", Vector3(-0.40, 5.12, -0.01), 180.0)
+	_sign("ОБЗОР", Vector3(-0.40, 5.12, HALL_Z0 + 0.01), 0.0)
+	_sign("ТЕХСКЛАД", Vector3(X1 - 0.01, 5.12, -1.70), -90.0)
+	_sign("ВЕРХНЯЯ ПАЛУБА", Vector3(-2.90, 2.18, -0.04), 180.0)
 	# A small warm lens over the lower stair sign, matching the old lamp style.
 	var lamp := _material("lamp_diffuser", Color(0.35, 0.40, 0.35), 0.0, 0.8)
 	lamp.emission_enabled = true
 	lamp.emission = Color(1.0, 0.78, 0.52)
 	lamp.emission_energy_multiplier = 0.9
-	_box(Vector3(0.52, 0.02, 0.08), Vector3(-3.10, 2.44, -0.04), lamp)
-	_omni("StairSignFill", Vector3(-3.10, 2.24, -0.35), Color(1.0, 0.80, 0.56), 0.5, 2.0)
+	_box(Vector3(0.52, 0.02, 0.08), Vector3(-2.90, 2.44, -0.04), lamp)
+	_omni("StairSignFill", Vector3(-2.90, 2.24, -0.35), Color(1.0, 0.80, 0.56), 0.5, 2.0)
 
 
 func _sign(text: String, pos: Vector3, yaw: float) -> void:
@@ -521,8 +603,8 @@ func _build_window() -> void:
 	_box(Vector3(0.10, 1.72, 0.10), Vector3(X0 + 0.04, FLOOR + 1.50, -4.80), frame)
 	_box(Vector3(0.10, 0.10, 2.50), Vector3(X0 + 0.04, FLOOR + 2.30, -6.0), frame)
 	_box(Vector3(0.10, 0.10, 2.50), Vector3(X0 + 0.04, FLOOR + 0.70, -6.0), frame)
-	_box(Vector3(0.06, 1.64, 0.06), Vector3(X0 + 0.05, FLOOR + 1.50, -6.0), frame)
-	_box(Vector3(0.06, 0.06, 2.40), Vector3(X0 + 0.05, FLOOR + 1.50, -6.0), frame)
+	_box(Vector3(0.06, 1.64, 0.06), Vector3(X0 + 0.06, FLOOR + 1.50, -6.0), frame)
+	_box(Vector3(0.06, 0.06, 2.40), Vector3(X0 + 0.00, FLOOR + 1.50, -6.0), frame)
 
 
 func _build_collision() -> void:
@@ -550,14 +632,16 @@ func _build_collision() -> void:
 	# Smooth ramp collider over the visual treads.
 	var run := sqrt(STAIR_RUN * STAIR_RUN + STAIR_RISE * STAIR_RISE)
 	var ramp := _add_box(body, Vector3(1.0, 0.20, run),
-		Vector3(-3.60, STAIR_RISE * 0.5 - 0.10, -STAIR_RUN * 0.5))
+		Vector3(-3.60, STAIR_RISE * 0.5, -STAIR_RUN * 0.5))
 	ramp.rotation.x = atan2(STAIR_RISE, STAIR_RUN)
+	# The glass is solid; otherwise the player can step through the window.
+	_add_box(body, Vector3(0.06, 1.60, 2.40), Vector3(X0 - 0.02, FLOOR + 1.50, -6.0))
 	for prop_name in ["CabinBunk", "CabinLocker", "CabinTable", "CabinChair",
-			"ObservationConsole", "ObservationChair", "ObservationBench",
-			"ObservationTable", "TechShelf", "TechLocker", "TechTable", "TechBin"]:
+			"ObservationConsole", "ObservationBench", "ObservationTable",
+			"TechShelf", "TechLocker", "TechTable", "TechBin"]:
 		var prop := find_child(prop_name, true, false) as Node3D
 		if prop != null:
-			_add_prop_collision(prop)
+			_add_prop_collision(body, prop)
 
 
 func _collide_named(body: StaticBody3D, label: String) -> void:
@@ -581,17 +665,21 @@ func _add_box(body: StaticBody3D, size: Vector3, pos: Vector3,
 	return shape
 
 
-func _add_prop_collision(prop: Node3D) -> void:
+func _add_prop_collision(body: StaticBody3D, prop: Node3D) -> void:
+	var inv := global_transform.affine_inverse()
+	var bounds := AABB()
+	var has_bounds := false
 	for node in prop.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node := node as MeshInstance3D
 		if mesh_node.mesh == null:
 			continue
-		mesh_node.create_trimesh_collision()
-		for child in mesh_node.get_children():
-			if child is StaticBody3D:
-				var body := child as StaticBody3D
-				body.collision_layer = 1
-				body.collision_mask = 0
-				for shape in body.get_children():
-					if shape is CollisionShape3D:
-						_collision_shapes.append(shape)
+		var local := inv * mesh_node.global_transform
+		var box: AABB = local * mesh_node.mesh.get_aabb()
+		if not has_bounds:
+			bounds = box
+			has_bounds = true
+		else:
+			bounds = bounds.merge(box)
+	if not has_bounds:
+		return
+	_add_box(body, bounds.size, bounds.position + bounds.size * 0.5)
