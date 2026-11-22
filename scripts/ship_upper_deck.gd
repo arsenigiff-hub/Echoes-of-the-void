@@ -161,8 +161,8 @@ func _cut_stair_door() -> void:
 		var node := rooms.find_child(label, true, false) as MeshInstance3D
 		if node == null:
 			continue
-		var removed := _cut_mesh_box(node, position, Vector3(-3.10, 0.0, -1.20),
-			Vector3(-2.20, 2.42, 0.90))
+		var removed := _cut_mesh_box(node, position, Vector3(-2.95, 0.0, -0.90),
+			Vector3(-2.35, 2.42, 0.60))
 		# The old galley counter base/partition at the stair foot sits further
 		# west than the doorway. Remove the strip that crosses the flight.
 		removed += _cut_mesh_box(node, position, Vector3(-3.80, 0.0, -0.80),
