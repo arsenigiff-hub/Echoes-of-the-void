@@ -264,6 +264,17 @@ func _run() -> void:
 		var node := scene.get_node_or_null(label)
 		if node == null or not (node is Interactable):
 			failures.append("%s is not an Interactable" % label)
+	var cargo := scene.get_node_or_null("CargoEquipment") as Node3D
+	for label in ["CargoModule", "LashingBelts", "RestraintNet", "DeckTracks", "TransitCase"]:
+		var part := cargo.find_child(label, true, false) as MeshInstance3D if cargo != null else null
+		if part == null or not part.is_visible_in_tree() or part.mesh == null:
+			failures.append("cargo model is missing: %s" % label)
+	for label in ["CargoContainer", "SmallBox"]:
+		var body := scene.get_node_or_null(label) as StaticBody3D
+		if body == null or body.find_children("*", "CollisionShape3D", true, false).is_empty():
+			failures.append("cargo collider is missing: %s" % label)
+		elif (body.get_child(1) as MeshInstance3D).is_visible_in_tree():
+			failures.append("obsolete cargo placeholder is still visible: %s" % label)
 	var exam_model := scene.get_node_or_null("TripoExamTable") as Node3D
 	if exam_model == null or not exam_model.is_visible_in_tree():
 		failures.append("medbay exam table model is missing or hidden")

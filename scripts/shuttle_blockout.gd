@@ -575,27 +575,32 @@ func _build_medbay_exam_lamp(start_z: float) -> void:
 
 # ------------------------------------------------------------------- cargo --
 
+const CARGO_EQUIPMENT := preload("res://assetss/blender/cargo_equipment/cargo_equipment.glb")
+
+
 func _build_cargo() -> void:
 	var c: Vector2 = compartment_ranges["Cargo"]
-	# Crates stacked on the left, a strapped container on the right, loose straps.
+	# Keep the existing collision bodies; the cargo kit supplies only the visuals.
 	var crate := Color(0.34, 0.28, 0.20)
 	_prop("CargoCrateA", Vector3(1.0, 0.9, 1.0), -1.85, c.x + 1.0, crate)
 	_prop("CargoCrateB", Vector3(1.0, 0.9, 1.0), -1.85, c.x + 1.0, crate, 0.9)
 	_prop("CargoCrateC", Vector3(1.0, 0.7, 1.4), -1.75, c.x + 2.4, Color(0.30, 0.31, 0.28))
 	_prop("CargoCrateD", Vector3(0.8, 0.8, 0.8), -2.0, c.x + 3.6, crate)
 	_prop("CargoContainer", Vector3(1.4, 1.5, 2.2), 1.7, c.x + 2.0, Color(0.28, 0.32, 0.34))
-	for index in 3:
-		_deco("CargoStrap%d" % index, Vector3(1.45, 0.05, 0.06), Vector3(1.7, 0.4 + index * 0.45, c.x + 0.95), Color(0.55, 0.38, 0.12))
-	_deco("CargoStrapV", Vector3(0.06, 1.5, 0.06), Vector3(1.4, 0.75, c.x + 0.9), Color(0.55, 0.38, 0.12))
-	_deco("LooseStrap", Vector3(0.06, 0.012, 1.1), Vector3(0.3, 0.012, c.x + 3.2), Color(0.55, 0.38, 0.12), Vector3(0, 18, 0))
 	_prop("SmallBox", Vector3(0.5, 0.35, 0.4), 2.0, c.x + 3.6, crate)
-	# Floor tie-down rails and a hanging cargo net (grid of thin straps).
-	for rail in [-0.9, 0.9]:
-		_deco("CargoRail", Vector3(0.06, 0.02, c.y - c.x - 0.4), Vector3(rail, 0.02, (c.x + c.y) * 0.5), Color(0.18, 0.18, 0.17))
-	for index in 5:
-		_deco("NetV%d" % index, Vector3(0.02, 1.4, 0.02), Vector3(X(1.76), 1.5, c.x + 3.0 + index * 0.25), Color(0.2, 0.2, 0.16))
-	for index in 4:
-		_deco("NetH%d" % index, Vector3(0.02, 0.02, 1.0), Vector3(X(1.76), 0.9 + index * 0.35, c.x + 3.5), Color(0.2, 0.2, 0.16))
+	for label in ["CargoContainer", "SmallBox"]:
+		_hide_mesh(label)
+	var kit := CARGO_EQUIPMENT.instantiate() as Node3D
+	kit.name = "CargoEquipment"
+	kit.position = Vector3(WIDTH * 0.5, 0.0, c.x + 2.0)
+	kit.rotation_degrees.y = -90.0
+	add_child(kit)
+	for child in kit.find_children("*", "MeshInstance3D", true, false):
+		var visual := child as MeshInstance3D
+		for surface in visual.mesh.get_surface_count():
+			var material := visual.get_active_material(surface) as BaseMaterial3D
+			if material != null:
+				material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	_label("ГРУЗ", Vector3(X(1.72), 1.9, c.x + 2.0), -90.0, 0.08, Color(0.6, 0.55, 0.3))
 
 

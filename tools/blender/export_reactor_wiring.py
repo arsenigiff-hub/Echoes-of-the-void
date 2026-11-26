@@ -62,31 +62,36 @@ def bake(obj, size):
         node.interpolation = "Closest"
 
 
-scene = bpy.context.scene
-root = scene.objects["CabinetRoot"]
-door = scene.objects["DoorPivot"]
-door.rotation_euler.z = 0
-for obj in list(scene.objects):
-    if any(c.name.startswith(("04 •", "90 •", "91 •")) for c in obj.users_collection):
-        bpy.data.objects.remove(obj, do_unlink=True)
-scene.camera = None
-scene.render.engine = "CYCLES"
-scene.cycles.samples = 1
-scene.cycles.device = "CPU"
-bpy.context.view_layer.update()
+def export_cabinet():
+    scene = bpy.context.scene
+    root = scene.objects["CabinetRoot"]
+    door = scene.objects["DoorPivot"]
+    door.rotation_euler.z = 0
+    for obj in list(scene.objects):
+        if any(c.name.startswith(("04 •", "90 •", "91 •")) for c in obj.users_collection):
+            bpy.data.objects.remove(obj, do_unlink=True)
+    scene.camera = None
+    scene.render.engine = "CYCLES"
+    scene.cycles.samples = 1
+    scene.cycles.device = "CPU"
+    bpy.context.view_layer.update()
 
-shell_meshes = [o for o in root.children if o.type == "MESH" and o.name != "Warm lamp diffuser"]
-door_meshes = [o for o in door.children if o.type == "MESH"]
-door_meshes.sort(key=lambda o: not o.name.startswith("Door | pressed steel panel"))
-shell = merge("CabinetShell", shell_meshes)
-door_mesh = merge("CabinetDoor", door_meshes)
-bake(shell, 1024)
-bake(door_mesh, 1024)
-select(*list(scene.objects))
-target = Path(bpy.data.filepath).resolve().parents[1] / "assetss/blender/reactor_wiring/reactor_wiring.glb"
-target.parent.mkdir(parents=True, exist_ok=True)
-staged = target.with_name(".reactor_wiring_export.glb")
-bpy.ops.export_scene.gltf(filepath=str(staged), use_selection=True, export_yup=True,
-                          export_animations=False, export_cameras=False, export_lights=False)
-staged.replace(target)
-print("CABINET_EXPORT_OK", target, target.stat().st_size)
+    shell_meshes = [o for o in root.children if o.type == "MESH" and o.name != "Warm lamp diffuser"]
+    door_meshes = [o for o in door.children if o.type == "MESH"]
+    door_meshes.sort(key=lambda o: not o.name.startswith("Door | pressed steel panel"))
+    shell = merge("CabinetShell", shell_meshes)
+    door_mesh = merge("CabinetDoor", door_meshes)
+    bake(shell, 1024)
+    bake(door_mesh, 1024)
+    select(*list(scene.objects))
+    target = Path(bpy.data.filepath).resolve().parents[1] / "assetss/blender/reactor_wiring/reactor_wiring.glb"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    staged = target.with_name(".reactor_wiring_export.glb")
+    bpy.ops.export_scene.gltf(filepath=str(staged), use_selection=True, export_yup=True,
+                              export_animations=False, export_cameras=False, export_lights=False)
+    staged.replace(target)
+    print("CABINET_EXPORT_OK", target, target.stat().st_size)
+
+
+if __name__ == "__main__":
+    export_cabinet()
