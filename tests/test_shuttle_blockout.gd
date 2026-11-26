@@ -247,6 +247,22 @@ func _run() -> void:
 	if length < 30.0 or length > 36.0:
 		failures.append("shuttle length %.2f outside 30-36 m" % length)
 	var ranges: Dictionary = scene.get("compartment_ranges")
+	var life := scene.get_node_or_null("CrewLifeProps") as Node3D
+	var story_props := {
+		"Snapshot": "Galley", "ChildDrawing": "Galley", "WorkJacket": "CrewBay",
+		"RationPouch": "Galley", "PersonalCassette": "CrewBay", "UsedSyringeTray": "Medbay",
+		"OilyRag": "Cargo", "ToolRoll": "Cargo",
+	}
+	for label: String in story_props:
+		var anchor := life.find_child(label, true, false) as Node3D if life != null else null
+		var visual := anchor.find_child(label + "Mesh", true, false) as MeshInstance3D if anchor != null else null
+		var bounds: Vector2 = ranges[story_props[label]]
+		if visual == null or visual.mesh == null or not visual.is_visible_in_tree() \
+				or anchor.global_position.z <= bounds.x or anchor.global_position.z >= bounds.y:
+			failures.append("crew life prop is missing or in the wrong compartment: %s" % label)
+	if life != null and (life.find_children("*", "MeshInstance3D", true, false).size() != 8 \
+			or not life.find_children("*", "CollisionObject3D", true, false).is_empty()):
+		failures.append("crew life props export includes extra meshes or colliders")
 	var beam := scene.get_node_or_null("MedbayExamLamp/ExamBeam") as SpotLight3D
 	await _test_power(ranges["Reactor"], beam)
 	var order := ["Airlock", "Cockpit"]

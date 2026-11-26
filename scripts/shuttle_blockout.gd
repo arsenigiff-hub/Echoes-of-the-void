@@ -77,6 +77,7 @@ func _ready() -> void:
 	_build_lights()
 	_build_traces()
 	_build_tripo_props()
+	_build_crew_life_props()
 	_build_interactions()
 	_build_ambience()
 	_apply_textures()
@@ -520,10 +521,6 @@ func _build_galley() -> void:
 	_deco("Mattress", Vector3(0.8, 0.12, 1.9), Vector3(X(-1.25), 1.06, c.x + 1.5), Color(0.28, 0.30, 0.34))
 	_deco("Blanket", Vector3(0.78, 0.08, 1.0), Vector3(X(-1.25), 1.14, c.x + 1.15), Color(0.22, 0.26, 0.20), Vector3(0, 0, 3))
 	_deco("Pillow", Vector3(0.4, 0.12, 0.3), Vector3(X(-1.25), 1.18, c.x + 0.7), Color(0.55, 0.54, 0.48))
-	# Taped-up personal things above the capsule: a photo and a child's drawing.
-	_deco("Photo", Vector3(0.015, 0.16, 0.12), Vector3(X(-1.77), 1.62, c.x + 1.2), Color(0.55, 0.45, 0.35), Vector3(4, 0, 0))
-	_deco("Drawing", Vector3(0.012, 0.24, 0.3), Vector3(X(-1.77), 1.55, c.x + 1.6), Color(0.62, 0.58, 0.30), Vector3(-3, 0, 0))
-	_deco("DrawingSun", Vector3(0.014, 0.07, 0.07), Vector3(X(-1.765), 1.60, c.x + 1.55), Color(0.70, 0.30, 0.10))
 	_prop("GalleyCounter", Vector3(0.6, 0.95, 1.8), X(1.4), c.x + 1.1, C_METAL)
 	_deco("Sink", Vector3(0.4, 0.04, 0.5), Vector3(X(1.4), 0.96, c.x + 0.7), Color(0.12, 0.12, 0.12))
 	_cyl("Tap", 0.015, 0.2, Vector3(X(1.6), 1.08, c.x + 0.7), Color(0.5, 0.5, 0.5), "y")
@@ -555,7 +552,6 @@ func _build_medbay() -> void:
 	_prop("MedCounter", Vector3(0.6, 0.95, 1.6), X(1.4), c.x + 2.8, C_METAL)
 	_deco("SurgeryLampArm", Vector3(0.04, 0.04, 1.0), Vector3(-1.1, HEIGHT - 0.4, c.x + 2.0), Color(0.4, 0.4, 0.4))
 	_deco("SurgeryLamp", Vector3(0.5, 0.08, 0.5), Vector3(-1.1, HEIGHT - 0.55, c.x + 2.0), Color(0.5, 0.52, 0.5))
-	_deco("Syringe", Vector3(0.12, 0.015, 0.015), Vector3(X(1.4), 0.965, c.x + 2.6), Color(0.7, 0.7, 0.7), Vector3(0, 35, 0))
 	_deco("MedNote", Vector3(0.2, 0.012, 0.28), Vector3(X(1.4), 0.96, c.x + 3.1), C_PAPER, Vector3(0, -25, 0))
 	_label("МЕДИЦИНА", Vector3(X(1.72), 1.65, c.x + 2.8), -90.0, 0.06, Color(0.45, 0.55, 0.5))
 
@@ -932,8 +928,45 @@ func _mount_reactor_starter(reactor: Node3D, reactor_scale: float) -> void:
 
 # ------------------------------------------------------------------ traces --
 # Small signs of people (docs/SHUTTLE_LEVEL_DESIGN.md §3): the ship was built for
-# four, one is aboard, and the rest left in a hurry. Boxes and labels for now;
-# real props from Tripo replace the boxes later.
+# four, one is aboard, and the rest left in a hurry.
+
+const CREW_LIFE_PROPS := preload("res://assetss/blender/crew_life_props/crew_life_props.glb")
+
+
+func _build_crew_life_props() -> void:
+	var crew: Vector2 = compartment_ranges["CrewBay"]
+	var galley: Vector2 = compartment_ranges["Galley"]
+	var medbay: Vector2 = compartment_ranges["Medbay"]
+	var cargo: Vector2 = compartment_ranges["Cargo"]
+	var kit := CREW_LIFE_PROPS.instantiate() as Node3D
+	kit.name = "CrewLifeProps"
+	add_child(kit)
+
+	# The paper props are authored flat on the Blender XY plane.
+	var port_wall := Basis(Vector3.FORWARD, Vector3.RIGHT, Vector3.DOWN)
+	_place_life_prop(kit, "Snapshot", Vector3(-WIDTH * 0.5 + 0.010, 1.66, galley.x + 1.20),
+		port_wall.rotated(Vector3.RIGHT, deg_to_rad(-4.0)))
+	_place_life_prop(kit, "ChildDrawing", Vector3(-WIDTH * 0.5 + 0.010, 1.57, galley.x + 1.51),
+		port_wall.rotated(Vector3.RIGHT, deg_to_rad(3.0)))
+	_place_life_prop(kit, "WorkJacket", Vector3(-2.04, 0.502, crew.x + 2.60), Basis(Vector3.UP, deg_to_rad(84.0)))
+	# Use the real kitchen work surface, not the taller collision block.
+	_place_life_prop(kit, "RationPouch", Vector3(1.975, 0.777, galley.x + 1.94), Basis(Vector3.UP, deg_to_rad(-6.0)))
+	_place_life_prop(kit, "PersonalCassette", Vector3(1.80, 0.950, crew.x + 1.61), Basis(Vector3.UP, deg_to_rad(-78.0)))
+	_place_life_prop(kit, "UsedSyringeTray", Vector3(1.99, 0.951, medbay.x + 2.60), Basis(Vector3.UP, deg_to_rad(18.0)))
+	_place_life_prop(kit, "OilyRag", Vector3(1.84, 1.491, cargo.x + 1.60), Basis(Vector3.UP, deg_to_rad(-13.0)))
+	_place_life_prop(kit, "ToolRoll", Vector3(1.69, 1.489, cargo.x + 2.43), Basis(Vector3.UP, deg_to_rad(86.0)))
+	for child in kit.find_children("*", "MeshInstance3D", true, false):
+		var visual := child as MeshInstance3D
+		for surface in visual.mesh.get_surface_count():
+			var material := visual.get_active_material(surface) as BaseMaterial3D
+			if material != null:
+				material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+
+
+func _place_life_prop(kit: Node3D, label: String, position: Vector3, basis: Basis) -> void:
+	var anchor := kit.find_child(label, true, false) as Node3D
+	anchor.transform = Transform3D(basis, position)
+
 
 func _build_traces() -> void:
 	var c0: Vector2 = compartment_ranges["Cockpit"]
