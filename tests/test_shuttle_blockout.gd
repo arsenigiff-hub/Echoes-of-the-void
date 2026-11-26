@@ -293,6 +293,12 @@ func _run() -> void:
 		if body == null or body.find_children("*", "CollisionShape3D", true, false).is_empty() \
 				or (body.get_child(1) as MeshInstance3D).is_visible_in_tree():
 			failures.append("crew placeholder visibility or collision changed: %s" % label)
+	var footwear := scene.get_node_or_null("GalleySlippers") as Node3D
+	var pair := footwear.find_child("Slippers", true, false) as MeshInstance3D if footwear != null else null
+	if pair == null or pair.mesh == null or not pair.is_visible_in_tree():
+		failures.append("galley slipper model is missing")
+	elif not footwear.find_children("*", "CollisionObject3D", true, false).is_empty():
+		failures.append("galley slippers unexpectedly block the passage")
 	var cargo := scene.get_node_or_null("CargoEquipment") as Node3D
 	for label in ["CargoModule", "LashingBelts", "RestraintNet", "DeckTracks", "TransitCase"]:
 		var part := cargo.find_child(label, true, false) as MeshInstance3D if cargo != null else null

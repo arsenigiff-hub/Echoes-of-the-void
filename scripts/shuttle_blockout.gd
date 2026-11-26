@@ -500,8 +500,21 @@ func _mount_crew_equipment(start_z: float) -> void:
 
 # ------------------------------------------------------------------- galley -
 
+const GALLEY_SLIPPERS := preload("res://assetss/blender/galley_slippers/galley_slippers.glb")
+
+
 func _build_galley() -> void:
 	var c: Vector2 = compartment_ranges["Galley"]
+	var slippers := GALLEY_SLIPPERS.instantiate() as Node3D
+	slippers.name = "GalleySlippers"
+	slippers.position.z = c.x
+	add_child(slippers)
+	var visual := slippers.find_child("Slippers", true, false) as MeshInstance3D
+	if visual != null:
+		for surface in visual.mesh.get_surface_count():
+			var material := visual.get_active_material(surface) as BaseMaterial3D
+			if material != null:
+				material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	_prop("SleepCapsule", Vector3(0.95, 0.75, 2.1), X(-1.25), c.x + 1.5, Color(0.50, 0.50, 0.46), 0.25)
 	_deco("CapsuleLid", Vector3(0.95, 0.06, 1.9), Vector3(X(-1.45), 1.62, c.x + 1.5), Color(0.55, 0.55, 0.5), Vector3(0, 0, 58))
 	_deco("Mattress", Vector3(0.8, 0.12, 1.9), Vector3(X(-1.25), 1.06, c.x + 1.5), Color(0.28, 0.30, 0.34))
@@ -930,8 +943,6 @@ func _build_traces() -> void:
 	var c2: Vector2 = compartment_ranges["Galley"]
 	_cyl("WetCup", 0.04, 0.09, Vector3(X(1.4), 1.0, c2.x + 1.38), Color(0.4, 0.4, 0.38))
 	_deco("WetRing", Vector3(0.16, 0.003, 0.16), Vector3(X(1.4), 0.953, c2.x + 1.38), Color(0.06, 0.07, 0.08))
-	_deco("SlippersL", Vector3(0.12, 0.05, 0.28), Vector3(-0.6, 0.025, c2.x + 2.6), Color(0.35, 0.28, 0.2), Vector3(0, 20, 0))
-	_deco("SlippersR", Vector3(0.12, 0.05, 0.28), Vector3(-0.4, 0.025, c2.x + 2.7), Color(0.35, 0.28, 0.2), Vector3(0, 8, 0))
 
 	# Medbay: a bloodstained cloth on the counter.
 	var cm: Vector2 = compartment_ranges["Medbay"]
