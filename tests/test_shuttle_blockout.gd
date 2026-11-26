@@ -260,7 +260,7 @@ func _run() -> void:
 		if player.global_position.y > 0.4 or player.global_position.y < -0.2:
 			failures.append("%s: unexpected height %.2f" % [label, player.global_position.y])
 	# Interaction hooks: props remain Interactables in the dark.
-	for label in ["BreakerPanel", "NavConsole", "RadioDesk", "SleepCapsule", "EvaHatch", "ExamTable"]:
+	for label in ["BreakerPanel", "NavConsole", "RadioDesk", "JumpSeat1", "SleepCapsule", "EvaHatch", "ExamTable"]:
 		var node := scene.get_node_or_null(label)
 		if node == null or not (node is Interactable):
 			failures.append("%s is not an Interactable" % label)
@@ -277,6 +277,22 @@ func _run() -> void:
 	if nav_body == null or nav_body.find_children("*", "CollisionShape3D", true, false).is_empty() \
 			or (nav_body.get_child(1) as MeshInstance3D).is_visible_in_tree():
 		failures.append("navigation placeholder visibility or collision changed")
+	var crew := scene.get_node_or_null("CrewEquipment") as Node3D
+	for label in ["RadioDesk", "DeskDetails", "CrewSeats", "WatchSchedule"]:
+		var anchor := crew.find_child(label + "Mount", true, false) as Node3D if crew != null else null
+		var model := anchor.find_child(label + "Mesh", true, false) as MeshInstance3D if anchor != null else null
+		var side := -1.0 if label == "CrewSeats" else 1.0
+		if model == null or model.mesh == null or not model.is_visible_in_tree() \
+				or not is_equal_approx(anchor.global_position.x, side * 2.4):
+			failures.append("crew equipment is missing or on the wrong wall: %s" % label)
+	var radio := scene.get_node_or_null("TripoRadio") as Node3D
+	if radio == null or not radio.is_visible_in_tree():
+		failures.append("original radio model is missing from the crew desk")
+	for label in ["RadioDesk", "JumpSeat0", "JumpSeat1", "JumpSeat2"]:
+		var body := scene.get_node_or_null(label) as StaticBody3D
+		if body == null or body.find_children("*", "CollisionShape3D", true, false).is_empty() \
+				or (body.get_child(1) as MeshInstance3D).is_visible_in_tree():
+			failures.append("crew placeholder visibility or collision changed: %s" % label)
 	var cargo := scene.get_node_or_null("CargoEquipment") as Node3D
 	for label in ["CargoModule", "LashingBelts", "RestraintNet", "DeckTracks", "TransitCase"]:
 		var part := cargo.find_child(label, true, false) as MeshInstance3D if cargo != null else null

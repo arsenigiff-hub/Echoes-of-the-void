@@ -460,26 +460,42 @@ func _build_cockpit() -> void:
 
 # ----------------------------------------------------------------- crew bay -
 
+const CREW_EQUIPMENT := preload("res://assetss/blender/crew_equipment/crew_equipment.glb")
+
+
 func _build_crew_bay() -> void:
 	var c: Vector2 = compartment_ranges["CrewBay"]
 	_prop("RadioDesk", Vector3(0.6, 0.95, 1.5), X(1.4), c.x + 1.5, C_METAL)
-	_deco("RadioSet", Vector3(0.38, 0.30, 0.46), Vector3(X(1.45), 1.10, c.x + 1.35), Color(0.16, 0.18, 0.15), Vector3(0, -6, 0))
-	_deco("RadioScreen", Vector3(0.02, 0.12, 0.2), Vector3(X(1.255), 1.15, c.x + 1.35), Color(0.1, 0.8, 0.4)).get_child(0).set("material_override", _emit(Color(0.1, 0.8, 0.4), 1.3))
-	for index in 4:
-		_cyl("RadioKnob%d" % index, 0.025, 0.03, Vector3(X(1.255), 1.03, c.x + 1.2 + index * 0.07), Color(0.1, 0.1, 0.1), "x")
-	_deco("RadioWire", Vector3(0.03, 0.03, 0.9), Vector3(X(1.0), 0.06, c.x + 1.8), Color(0.04, 0.04, 0.04), Vector3(0, 12, 0))
-	_deco("Headset", Vector3(0.18, 0.04, 0.2), Vector3(X(1.45), 0.97, c.x + 0.95), Color(0.08, 0.08, 0.08), Vector3(0, 30, 0))
-	_deco("LogBook", Vector3(0.22, 0.03, 0.3), Vector3(X(1.45), 0.965, c.x + 2.0), Color(0.18, 0.22, 0.30), Vector3(0, -15, 0))
+	_hide_mesh("RadioDesk")
 	for index in 3:
 		var z := c.x + 0.8 + index * 0.9
 		_prop("JumpSeat%d" % index, Vector3(0.5, 0.5, 0.55), X(-1.45), z, C_SEAT)
 		_prop("JumpSeat%d_Back" % index, Vector3(0.12, 0.75, 0.55), X(-1.7), z, C_SEAT, 0.5)
-	# A jacket thrown over the middle seat and a thermos under the desk.
-	_cyl("Thermos", 0.05, 0.24, Vector3(X(1.0), 0.12, c.x + 2.1), Color(0.35, 0.36, 0.34))
+		_hide_mesh("JumpSeat%d" % index)
+		_hide_mesh("JumpSeat%d_Back" % index)
+	_mount_crew_equipment(c.x)
 	# Wall locker with a half-open door.
 	_prop("CrewLocker", Vector3(0.5, 1.8, 0.7), X(-1.5), c.x + 3.2, C_GREEN)
 	_deco("LockerDoor", Vector3(0.04, 1.7, 0.34), Vector3(X(-1.2), 0.95, c.x + 2.98), Color(0.20, 0.27, 0.22), Vector3(0, 55, 0))
 	_label("СВЯЗЬ", Vector3(X(1.72), 1.65, c.x + 1.5), -90.0, 0.06, Color(0.45, 0.55, 0.5))
+
+
+func _mount_crew_equipment(start_z: float) -> void:
+	var kit := CREW_EQUIPMENT.instantiate() as Node3D
+	kit.name = "CrewEquipment"
+	add_child(kit)
+	for entry in [["RadioDeskMount", 1.0, 1.5], ["DeskDetailsMount", 1.0, 1.5],
+			["CrewSeatsMount", -1.0, 0.8], ["WatchScheduleMount", 1.0, 3.4]]:
+		var anchor := kit.find_child(entry[0], true, false) as Node3D
+		var side: float = entry[1]
+		anchor.position = Vector3(side * WIDTH * 0.5, 0.0, start_z + float(entry[2]))
+		anchor.rotation_degrees.y = -side * 90.0
+	for child in kit.find_children("*", "MeshInstance3D", true, false):
+		var visual := child as MeshInstance3D
+		for surface in visual.mesh.get_surface_count():
+			var material := visual.get_active_material(surface) as BaseMaterial3D
+			if material != null:
+				material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 
 
 # ------------------------------------------------------------------- galley -
@@ -735,8 +751,6 @@ func _build_tripo_props() -> void:
 			Vector3(x, 0.9, c0.x + 0.55), 0.0)
 	# The field radio on the radio operator's desk.
 	var c1: Vector2 = compartment_ranges["CrewBay"]
-	for part in ["RadioSet", "RadioScreen", "Headset", "RadioKnob0", "RadioKnob1", "RadioKnob2", "RadioKnob3"]:
-		_hide_mesh(part)
 	_place_model("shuttle_radio.glb", "TripoRadio", 0.5, Vector3(X(1.4), 0.95, c1.x + 1.4), -90.0)
 	# Crew bay: a real locker instead of the grey box (stretched to 1.9 m tall).
 	for part in ["CrewLocker", "LockerDoor"]:
@@ -909,24 +923,8 @@ func _mount_reactor_starter(reactor: Node3D, reactor_scale: float) -> void:
 # real props from Tripo replace the boxes later.
 
 func _build_traces() -> void:
-	var tape := Color(0.14, 0.14, 0.13)
 	var c0: Vector2 = compartment_ranges["Cockpit"]
 	_label("ЭХО 1/4", Vector3(0.53, 0.744, c0.x + 0.84), 0.0, 0.043, Color(0.55, 0.5, 0.3))
-
-	# Crew bay: nameplates on the three fold-down seats, two taped over, a calendar.
-	var c1: Vector2 = compartment_ranges["CrewBay"]
-	for index in 3:
-		var z := c1.x + 0.8 + index * 0.9
-		var x := X(-1.7) + 0.07
-		_deco("NamePlate%d" % index, Vector3(0.02, 0.1, 0.34), Vector3(x, 0.95, z), Color(0.5, 0.48, 0.4))
-		if index == 1:
-			_label("ВЕТРОВ А.", Vector3(x + 0.015, 0.95, z), 90.0, 0.045, Color(0.12, 0.12, 0.1))
-		else:
-			_deco("NameTape%d" % index, Vector3(0.025, 0.12, 0.4), Vector3(x + 0.004, 0.95, z), tape, Vector3(0, 0, 4))
-	_deco("Calendar", Vector3(0.02, 0.4, 0.3), Vector3(X(1.76), 1.5, c1.x + 3.4), C_PAPER)
-	for day in 12:
-		_deco("CalendarCross%d" % day, Vector3(0.025, 0.012, 0.03),
-			Vector3(X(1.75), 1.62 - (day / 4) * 0.08, c1.x + 3.29 + (day % 4) * 0.07), Color(0.5, 0.1, 0.08))
 
 	# Galley: the second cup on the drying rack is still wet.
 	var c2: Vector2 = compartment_ranges["Galley"]
