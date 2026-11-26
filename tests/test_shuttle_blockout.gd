@@ -4,6 +4,7 @@ extends SceneTree
 
 const FRAME_STEP := 1.0 / 60.0
 const REACTOR_HOLD_SECONDS := 4.0
+const WIRING := preload("res://scripts/reactor_wiring.gd")
 var scene: Node3D
 var player: Player
 var failures: Array[String] = []
@@ -103,6 +104,75 @@ func _start_reactor() -> bool:
 	return true
 
 
+func _mouse_at(position: Vector2, pressed: bool) -> void:
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.position = position
+	click.pressed = pressed
+	root.push_input(click, true)
+
+
+func _drag_wire(wiring: WIRING, left: int, right: int) -> void:
+	var camera := root.get_camera_3d()
+	var source: Vector3 = wiring.call("_rest_tip", left)
+	var socket: Vector3 = wiring.call("_socket", right)
+	socket.x = 0.265 # Dropping over the engraved tile is allowed, not just the small socket.
+	var first := camera.unproject_position(wiring.to_global(source))
+	var last := camera.unproject_position(wiring.to_global(socket))
+	_mouse_at(first, true)
+	var motion := InputEventMouseMotion.new()
+	motion.position = last
+	motion.relative = last - first
+	motion.button_mask = MOUSE_BUTTON_MASK_LEFT
+	root.push_input(motion, true)
+	var wire := wiring.get_node("Wire_%s" % WIRING.LEFT[left]) as MeshInstance3D
+	var tip := wire.get_node("Tip") as MeshInstance3D
+	if tip.position.x < 0.18 or wire.mesh == null or wire.mesh.get_surface_count() != 1:
+		failures.append("pointer drag did not move a 3D wire to the right terminal")
+	_mouse_at(last, false)
+
+
+func _repair_breaker(breaker: Node3D) -> bool:
+	var wiring := scene.get_node("ReactorBreakerCabinet") as WIRING
+	_press(KEY_E)
+	await create_timer(0.60).timeout
+	var hinge := wiring.find_child("DoorPivot", true, false) as Node3D
+	if not wiring.is_focused() or not player.is_interacting or root.get_camera_3d() == player.camera \
+			or hinge == null or hinge.rotation_degrees.y > -90.0 or scene.get("powered"):
+		failures.append("breaker repair did not open the physical door and take camera focus in blackout")
+		return false
+	_drag_wire(wiring, 7, 7) # Moon -> cross is the mismatch on the generated art reference.
+	await create_timer(0.25).timeout
+	var moon_tip := wiring.get_node("Wire_moon/Tip") as MeshInstance3D
+	if wiring.connected_count != 0 or moon_tip.position.x > 0.0:
+		failures.append("wrong symbol was accepted or the loose wire did not retreat")
+	_drag_wire(wiring, 7, 8) # Moon -> moon.
+	var leave := InputEventKey.new()
+	leave.keycode = KEY_ESCAPE
+	leave.pressed = true
+	root.push_input(leave, true)
+	await create_timer(0.55).timeout
+	if wiring.connected_count != 1 or not is_zero_approx(hinge.rotation.y) or wiring.is_focused() \
+			or player.is_interacting or root.get_camera_3d() != player.camera or not _aim_at(breaker):
+		failures.append("Esc lost the matched pair or did not return the camera and movement")
+		return false
+	_press(KEY_E)
+	await create_timer(0.60).timeout
+	# Explicit order by symbol, independent of the controller's matching table.
+	var destinations := [2, 7, 3, 0, 9, 1, 5, 8, 4, 6]
+	for left in destinations.size():
+		if left == 7:
+			continue
+		_drag_wire(wiring, left, destinations[left])
+		if left < 9 and scene.get("powered"):
+			failures.append("board power returned before all ten wires were connected")
+	await create_timer(0.9).timeout
+	if wiring.connected_count != 10 or not wiring.is_repaired() or player.is_interacting or wiring.is_focused():
+		failures.append("repair did not commit all ten pairs and leave the panel")
+		return false
+	return _aim_at(breaker)
+
+
 func _test_power(reactor: Vector2, beam: SpotLight3D) -> void:
 	var environment: Environment = scene.get("_environment")
 	var med_light := scene.get_node("MedTube") as OmniLight3D
@@ -140,7 +210,9 @@ func _test_power(reactor: Vector2, beam: SpotLight3D) -> void:
 		failures.append("could not return to the breaker after stabilization")
 		return
 
-	_press(KEY_E)
+	if not await _repair_breaker(breaker):
+		failures.append("could not complete the in-world breaker repair")
+		return
 	if not scene.get("powered") or not is_equal_approx(environment.ambient_light_energy, 0.35) or objective.visible:
 		failures.append("the breaker did not restore the authored ambient light")
 	if not glow.emission_enabled or not med_light.is_visible_in_tree() or not is_equal_approx(med_light.light_energy, 0.7):
@@ -156,6 +228,10 @@ func _test_power(reactor: Vector2, beam: SpotLight3D) -> void:
 		failures.append("turning the breaker off did not shut down the shuttle")
 	if not is_zero_approx(float(scene.get("_rotor_speed"))) or not player.flashlight.is_visible_in_tree():
 		failures.append("the rotor and the personal flashlight did not respond independently")
+	_press(KEY_E)
+	if not scene.get("powered") or player.is_interacting:
+		failures.append("turning a repaired breaker back on incorrectly required another repair")
+	_press(KEY_E)
 	_press(KEY_F)
 
 

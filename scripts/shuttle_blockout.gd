@@ -363,7 +363,12 @@ func _build_ribs_and_runs(label: String, z0: float, length: float) -> void:
 	var count := int(floor(length))
 	for index in count:
 		var z := z0 + 0.5 + index * (length - 1.0) / maxf(float(count - 1), 1.0)
-		_deco(label + "_RibL", Vector3(0.10, HEIGHT - 0.1, 0.12), Vector3(-WIDTH * 0.5 + 0.05, HEIGHT * 0.5, z), C_RIB)
+		if label == "Reactor" and index == 0:
+			# Leave the recessed breaker bay clear of this wall rib.
+			_deco(label + "_RibL", Vector3(0.10, 0.75, 0.12), Vector3(-WIDTH * 0.5 + 0.05, 0.425, z), C_RIB)
+			_deco(label + "_RibL", Vector3(0.10, 0.75, 0.12), Vector3(-WIDTH * 0.5 + 0.05, 2.075, z), C_RIB)
+		else:
+			_deco(label + "_RibL", Vector3(0.10, HEIGHT - 0.1, 0.12), Vector3(-WIDTH * 0.5 + 0.05, HEIGHT * 0.5, z), C_RIB)
 		_deco(label + "_RibR", Vector3(0.10, HEIGHT - 0.1, 0.12), Vector3(WIDTH * 0.5 - 0.05, HEIGHT * 0.5, z), C_RIB)
 		_deco(label + "_RibTop", Vector3(WIDTH - 0.5, 0.10, 0.12), Vector3(0, HEIGHT - 0.05, z), C_RIB)
 	# Floor plate seams and a cable tray along the left wall.
@@ -604,10 +609,10 @@ func _build_reactor() -> void:
 	_deco("ReactorGlow", Vector3(0.02, 0.1, 1.5), Vector3(X(0.44), 1.5, c.x + 1.75), Color(1.0, 0.45, 0.12)).get_child(0).set("material_override", _emit(Color(1.0, 0.45, 0.12), 1.0))
 	for index in 6:
 		_deco("FloorHazard%d" % index, Vector3(0.18, 0.004, 0.5), Vector3(X(0.15), 0.005, c.x + 0.8 + index * 0.4), C_HAZARD, Vector3(0, 35, 0))
-	_prop("OxygenUnit", Vector3(0.6, 1.4, 0.9), X(-1.45), c.x + 1.0, C_GREEN)
-	_cyl("OxygenGaugeA", 0.07, 0.04, Vector3(X(-1.14), 1.15, c.x + 0.8), Color(0.75, 0.74, 0.66), "x")
-	_cyl("OxygenGaugeB", 0.07, 0.04, Vector3(X(-1.14), 1.15, c.x + 1.2), Color(0.75, 0.74, 0.66), "x")
-	_cyl("OxygenValve", 0.12, 0.04, Vector3(X(-1.14), 0.7, c.x + 1.0), Color(0.55, 0.12, 0.10), "x")
+	_prop("OxygenUnit", Vector3(0.6, 1.4, 1.35), X(-1.45), c.x + 1.55, C_GREEN)
+	_cyl("OxygenGaugeA", 0.07, 0.04, Vector3(X(-1.14), 1.15, c.x + 1.35), Color(0.75, 0.74, 0.66), "x")
+	_cyl("OxygenGaugeB", 0.07, 0.04, Vector3(X(-1.14), 1.15, c.x + 1.75), Color(0.75, 0.74, 0.66), "x")
+	_cyl("OxygenValve", 0.12, 0.04, Vector3(X(-1.14), 0.7, c.x + 1.55), Color(0.55, 0.12, 0.10), "x")
 	_prop("PipeCabinet", Vector3(0.5, 1.9, 0.7), X(-1.5), c.x + 2.6, Color(0.32, 0.34, 0.35))
 
 
@@ -653,6 +658,8 @@ func _build_airlock() -> void:
 
 const TRIPO := "res://assetss/tripo/"
 const REACTOR_STARTER_MODEL := preload("res://assetss/blender/reactor_starter/reactor_starter.glb")
+const REACTOR_BREAKER_MODEL := preload("res://assetss/blender/reactor_wiring/reactor_wiring.glb")
+const REACTOR_WIRING := preload("res://scripts/reactor_wiring.gd")
 const REACTOR_CONTROL_LAYER := 2
 
 var _oxygen_unit: Node3D
@@ -811,6 +818,22 @@ func _build_tripo_props() -> void:
 		Vector3(X(0), 0.42, ca.y - 0.13), 180.0)
 	if eva_hatch != null:
 		eva_hatch.scale = Vector3(1.7, 1.7, 0.5)
+	# Keep the interaction body separate from the visible cabinet and its hinge.
+	_breaker_wiring = REACTOR_WIRING.new()
+	_breaker_wiring.name = "ReactorBreakerCabinet"
+	_breaker_wiring.position = Vector3(-WIDTH * 0.5, 0.81, rc.x + 0.45)
+	_breaker_wiring.rotation_degrees.y = 90.0
+	_breaker_wiring.add_child(REACTOR_BREAKER_MODEL.instantiate())
+	_breaker_wiring.focus_changed.connect(_on_breaker_focus_changed)
+	_breaker_wiring.terminal_connected.connect(_play_one.bind("switch.ogg", -16.0))
+	_breaker_wiring.repaired.connect(_set_breaker_power.bind(true))
+	add_child(_breaker_wiring)
+	for child in _breaker_wiring.find_children("*", "MeshInstance3D", true, false):
+		var visual := child as MeshInstance3D
+		for surface in visual.mesh.get_surface_count():
+			var material := visual.get_active_material(surface) as BaseMaterial3D
+			if material != null:
+				material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	# Reactor: the oxygen generator on the left wall with a spinning rotor in its hatch.
 	var c3: Vector2 = compartment_ranges["Reactor"]
 	for part in ["OxygenUnit", "OxygenGaugeA", "OxygenGaugeB", "OxygenValve"]:
@@ -828,7 +851,7 @@ func _build_tripo_props() -> void:
 		_oxygen_unit = generator_scene.instantiate() as Node3D
 		_oxygen_unit.name = "TripoOxygenGenerator"
 		_oxygen_unit.scale = Vector3.ONE * 1.7
-		_oxygen_unit.position = Vector3(-WIDTH * 0.5 + 0.85, 0.0, c3.x + 1.2)
+		_oxygen_unit.position = Vector3(-WIDTH * 0.5 + 0.85, 0.0, c3.x + 1.55)
 		_oxygen_unit.rotation_degrees.y = 90.0
 		add_child(_oxygen_unit)
 		_oxygen_base = _oxygen_unit.position
@@ -916,10 +939,10 @@ func _build_traces() -> void:
 	var cm: Vector2 = compartment_ranges["Medbay"]
 	_deco("BloodCloth", Vector3(0.14, 0.01, 0.2), Vector3(X(1.4), 0.965, cm.x + 3.4), Color(0.33, 0.2, 0.2), Vector3(0, 40, 0))
 
-	# Reactor: an oil puddle and a "do not switch on" tag on the breaker panel.
+	# Reactor: an oil puddle under the breaker cabinet. The old red "do not switch on"
+	# tag is gone: the real cabinet carries its own stencils.
 	var c3: Vector2 = compartment_ranges["Reactor"]
 	_deco("OilPuddle", Vector3(0.7, 0.003, 0.5), Vector3(0.1, 0.004, c3.x + 3.5), Color(0.03, 0.03, 0.03), Vector3(0, 25, 0))
-	_deco("NoSwitchTag", Vector3(0.015, 0.1, 0.06), Vector3(-WIDTH * 0.5 + 0.15, 1.3, c3.x + 0.45), Color(0.6, 0.15, 0.1))
 
 	# Airlock: one suit hangs, two hooks are empty, a note about the seal.
 	var c4: Vector2 = compartment_ranges["Airlock"]
@@ -963,15 +986,14 @@ var _reactor_needle: Node3D
 var _reactor_zone: Node3D
 var _reactor_ready := false
 var _power_task_seen := false
+var _breaker_wiring: REACTOR_WIRING
 
 
 func _build_interactions() -> void:
 	var c: Vector2 = compartment_ranges["Reactor"]
 	# A dedicated breaker panel on the reactor wall by the hatch.
-	var panel := _box("BreakerPanel", Vector3(0.12, 0.9, 0.7), Vector3(-WIDTH * 0.5 + 0.06, 1.25, c.x + 0.45), Color(0.18, 0.2, 0.19))
-	for index in 6:
-		_deco("Breaker%d_Switch" % index, Vector3(0.04, 0.08, 0.05),
-			Vector3(-WIDTH * 0.5 + 0.14, 1.5 - index * 0.12, c.x + 0.45), Color(0.55, 0.5, 0.42) if index != 2 else Color(0.5, 0.1, 0.08))
+	_box("BreakerPanel", Vector3(0.24, 0.88, 0.69), Vector3(-WIDTH * 0.5 + 0.12, 1.25, c.x + 0.45), Color(0.18, 0.2, 0.19))
+	_hide_mesh("BreakerPanel")
 	for label in INTERACTABLES:
 		var body := get_node_or_null(label) as StaticBody3D
 		if body != null:
@@ -1069,17 +1091,18 @@ func on_interact(action: String, operator: CharacterBody3D = null) -> void:
 		_play_one("switch.ogg", -14.0)
 	match action:
 		"breaker":
+			if _breaker_wiring.is_focused():
+				_breaker_wiring.finish()
+				return
 			_power_task_seen = true
 			if not powered and not _reactor_ready:
 				_sync_power_hud()
 				show_message("ЩИТ БЕЗ ПИТАНИЯ. СНАЧАЛА ЗАПУСТИТЕ РЕАКТОР НАПРОТИВ КИСЛОРОДНОГО УЗЛА.")
 				return
-			set_powered(not powered)
-			_play_one("breaker.ogg", -6.0)
-			if powered:
-				_play_one("powerup.ogg", -12.0)
-			show_message("ЩИТ: АВТОМАТЫ ВКЛЮЧЕНЫ. БОРТОВАЯ СЕТЬ — ПИТАНИЕ ЕСТЬ." if powered
-				else "ЩИТ: АВТОМАТЫ ОТКЛЮЧЕНЫ. СЕТЬ БЕЗ ПИТАНИЯ.")
+			if powered or _breaker_wiring.is_repaired():
+				_set_breaker_power(not powered)
+			else:
+				_breaker_wiring.begin(operator as Player)
 		"reactor":
 			_interact_reactor(operator as Player)
 		"nav":
@@ -1102,6 +1125,27 @@ func on_interact(action: String, operator: CharacterBody3D = null) -> void:
 		"hatch":
 			show_message("ЛЮК: ВЫХОД НЕ РАЗРЕШЁН. ПАНЕЛЬ №2 ТРЕБУЕТ РЕМОНТА." if powered
 				else "ЛЮК ЗАБЛОКИРОВАН. НЕТ ПИТАНИЯ.")
+
+
+func _on_breaker_focus_changed() -> void:
+	_hud_prompt.text = ""
+	var focused := _breaker_wiring.is_focused()
+	if focused:
+		_hud_message.text = ""
+	# The PSX effect stays present, but the tiny stamped symbols must read.
+	_psx_material.set_shader_parameter("pixel_size", 2.0 if focused else 4.0)
+	_psx_material.set_shader_parameter("dither", 0.45 if focused else 0.8)
+	_psx_material.set_shader_parameter("grain", 0.023 if focused else 0.035)
+	_sync_power_hud()
+
+
+func _set_breaker_power(value: bool) -> void:
+	set_powered(value)
+	_play_one("breaker.ogg", -6.0)
+	if value:
+		_play_one("powerup.ogg", -12.0)
+	show_message("ЩИТ: АВТОМАТЫ ВКЛЮЧЕНЫ. БОРТОВАЯ СЕТЬ — ПИТАНИЕ ЕСТЬ." if value
+		else "ЩИТ: АВТОМАТЫ ОТКЛЮЧЕНЫ. СЕТЬ БЕЗ ПИТАНИЯ.")
 
 
 func _interact_reactor(operator: Player) -> void:
@@ -1151,15 +1195,21 @@ func _set_reactor_dial(needle: float, band: float) -> void:
 
 
 func _sync_power_hud() -> void:
-	_hud_objective.visible = not powered and _reactor_operator == null
+	_hud_objective.visible = not powered and _reactor_operator == null and not _breaker_wiring.is_focused()
 	if _reactor_ready:
 		_hud_objective.text = "Подайте питание на щите"
 	elif _power_task_seen:
 		_hud_objective.text = "Запустите реактор"
 	var breaker := get_node_or_null("BreakerPanel")
 	if breaker != null:
-		breaker.set("prompt", "[E] Отключить питание" if powered else (
-			"[E] Подать питание" if _reactor_ready else "[E] Щит автоматов"))
+		var prompt := "[E] Щит автоматов"
+		if powered:
+			prompt = "[E] Отключить питание"
+		elif _breaker_wiring.is_repaired():
+			prompt = "[E] Подать питание"
+		elif _reactor_ready:
+			prompt = "[E] Восстановить цепь"
+		breaker.set("prompt", prompt)
 	if _reactor_control != null:
 		_reactor_control.set("prompt", "[E] Реактор" if _reactor_ready or powered else "[E] Ручной пуск реактора")
 
@@ -1169,7 +1219,7 @@ func _update_prompt(delta: float) -> void:
 		_message_timer -= delta
 		if _message_timer <= 0.0:
 			_hud_message.text = ""
-	if _hud_prompt == null or _player == null or _reactor_operator != null:
+	if _hud_prompt == null or _player == null or _reactor_operator != null or _breaker_wiring.is_focused():
 		return
 	var ray := _player.get_node_or_null("Head/Camera3D/RayCast3D") as RayCast3D
 	var text := ""
@@ -1431,15 +1481,16 @@ func _setup_power() -> void:
 	var player := get_node_or_null("Player")
 	for child in find_children("*", "Light3D", true, false):
 		var light := child as Light3D
-		# The player's flashlight is independent of the ship's electrical system.
-		if player == null or not player.is_ancestor_of(light):
+		# The player's flashlight and repair inspection light are independent of board power.
+		if not _breaker_wiring.is_ancestor_of(light) and (player == null or not player.is_ancestor_of(light)):
 			_board_lights[light] = [light.visible, light.light_energy, light.is_processing()]
 
 	var copies: Dictionary = {}
 	var planet_ring := get_node_or_null("WindowPlanetRing")
 	for child in find_children("*", "MeshInstance3D", true, false):
 		var visual := child as MeshInstance3D
-		if visual.mesh == null or visual == planet_ring or (_planet != null and _planet.is_ancestor_of(visual)):
+		if visual.mesh == null or visual == planet_ring or _breaker_wiring.is_ancestor_of(visual) \
+				or (_planet != null and _planet.is_ancestor_of(visual)):
 			continue
 		if visual.material_override != null:
 			var power_override := _power_material(visual.material_override as BaseMaterial3D, copies)
