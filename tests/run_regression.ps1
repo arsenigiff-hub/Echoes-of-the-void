@@ -3,17 +3,9 @@ param(
 	[string]$Project = (Split-Path $PSScriptRoot -Parent)
 )
 
-# General regression pass. Runs every permanent test headless and fails on the
-# first non-zero exit code. The ObjectDB leak warning at shutdown is known and
-# does not affect the exit code.
-$tests = @(
-	"test_upper_deck.gd",
-	"test_object_placement.gd",
-	"test_full_spatial.gd",
-	"test_ship_layout_b.gd",
-	"test_eva_oxygen.gd",
-	"test_full_regression.gd"
-)
+# Permanent headless tests for the slimmed-down game (menu, intro, new shuttle).
+# The old ship's tests live in D:\Echoes-of-the-void-main_old_ship\tests.
+$tests = @("test_shuttle_blockout.gd", "test_game_flow.gd")
 
 $failed = @()
 foreach ($test in $tests) {

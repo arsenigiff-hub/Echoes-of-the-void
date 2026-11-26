@@ -389,7 +389,7 @@ func _continue_profile() -> void:
 	_profile_db.set("difficulty", String(save_data.get("difficulty", _profile_db.get("difficulty"))))
 	_profile_db.set("resume_requested", true)
 	_profile_db.set("session_playtime", float(save_data.get("playtime_seconds", 0.0)))
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	get_tree().change_scene_to_file("res://scenes/shuttle_blockout.tscn")
 
 
 func _show_leaderboard() -> void:

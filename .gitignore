@@ -11,3 +11,6 @@
 !.codex_qa/shipassemble/*.gd
 *.tmp
 __pycache__/
+
+# Локальные секреты (ключи API) — не коммитить
+.env

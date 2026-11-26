@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://bjtt7yasiwggl"]
+
+[ext_resource type="PackedScene" uid="uid://bvd0sap4ifwc4" path="res://assetss/tripo/shuttle_oxygen_generator.glb" id="1_nbyox"]
+[ext_resource type="PackedScene" uid="uid://btoofxwxkbael" path="res://assetss/tripo/shuttle_fan_rotor.glb" id="2_qk27p"]
+
+[node name="OxygenGenerator" type="Node3D" unique_id=828329543]
+
+[node name="Model" parent="." unique_id=449548144 instance=ExtResource("1_nbyox")]
+
+[node name="RotorPivot" type="Node3D" parent="." unique_id=779264160]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.011, 0.346, 0.06)
+
+[node name="FanRotor" parent="RotorPivot" unique_id=2035485871 instance=ExtResource("2_qk27p")]
+transform = Transform3D(0.28968158, 0, 0, 0, 0.30412683, 0, 0, 0, 0.235, 0.007209435, -0.1963888, 0.030419994)

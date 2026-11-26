@@ -260,7 +260,17 @@ $godot = "D:\Godot_v4.7.2-stable_win64.exe"
 - Зависший субагент: своих инструментов остановки нет (`interrupt_agent`/`job_kill` могут не
   видеть его) — попросить пользователя остановить его в UI; следить за расходом токенов.
 
-## 9. Текущее состояние (на 2026-11-15)
+## 9. Текущее состояние
+
+**Актуально на 2026-11-23 (приоритетнее текста ниже):** в проекте остались главное меню,
+катсцена и новый шаттл `scenes/shuttle_blockout.tscn` (`scripts/shuttle_blockout.gd`). Старый
+корабль, EVA, радио и сюжетная цепочка вынесены в `D:\Echoes-of-the-void-main_old_ship`.
+Постоянные тесты: `tests/test_shuttle_blockout.gd`, `tests/test_game_flow.gd`
+(`tests/run_regression.ps1`). Дальнейший план — `docs/SHUTTLE_LEVEL_DESIGN.md`. Ниже
+(разделы 4–9 про Blender-интерьер, `ship_dresser`, EVA и т. п.) — история старого корабля;
+сверять с реальными файлами.
+
+### Историческое состояние (на 2026-11-15)
 
 Рабочая папка: `D:\Echoes-of-the-void-main`; `.git` в этой папке нет. Godot 4.7.2,
 GL Compatibility. Актуальная точка входа — `scenes/main_menu.tscn`; основная игровая сцена —

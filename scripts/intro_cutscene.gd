@@ -937,7 +937,7 @@ func _finish() -> void:
 	if _finished:
 		return
 	_finished = true
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	get_tree().change_scene_to_file("res://scenes/shuttle_blockout.tscn")
 
 
 func _skip() -> void:
@@ -952,7 +952,7 @@ func _skip() -> void:
 	var tw := create_tween()
 	tw.tween_method(_set_fade, _fade, 1.0, 0.35)
 	await tw.finished
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	get_tree().change_scene_to_file("res://scenes/shuttle_blockout.tscn")
 
 
 # ──────────────────────────────────────────────────────── мелкие действия ──

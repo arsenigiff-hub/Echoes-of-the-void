@@ -10,7 +10,7 @@
 - Правила работы для агентов: `AGENTS.md`, `docs/AI_CHAT_RULES.md`.
 - Арт-дирекшн и атмосфера: `docs/ART_DIRECTION.md`.
 - Новый интерьер и его сборка: `docs/INTERIOR_LAYOUT_B.md`.
-- Отчёт о состоянии прототипа: `.codex_qa/work_report/report.md`.
+- Отчёт о состоянии прототипа (старый корабль): `.codex_qa/work_report/report.md`.
 - Схемы механик: `Документы курсовой/03_Спецификация и проектирование/Схемы/`.
 - Отчёты и материалы: `Отчеты/` (ежедневные docx), `Документы курсовой/`
   (требования, постановка, отчёты и схемы), референсы `images/`, исходники моделей `blender/`.
@@ -20,29 +20,36 @@
 
 ## Запуск
 
-Открыть `project.godot` в Godot 4.7. Маршрут меню: `scenes/main_menu.tscn` →
-`scenes/intro_cutscene.tscn` → `scenes/main.tscn`.
+Открыть `project.godot` в Godot 4.7. Маршрут: `scenes/main_menu.tscn` →
+`scenes/intro_cutscene.tscn` → `scenes/shuttle_blockout.tscn` (новый шаттл «Ариадна»).
 
 Проверки (headless/консоль):
 
 ```powershell
 $godot = "D:\Godot_v4.7.2-stable_win64.exe"
 & $godot --headless --path "D:\Echoes-of-the-void-main" --quit
-& $godot --headless --path "D:\Echoes-of-the-void-main" --script "res://tests/verify_radio_no_spin.gd"
-& $godot --headless --path "D:\Echoes-of-the-void-main" --script "res://tests/test_ship_layout_b.gd"
+& $godot --headless --path "D:\Echoes-of-the-void-main" --script "res://tests/test_shuttle_blockout.gd"
+& $godot --headless --path "D:\Echoes-of-the-void-main" --script "res://tests/test_game_flow.gd"
+# или всё сразу
+powershell -ExecutionPolicy Bypass -File tests/run_regression.ps1
 ```
 
 ## Управление
 
-WASD — движение, мышь — обзор, Space — прыжок, E — взаимодействие, F — фонарь.
-В EVA: WASD — тяга относительно взгляда, Space/Ctrl — вверх/вниз, инерция и торможение;
-взаимодействие с люком — E.
+WASD — движение, мышь — обзор, E — осмотреть/взаимодействовать, F — фонарь.
 
-## Статус
+## Статус (2026-11-23)
 
-Готово: новый интерьер планировки Б (общий отсек, Г-образный проход, мостик, каюта, шлюз), игрок, радио (фокус камеры,
-ползунки, диск), фонарь, меню, вступление с процедурной стартовой площадкой, VHS-пост-обработка,
-внешний корабль с люком, цикл EVA (выход → невесомость → возврат), атмосферный звук и интро-SFX.
+Остались: главное меню с профилями (SQLite), вступительная катсцена и **новый шаттл** —
+линейный, 33 м, 7 отсеков (пилотская, экипаж, камбуз, медотсек, груз, реактор, шлюз), текстуры
+из ChatGPT (`assetss/shuttle_textures`), пиксельный PS1-фильтр (`shaders/pixel_psx.gdshader`),
+окно в космос, свет и звук по отсекам, переключатель питания (щит автоматов в реакторном отсеке),
+осмотр предметов (E) с подсказками.
 
-Не реализовано: главы, радиосистема с частотами и пакетами, сохранения, чёрная дыра, ремонт.
-План и критерии приёмки — `docs/PLOT.md` §12 (ближайший этап — M0 → M1).
+Старый корабль (интерьер B, верхняя палуба, EVA, радио, сюжетная цепочка, прежние тесты) вынесен
+из проекта в архив `D:\Echoes-of-the-void-main_old_ship` (структура папок сохранена).
+
+План и спецификации: `docs/SHUTTLE_LEVEL_DESIGN.md` (отсеки, предметы, свет, звук),
+`docs/TRIPO_MODEL_BRIEF.md` (бриф для моделей Tripo3D), сюжет — `docs/PLOT.md`.
+Документы про старый корабль (`INTERIOR_LAYOUT_B`, `SHIP_REBUILD_SPEC`, `DOOR_SPEC` и др.) —
+исторические.

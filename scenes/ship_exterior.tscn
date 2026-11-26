@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assetss/tripo/shuttle_exterior_hull.glb" id="1_gmm2b"]
+[ext_resource type="PackedScene" path="res://assetss/tripo/shuttle_solar_panel.glb" id="2_upvyh"]
+[ext_resource type="PackedScene" path="res://assetss/tripo/shuttle_solar_panel_damaged.glb" id="3_7qu1g"]
+
+[node name="ShipExterior" type="Node3D" unique_id=1748914169]
+
+[node name="Hull" type="Node3D" parent="." unique_id=1920712214 instance=ExtResource("1_gmm2b")]
+transform = Transform3D(29, 0, 0, 0, 29, 0, 0, 0, 33.6, 0, 0, 0)
+
+[node name="SolarPanelRight" type="Node3D" parent="." unique_id=905085208 instance=ExtResource("2_upvyh")]
+transform = Transform3D(-3.496911e-07, 8, 0, -8, -3.496911e-07, 0, 0, 0, 8, 3, 3.4, -6.4)
+
+[node name="SolarPanelLeftDamaged" type="Node3D" parent="." unique_id=147157389 instance=ExtResource("3_7qu1g")]
+transform = Transform3D(-3.496911e-07, -8, 0, 8, -3.496911e-07, 0, 0, 0, 8, -3, 3.4, -6.4)
