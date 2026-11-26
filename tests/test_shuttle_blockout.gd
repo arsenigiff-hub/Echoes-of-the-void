@@ -264,6 +264,19 @@ func _run() -> void:
 		var node := scene.get_node_or_null(label)
 		if node == null or not (node is Interactable):
 			failures.append("%s is not an Interactable" % label)
+	var cockpit := scene.get_node_or_null("CockpitEquipment") as Node3D
+	for label in ["NavPlinth", "BreakerBank", "WindowFrame", "DeskProps"]:
+		var model := cockpit.find_child(label, true, false) as MeshInstance3D if cockpit != null else null
+		if model == null or model.mesh == null or not model.is_visible_in_tree():
+			failures.append("cockpit model is missing: %s" % label)
+	for label in ["NoseWall_Glass", "WindowGrime", "WindowPlanet", "WindowPlanetRing", "TripoConsole0", "TripoConsole1"]:
+		var retained := scene.get_node_or_null(label) as Node3D
+		if retained == null or not retained.is_visible_in_tree():
+			failures.append("cockpit kit did not retain existing equipment or view: %s" % label)
+	var nav_body := scene.get_node_or_null("NavConsole") as StaticBody3D
+	if nav_body == null or nav_body.find_children("*", "CollisionShape3D", true, false).is_empty() \
+			or (nav_body.get_child(1) as MeshInstance3D).is_visible_in_tree():
+		failures.append("navigation placeholder visibility or collision changed")
 	var cargo := scene.get_node_or_null("CargoEquipment") as Node3D
 	for label in ["CargoModule", "LashingBelts", "RestraintNet", "DeckTracks", "TransitCase"]:
 		var part := cargo.find_child(label, true, false) as MeshInstance3D if cargo != null else null

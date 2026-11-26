@@ -425,37 +425,29 @@ func _build_end_walls(z_end: float) -> void:
 		_box("NoseWall_Pillar", Vector3(pillar_w, win_h, WALL),
 			Vector3(side * (win_w * 0.5 + pillar_w * 0.5), win_mid, -WALL * 0.5), C_WALL)
 	_box("NoseWall_Glass", Vector3(win_w, win_h, 0.04), Vector3(0, win_mid, -0.02), Color(0.02, 0.03, 0.06))
-	# Window frame and mullions.
-	var frame := Color(0.20, 0.21, 0.21)
-	_deco("WinFrameT", Vector3(win_w + 0.2, 0.10, 0.10), Vector3(0, win_high, 0.05), frame)
-	_deco("WinFrameB", Vector3(win_w + 0.2, 0.10, 0.10), Vector3(0, win_low, 0.05), frame)
-	_deco("WinFrameL", Vector3(0.10, win_h, 0.10), Vector3(-win_w * 0.5, win_mid, 0.05), frame)
-	_deco("WinFrameR", Vector3(0.10, win_h, 0.10), Vector3(win_w * 0.5, win_mid, 0.05), frame)
-	for mull in [-win_w / 6.0, win_w / 6.0]:
-		_deco("WinMullion", Vector3(0.07, win_h, 0.08), Vector3(mull, win_mid, 0.05), frame)
 	_box("SternWall", Vector3(WIDTH + 2.0 * WALL, HEIGHT, WALL), Vector3(0, HEIGHT * 0.5, z_end + WALL * 0.5), C_WALL)
 
 
 # --------------------------------------------------------------- cockpit ----
 
+const COCKPIT_EQUIPMENT := preload("res://assetss/blender/cockpit_equipment/cockpit_equipment.glb")
+
+
 func _build_cockpit() -> void:
 	var c: Vector2 = compartment_ranges["Cockpit"]
+	# The navigation body retains its collider and interaction behind the new art.
 	_prop("NavConsole", Vector3(3.8, 0.9, 0.55), X(0.0), c.x + 0.55, C_METAL)
-	# Slanted dash with three dead-ish screens and a row of switches.
-	_deco("DashSlope", Vector3(3.7, 0.06, 0.5), Vector3(X(0), 0.96, c.x + 0.58), Color(0.18, 0.19, 0.20), Vector3(-25, 0, 0))
-	var screens := [Color(0.10, 0.55, 0.30), Color(0.55, 0.38, 0.10), Color(0.04, 0.10, 0.14)]
-	for index in 3:
-		var sx := -1.1 + index * 1.1
-		_deco("DashScreen%d" % index, Vector3(0.55, 0.32, 0.02),
-			Vector3(sx, 1.04, c.x + 0.50), screens[index], Vector3(-25, 0, 0)).get_child(0).set("material_override", _emit(screens[index], 1.1))
-	for index in 9:
-		_deco("Switch%d" % index, Vector3(0.04, 0.06, 0.04), Vector3(-1.5 + index * 0.37, 1.0, c.x + 0.78),
-			Color(0.55, 0.5, 0.4) if index % 3 else Color(0.5, 0.12, 0.1), Vector3(-25, 0, 0))
-	# Overhead panel with breakers.
-	_deco("OverheadPanel", Vector3(1.6, 0.06, 0.7), Vector3(X(0), HEIGHT - 0.32, c.x + 1.2), Color(0.16, 0.17, 0.17), Vector3(18, 0, 0))
-	for index in 12:
-		_deco("Breaker%d" % index, Vector3(0.05, 0.05, 0.03),
-			Vector3(-0.65 + index * 0.118, HEIGHT - 0.30, c.x + 1.0), Color(0.55, 0.5, 0.42) if index != 7 else Color(0.5, 0.1, 0.08))
+	_hide_mesh("NavConsole")
+	var kit := COCKPIT_EQUIPMENT.instantiate() as Node3D
+	kit.name = "CockpitEquipment"
+	kit.position.z = c.x
+	add_child(kit)
+	for child in kit.find_children("*", "MeshInstance3D", true, false):
+		var visual := child as MeshInstance3D
+		for surface in visual.mesh.get_surface_count():
+			var material := visual.get_active_material(surface) as BaseMaterial3D
+			if material != null:
+				material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	# Two pilot seats with headrests; the left one is turned a little as if just left.
 	for side in [-1.0, 1.0]:
 		var name_side := "L" if side < 0.0 else "R"
@@ -464,10 +456,6 @@ func _build_cockpit() -> void:
 		_deco("PilotSeat%s_Head" % name_side, Vector3(0.32, 0.22, 0.12), Vector3(side * 0.95, 1.45, c.x + 2.1), C_SEAT)
 		_deco("PilotSeat%s_Belt" % name_side, Vector3(0.05, 0.5, 0.02), Vector3(side * 0.95 - 0.18, 0.72, c.x + 1.98), Color(0.06, 0.06, 0.06), Vector3(0, 0, 8))
 		seat.rotation_degrees.y = -14.0 if side < 0.0 else 0.0
-	# Things on the console: mug, clipboard, crumpled foil, a pen.
-	_cyl("Mug", 0.045, 0.10, Vector3(X(0.95), 1.0, c.x + 0.62), Color(0.55, 0.55, 0.5))
-	_deco("Clipboard", Vector3(0.24, 0.015, 0.32), Vector3(X(-1.2), 0.94, c.x + 0.7), C_PAPER, Vector3(0, 20, 0))
-	_deco("Pen", Vector3(0.14, 0.012, 0.012), Vector3(X(-1.05), 0.955, c.x + 0.72), Color(0.1, 0.1, 0.35), Vector3(0, 70, 0))
 
 
 # ----------------------------------------------------------------- crew bay -
@@ -741,11 +729,7 @@ func _build_tripo_props() -> void:
 			_hide_mesh("PilotSeat" + side + part)
 		_place_model("shuttle_pilot_seat.glb", "TripoPilotSeat" + side, 1.1,
 			Vector3(x, 0.0, c0.x + 1.9), 180.0 + (-14.0 if side == "L" else 0.0))
-	# Two CRT console units on the navigation desk instead of the flat dash.
-	for part in ["DashSlope", "DashScreen0", "DashScreen1", "DashScreen2"]:
-		_hide_mesh(part)
-	for index in 9:
-		_hide_mesh("Switch%d" % index)
+	# Keep the existing CRT units on the Blender navigation desk.
 	for x in [-1.1, 1.1]:
 		_place_model("shuttle_crt_console.glb", "TripoConsole%d" % (0 if x < 0 else 1), 0.62,
 			Vector3(x, 0.9, c0.x + 0.55), 0.0)
@@ -927,7 +911,7 @@ func _mount_reactor_starter(reactor: Node3D, reactor_scale: float) -> void:
 func _build_traces() -> void:
 	var tape := Color(0.14, 0.14, 0.13)
 	var c0: Vector2 = compartment_ranges["Cockpit"]
-	_label("ЭХО 1/4", Vector3(0, 0.62, c0.x + 0.84), 0.0, 0.06, Color(0.55, 0.5, 0.3))
+	_label("ЭХО 1/4", Vector3(0.53, 0.744, c0.x + 0.84), 0.0, 0.043, Color(0.55, 0.5, 0.3))
 
 	# Crew bay: nameplates on the three fold-down seats, two taped over, a calendar.
 	var c1: Vector2 = compartment_ranges["CrewBay"]
