@@ -275,6 +275,19 @@ func _run() -> void:
 			failures.append("cargo collider is missing: %s" % label)
 		elif (body.get_child(1) as MeshInstance3D).is_visible_in_tree():
 			failures.append("obsolete cargo placeholder is still visible: %s" % label)
+	var airlock_kit := scene.get_node_or_null("AirlockEquipment") as Node3D
+	for label in ["Suit", "Bench", "Hooks", "Lockers"]:
+		var anchor := airlock_kit.find_child(label + "Mount", true, false) as Node3D if airlock_kit != null else null
+		var model := anchor.find_child(label + "Mesh", true, false) as MeshInstance3D if anchor != null else null
+		var side := 1.0 if label == "Lockers" else -1.0
+		if model == null or model.mesh == null or not model.is_visible_in_tree() \
+				or not is_equal_approx(anchor.global_position.x, side * 2.4):
+			failures.append("airlock equipment is missing or on the wrong wall: %s" % label)
+	for label in ["AirlockBench", "SuitLocker", "SuitLocker2"]:
+		var body := scene.get_node_or_null(label) as StaticBody3D
+		if body == null or body.find_children("*", "CollisionShape3D", true, false).is_empty() \
+				or (body.get_child(1) as MeshInstance3D).is_visible_in_tree():
+			failures.append("airlock placeholder visibility or collision changed: %s" % label)
 	var exam_model := scene.get_node_or_null("TripoExamTable") as Node3D
 	if exam_model == null or not exam_model.is_visible_in_tree():
 		failures.append("medbay exam table model is missing or hidden")

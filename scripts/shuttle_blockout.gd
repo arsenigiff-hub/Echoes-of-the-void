@@ -623,11 +623,17 @@ func _build_reactor() -> void:
 
 # ------------------------------------------------------------------ airlock -
 
+const AIRLOCK_EQUIPMENT := preload("res://assetss/blender/airlock_equipment/airlock_equipment.glb")
+
+
 func _build_airlock() -> void:
 	var c: Vector2 = compartment_ranges["Airlock"]
 	_prop("AirlockBench", Vector3(0.45, 0.45, 1.8), X(-1.5), c.x + 1.2, C_SEAT)
 	_prop("SuitLocker", Vector3(0.6, 1.9, 0.9), X(1.45), c.x + 1.0, C_GREEN)
 	_prop("SuitLocker2", Vector3(0.6, 1.9, 0.9), X(1.45), c.x + 2.0, C_GREEN)
+	for label in ["AirlockBench", "SuitLocker", "SuitLocker2"]:
+		_hide_mesh(label)
+	_mount_airlock_equipment(c.x)
 	# Round EVA hatch on the stern wall with a wheel and a green status lamp.
 	_cyl("EvaHatch", 0.58, 0.10, Vector3(X(0), 1.0, c.y - 0.06), Color(0.36, 0.36, 0.32), "z", true)
 	_cyl("EvaHatchRim", 0.66, 0.06, Vector3(X(0), 1.0, c.y - 0.04), Color(0.22, 0.22, 0.20), "z")
@@ -635,23 +641,28 @@ func _build_airlock() -> void:
 	_deco("EvaWheelBarA", Vector3(0.46, 0.04, 0.04), Vector3(X(0), 1.0, c.y - 0.17), Color(0.5, 0.46, 0.34))
 	_deco("EvaWheelBarB", Vector3(0.04, 0.46, 0.04), Vector3(X(0), 1.0, c.y - 0.17), Color(0.5, 0.46, 0.34))
 	_deco("EvaLamp", Vector3(0.1, 0.1, 0.03), Vector3(X(0.9), 1.7, c.y - 0.05), Color(0.2, 0.9, 0.3)).get_child(0).set("material_override", _emit(Color(0.2, 0.9, 0.3), 1.6))
-	# A suit hanging on the left wall, helmet on the bench.
-	_deco("SuitTorso", Vector3(0.5, 0.6, 0.25), Vector3(X(-1.62), 1.35, c.x + 2.3), Color(0.55, 0.55, 0.50))
-	_deco("SuitLegL", Vector3(0.2, 0.7, 0.2), Vector3(X(-1.62), 0.7, c.x + 2.18), Color(0.5, 0.5, 0.46))
-	_deco("SuitLegR", Vector3(0.2, 0.7, 0.2), Vector3(X(-1.62), 0.7, c.x + 2.42), Color(0.5, 0.5, 0.46))
-	var helmet := MeshInstance3D.new()
-	helmet.name = "Helmet"
-	var sphere := SphereMesh.new()
-	sphere.radius = 0.15
-	sphere.height = 0.3
-	sphere.radial_segments = 12
-	sphere.rings = 6
-	sphere.material = _mat(Color(0.6, 0.6, 0.55))
-	helmet.mesh = sphere
-	helmet.position = Vector3(X(-1.5), 0.6, c.x + 1.2)
-	add_child(helmet)
 	_label("ВЫХОД В КОСМОС", Vector3(X(0), 1.85, c.y - 0.03), 180.0, 0.07, Color(0.6, 0.55, 0.3))
 	_label("ДАВЛЕНИЕ", Vector3(X(0.9), 1.6, c.y - 0.03), 180.0, 0.04, Color(0.45, 0.55, 0.5))
+
+
+func _mount_airlock_equipment(start_z: float) -> void:
+	var kit := AIRLOCK_EQUIPMENT.instantiate() as Node3D
+	kit.name = "AirlockEquipment"
+	add_child(kit)
+	# The .blend shows the four mounts side by side; in the ship the lockers
+	# still face the bench across the aisle.
+	for entry in [["SuitMount", -1.0, 2.3], ["BenchMount", -1.0, 1.2],
+			["HooksMount", -1.0, 0.725], ["LockersMount", 1.0, 1.0]]:
+		var anchor := kit.find_child(entry[0], true, false) as Node3D
+		var side: float = entry[1]
+		anchor.position = Vector3(side * WIDTH * 0.5, 0.0, start_z + float(entry[2]))
+		anchor.rotation_degrees.y = -side * 90.0
+	for child in kit.find_children("*", "MeshInstance3D", true, false):
+		var visual := child as MeshInstance3D
+		for surface in visual.mesh.get_surface_count():
+			var material := visual.get_active_material(surface) as BaseMaterial3D
+			if material != null:
+				material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 
 
 # ------------------------------------------------------------------- light --
@@ -949,11 +960,8 @@ func _build_traces() -> void:
 	var c3: Vector2 = compartment_ranges["Reactor"]
 	_deco("OilPuddle", Vector3(0.7, 0.003, 0.5), Vector3(0.1, 0.004, c3.x + 3.5), Color(0.03, 0.03, 0.03), Vector3(0, 25, 0))
 
-	# Airlock: one suit hangs, two hooks are empty, a note about the seal.
+	# Airlock: note about the seal beside the modeled equipment.
 	var c4: Vector2 = compartment_ranges["Airlock"]
-	for index in 2:
-		_deco("EmptyHook%d" % index, Vector3(0.04, 0.04, 0.12),
-			Vector3(-WIDTH * 0.5 + 0.1, 1.7, c4.x + 0.5 + index * 0.45), Color(0.3, 0.3, 0.3))
 	_deco("SealNote", Vector3(0.012, 0.22, 0.16), Vector3(X(1.76), 1.35, c4.x + 3.0), C_PAPER, Vector3(2, 0, 5))
 	_label("ПРОВЕРИТЬ УПЛОТНЕНИЕ", Vector3(X(1.75), 1.35, c4.x + 3.0), -90.0, 0.03, Color(0.15, 0.15, 0.12))
 
