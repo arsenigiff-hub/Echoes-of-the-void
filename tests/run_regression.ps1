@@ -5,7 +5,7 @@ param(
 
 # Permanent headless tests for the slimmed-down game (menu, intro, new shuttle).
 # The old ship's tests live in D:\Echoes-of-the-void-main_old_ship\tests.
-$tests = @("test_shuttle_blockout.gd", "test_game_flow.gd")
+$tests = @("test_shuttle_blockout.gd", "test_game_flow.gd", "test_shuttle_eva.gd")
 
 $failed = @()
 foreach ($test in $tests) {

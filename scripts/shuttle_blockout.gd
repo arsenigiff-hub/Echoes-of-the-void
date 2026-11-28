@@ -14,6 +14,7 @@ const WALL := 0.15
 const BULKHEAD := 0.30
 const HATCH_W := 0.95
 const HATCH_H := 1.95       # player capsule is 1.82 m tall
+const EVA_DOCK_OFFSET := 0.78
 const SILL := 0.03          # visual lip only: the player cannot climb solid steps under a lintel
 
 # Compartments from the nose: [name, inner length]
@@ -79,6 +80,7 @@ func _ready() -> void:
 	_build_tripo_props()
 	_build_crew_life_props()
 	_build_interactions()
+	_build_eva()
 	_build_ambience()
 	_apply_textures()
 	_build_postfx()
@@ -350,7 +352,20 @@ func _build_compartment_shell(label: String, z0: float, length: float) -> void:
 	var zc := z0 + length * 0.5
 	_box(label + "_Floor", Vector3(WIDTH + 2.0 * WALL, 0.15, length), Vector3(0, -0.075, zc), C_FLOOR)
 	_box(label + "_Ceiling", Vector3(WIDTH + 2.0 * WALL, 0.15, length), Vector3(0, HEIGHT + 0.075, zc), C_CEIL)
-	_box(label + "_WallL", Vector3(WALL, HEIGHT, length), Vector3(-(WIDTH + WALL) * 0.5, HEIGHT * 0.5, zc), C_WALL)
+	if label == "Airlock":
+		var dock := z0 + length - EVA_DOCK_OFFSET
+		var wall_x := -(WIDTH + WALL) * 0.5
+		var notch := 0.71
+		var forward_length := dock - notch - z0
+		var rear_length := z0 + length - (dock + notch)
+		_solid_box("AirlockPortWallForward", Vector3(WALL, HEIGHT, forward_length),
+			Vector3(wall_x, HEIGHT * 0.5, z0 + forward_length * 0.5))
+		_solid_box("AirlockPortWallAft", Vector3(WALL, HEIGHT, rear_length),
+			Vector3(wall_x, HEIGHT * 0.5, dock + notch + rear_length * 0.5))
+		_solid_box("AirlockPortLintel", Vector3(WALL, HEIGHT - 2.26, notch * 2.0),
+			Vector3(wall_x, (HEIGHT + 2.26) * 0.5, dock))
+	else:
+		_box(label + "_WallL", Vector3(WALL, HEIGHT, length), Vector3(-(WIDTH + WALL) * 0.5, HEIGHT * 0.5, zc), C_WALL)
 	_box(label + "_WallR", Vector3(WALL, HEIGHT, length), Vector3((WIDTH + WALL) * 0.5, HEIGHT * 0.5, zc), C_WALL)
 	# Chamfered wall/ceiling corners: the cabin reads as a tube, not a box.
 	for side in [-1.0, 1.0]:
@@ -368,7 +383,7 @@ func _build_ribs_and_runs(label: String, z0: float, length: float) -> void:
 			# Leave the recessed breaker bay clear of this wall rib.
 			_deco(label + "_RibL", Vector3(0.10, 0.75, 0.12), Vector3(-WIDTH * 0.5 + 0.05, 0.425, z), C_RIB)
 			_deco(label + "_RibL", Vector3(0.10, 0.75, 0.12), Vector3(-WIDTH * 0.5 + 0.05, 2.075, z), C_RIB)
-		else:
+		elif label != "Airlock" or absf(z - (z0 + length - EVA_DOCK_OFFSET)) > 0.80:
 			_deco(label + "_RibL", Vector3(0.10, HEIGHT - 0.1, 0.12), Vector3(-WIDTH * 0.5 + 0.05, HEIGHT * 0.5, z), C_RIB)
 		_deco(label + "_RibR", Vector3(0.10, HEIGHT - 0.1, 0.12), Vector3(WIDTH * 0.5 - 0.05, HEIGHT * 0.5, z), C_RIB)
 		_deco(label + "_RibTop", Vector3(WIDTH - 0.5, 0.10, 0.12), Vector3(0, HEIGHT - 0.05, z), C_RIB)
@@ -377,8 +392,10 @@ func _build_ribs_and_runs(label: String, z0: float, length: float) -> void:
 	while seam < length:
 		_deco(label + "_Seam", Vector3(WIDTH, 0.004, 0.02), Vector3(0, 0.003, z0 + seam), Color(0.10, 0.10, 0.10))
 		seam += 0.75
-	_deco(label + "_Tray", Vector3(0.12, 0.08, length), Vector3(-WIDTH * 0.5 + 0.06, 0.22, zc), Color(0.12, 0.12, 0.12))
-	_cyl(label + "_Cable", 0.025, length, Vector3(-WIDTH * 0.5 + 0.08, 0.30, zc), Color(0.05, 0.05, 0.05))
+	var tray_length := length - EVA_DOCK_OFFSET - 0.73 if label == "Airlock" else length
+	var tray_z := z0 + tray_length * 0.5
+	_deco(label + "_Tray", Vector3(0.12, 0.08, tray_length), Vector3(-WIDTH * 0.5 + 0.06, 0.22, tray_z), Color(0.12, 0.12, 0.12))
+	_cyl(label + "_Cable", 0.025, tray_length, Vector3(-WIDTH * 0.5 + 0.08, 0.30, tray_z), Color(0.05, 0.05, 0.05))
 	# Ceiling duct on the right with a pipe on the left.
 	_deco(label + "_Duct", Vector3(0.34, 0.24, length - 0.1), Vector3(1.05, HEIGHT - 0.2, zc), C_METAL)
 	_cyl(label + "_Pipe", 0.045, length - 0.1, Vector3(-1.1, HEIGHT - 0.12, zc), Color(0.30, 0.30, 0.28))
@@ -647,15 +664,13 @@ func _build_airlock() -> void:
 	for label in ["AirlockBench", "SuitLocker", "SuitLocker2"]:
 		_hide_mesh(label)
 	_mount_airlock_equipment(c.x)
-	# Round EVA hatch on the stern wall with a wheel and a green status lamp.
-	_cyl("EvaHatch", 0.58, 0.10, Vector3(X(0), 1.0, c.y - 0.06), Color(0.36, 0.36, 0.32), "z", true)
-	_cyl("EvaHatchRim", 0.66, 0.06, Vector3(X(0), 1.0, c.y - 0.04), Color(0.22, 0.22, 0.20), "z")
-	_cyl("EvaWheel", 0.2, 0.05, Vector3(X(0), 1.0, c.y - 0.14), Color(0.5, 0.46, 0.34), "z")
-	_deco("EvaWheelBarA", Vector3(0.46, 0.04, 0.04), Vector3(X(0), 1.0, c.y - 0.17), Color(0.5, 0.46, 0.34))
-	_deco("EvaWheelBarB", Vector3(0.04, 0.46, 0.04), Vector3(X(0), 1.0, c.y - 0.17), Color(0.5, 0.46, 0.34))
-	_deco("EvaLamp", Vector3(0.1, 0.1, 0.03), Vector3(X(0.9), 1.7, c.y - 0.05), Color(0.2, 0.9, 0.3)).get_child(0).set("material_override", _emit(Color(0.2, 0.9, 0.3), 1.6))
-	_label("ВЫХОД В КОСМОС", Vector3(X(0), 1.85, c.y - 0.03), 180.0, 0.07, Color(0.6, 0.55, 0.3))
-	_label("ДАВЛЕНИЕ", Vector3(X(0.9), 1.6, c.y - 0.03), 180.0, 0.04, Color(0.45, 0.55, 0.5))
+	# Physics only; the cutout, cladding, passage, doors and railing are Blender meshes.
+	var dock := c.y - EVA_DOCK_OFFSET
+	_solid_box("EvaHatch", Vector3(0.125, 2.215, 1.42), Vector3(-3.77, 1.109, dock))
+	_solid_box("PortTunnelWalkway", Vector3(1.45, 0.09, 1.41), Vector3(-3.06, -0.048, dock))
+	_solid_box("PortTunnelCeiling", Vector3(1.42, 0.13, 1.48), Vector3(-3.06, 2.255, dock))
+	for side in [-1.0, 1.0]:
+		_solid_box("PortTunnelCheek", Vector3(1.38, 2.29, 0.13), Vector3(-3.06, 1.12, dock + side * 0.773))
 
 
 func _mount_airlock_equipment(start_z: float) -> void:
@@ -832,15 +847,6 @@ func _build_tripo_props() -> void:
 	_solid_box("TripoReactorBody", Vector3(1.85, 2.1, 1.9), Vector3(reactor_x, 1.05, rc.x + 2.1))
 	if reactor != null:
 		_mount_reactor_starter(reactor, reactor_scale)
-	# Airlock: the EVA hatch from the reference art (octagonal hazard frame, wheel, lamps)
-	# replaces the old cylinder/wheel primitives; the old solid body stays as its collider.
-	var ca: Vector2 = compartment_ranges["Airlock"]
-	for part in ["EvaHatch", "EvaHatchRim", "EvaWheel", "EvaWheelBarA", "EvaWheelBarB", "EvaLamp"]:
-		_hide_mesh(part)
-	var eva_hatch := _place_model("shuttle_eva_hatch.glb", "TripoEvaHatch", 1.7,
-		Vector3(X(0), 0.42, ca.y - 0.13), 180.0)
-	if eva_hatch != null:
-		eva_hatch.scale = Vector3(1.7, 1.7, 0.5)
 	# Keep the interaction body separate from the visible cabinet and its hinge.
 	_breaker_wiring = REACTOR_WIRING.new()
 	_breaker_wiring.name = "ReactorBreakerCabinet"
@@ -1009,7 +1015,7 @@ const INTERACTABLES := {
 	"ExamTable": ["exam", "[E] Кушетка"],
 	"MedCabinet": ["meds", "[E] Аптечка"],
 	"OxygenUnit": ["oxygen", "[E] Кислородный узел"],
-	"EvaHatch": ["hatch", "[E] Люк"],
+	"EvaHatch": ["hatch", "[ЛКМ] Люк"],
 }
 
 var _hud_message: Label
@@ -1026,6 +1032,31 @@ var _reactor_zone: Node3D
 var _reactor_ready := false
 var _power_task_seen := false
 var _breaker_wiring: REACTOR_WIRING
+const SHUTTLE_EVA := preload("res://scripts/shuttle_eva.gd")
+var _eva: SHUTTLE_EVA
+var _eva_audio_levels := {}
+
+
+func _build_eva() -> void:
+	var airlock: Vector2 = compartment_ranges["Airlock"]
+	_eva = SHUTTLE_EVA.new()
+	_eva.name = "ShuttleEVA"
+	_eva.configure(get_node("Player") as Player, airlock.y - EVA_DOCK_OFFSET,
+		airlock.x - BULKHEAD * 0.5, _environment)
+	_eva.exterior_audio.connect(_set_eva_audio)
+	add_child(_eva)
+
+
+func _set_eva_audio(active: bool) -> void:
+	var blend := create_tween().set_parallel()
+	for loop in _room_loops:
+		if active:
+			_eva_audio_levels[loop] = loop.volume_db
+			blend.tween_property(loop, "volume_db", loop.volume_db - 32.0, 0.7)
+		elif _eva_audio_levels.has(loop):
+			blend.tween_property(loop, "volume_db", _eva_audio_levels[loop], 0.8)
+	if not active:
+		_eva_audio_levels.clear()
 
 
 func _build_interactions() -> void:
@@ -1162,8 +1193,8 @@ func on_interact(action: String, operator: CharacterBody3D = null) -> void:
 			show_message("КИСЛОРОД: ДАВЛЕНИЕ В НОРМЕ. ФИЛЬТР — 14%." if powered
 				else "КИСЛОРОДНЫЙ УЗЕЛ: ИНДИКАТОРЫ ПОГАШЕНЫ.")
 		"hatch":
-			show_message("ЛЮК: ВЫХОД НЕ РАЗРЕШЁН. ПАНЕЛЬ №2 ТРЕБУЕТ РЕМОНТА." if powered
-				else "ЛЮК ЗАБЛОКИРОВАН. НЕТ ПИТАНИЯ.")
+			if not _eva.request_exit() and not powered:
+				show_message("ЛЮК ЗАБЛОКИРОВАН. НЕТ ПИТАНИЯ.")
 
 
 func _on_breaker_focus_changed() -> void:
@@ -1259,6 +1290,9 @@ func _update_prompt(delta: float) -> void:
 		if _message_timer <= 0.0:
 			_hud_message.text = ""
 	if _hud_prompt == null or _player == null or _reactor_operator != null or _breaker_wiring.is_focused():
+		return
+	if _eva.phase != SHUTTLE_EVA.Phase.INTERIOR:
+		_hud_prompt.text = ""
 		return
 	var ray := _player.get_node_or_null("Head/Camera3D/RayCast3D") as RayCast3D
 	var text := ""
@@ -1483,7 +1517,7 @@ func _apply_textures() -> void:
 			material = _tmat(WALL_TEXTURE.get(label.split("_")[0], "wall_technical"), 0.45)
 		elif label.begins_with("Bulkhead_") and (label.ends_with("_L") or label.ends_with("_R") or label.ends_with("_Lintel")):
 			material = _tmat("wall_technical", 0.45)
-		elif (label.begins_with("NoseWall_") and label != "NoseWall_Glass") or label == "SternWall":
+		elif (label.begins_with("NoseWall_") and label != "NoseWall_Glass") or label.begins_with("SternWall"):
 			material = _tmat("wall_quarters", 0.45)
 		elif label.begins_with("PilotSeat") or label.begins_with("JumpSeat") or label == "AirlockBench":
 			material = _tmat("seat_vinyl", 1.4)
@@ -1521,7 +1555,8 @@ func _setup_power() -> void:
 	for child in find_children("*", "Light3D", true, false):
 		var light := child as Light3D
 		# The player's flashlight and repair inspection light are independent of board power.
-		if not _breaker_wiring.is_ancestor_of(light) and (player == null or not player.is_ancestor_of(light)):
+		if not light.is_in_group("eva_independent_light") and not _breaker_wiring.is_ancestor_of(light) \
+				and (player == null or not player.is_ancestor_of(light)):
 			_board_lights[light] = [light.visible, light.light_energy, light.is_processing()]
 
 	var copies: Dictionary = {}
@@ -1557,6 +1592,7 @@ func _power_material(authored: BaseMaterial3D, copies: Dictionary) -> BaseMateri
 ## The breaker switches instantly. The second argument is kept for existing QA scripts.
 func set_powered(value: bool, _seconds := 0.0) -> void:
 	powered = value
+	_eva.powered = value
 	_environment.ambient_light_energy = _normal_ambient_energy if value else 0.0
 	_environment.reflected_light_source = _normal_reflection_source if value else Environment.REFLECTION_SOURCE_DISABLED
 	_environment.fog_light_color = _normal_fog_color if value else Color.BLACK

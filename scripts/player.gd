@@ -24,6 +24,8 @@ extends CharacterBody3D
 
 ## Режим свободного полёта в космосе (гравитация и пол отключены).
 var eva_mode: bool = false
+## On the shuttle, the EVA controller owns translation; the mouse still steers the view when released.
+var eva_mouse_only := false
 
 @export_group("Камера: дыхание и шаг")
 ## Включить покачивание/дыхание камеры (атмосфера, «живой» игрок).
@@ -166,6 +168,9 @@ func _physics_process(delta: float) -> void:
 	# расталкивать капсулу, споря с твином, который двигает тело.
 	if is_interacting:
 		velocity = Vector3.ZERO
+		return
+
+	if eva_mouse_only:
 		return
 
 	if eva_mode:
