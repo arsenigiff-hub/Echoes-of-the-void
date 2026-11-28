@@ -3,7 +3,7 @@ extends Node3D
 
 signal exterior_audio(active: bool)
 
-enum Phase { INTERIOR, DEPARTING, OUTSIDE, RETURNING }
+enum Phase { INTERIOR, DEPARTING, OUTSIDE, RETURNING, NIGHTMARE }
 
 const DOCK := preload("res://assetss/blender/eva_shuttle_dock/eva_shuttle_dock.glb")
 const PLATFORM := preload("res://assetss/blender/eva_platform/eva_platform.glb")
@@ -12,6 +12,7 @@ const CLUNK := preload("res://assetss/audio/intro/clunk.wav")
 const VENT := preload("res://assetss/audio/intro/whoosh_flyby.wav")
 const GROAN := preload("res://assetss/audio/intro/hull_groan.wav")
 const FABRIC := preload("res://assetss/audio/shuttle/step_04.wav")
+const NIGHTMARE := preload("res://scripts/eva_nightmare.gd")
 const GRIP_LAYER := 1 << 6
 const OUTSIDE_RENDER := 1 << 14
 const GRIP_RANGE := 2.75
@@ -59,6 +60,7 @@ var _tether_mesh: MeshInstance3D
 var _tether_anchor_node: Node3D
 var _tether_anchor_local := Vector3.ZERO
 var _tether_pending := false
+var nightmare: NIGHTMARE
 
 
 func configure(operator: Player, dock_z: float, inner_gate_z: float, room_environment: Environment) -> void:
@@ -82,6 +84,10 @@ func _ready() -> void:
 	add_child(_source)
 	_mechanical = AudioStreamPlayer.new()
 	add_child(_mechanical)
+	nightmare = NIGHTMARE.new()
+	nightmare.name = "NightmareRecovery"
+	nightmare.configure(self, player, GRIP_LAYER)
+	add_child(nightmare)
 
 
 
@@ -415,6 +421,9 @@ func _swing_outer(open: bool) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if phase == Phase.NIGHTMARE:
+		get_viewport().set_input_as_handled()
+		return
 	if phase == Phase.OUTSIDE and event is InputEventKey \
 			and (event.physical_keycode == KEY_Q or event.keycode == KEY_Q):
 		if event.pressed and not event.echo \
@@ -509,6 +518,48 @@ func _physics_process(delta: float) -> void:
 		_hint.text += "\nQ — отцепить трос"
 	elif not target.is_empty() or gripping:
 		_hint.text += "\nQ — закрепить трос"
+	nightmare.monitor(delta)
+
+
+func _can_start_nightmare() -> bool:
+	return phase == Phase.OUTSIDE and not gripping and not tether_attached and not player.is_interacting
+
+
+func _begin_nightmare() -> void:
+	phase = Phase.NIGHTMARE
+	_stop_grip()
+	_detach_tether()
+	player.is_interacting = true
+	player.interacting_object = null
+	player.camera_position_managed = true
+	_hint.hide()
+	_dot.hide()
+
+
+func _nightmare_reset_inside() -> void:
+	_hull_body.collision_layer = 0
+	_hull_root.hide()
+	_outer.rotation_degrees.y = 0.0
+	_wheel.rotation.x += TAU * 0.42
+	_set_outer_collision(true)
+	_inner[0].position.x = -0.75
+	_inner[1].position.x = 0.75
+	_pressure_light.light_energy = 0.0
+	_pressure_light.light_color = Color(1.0, 0.34, 0.13)
+	player.camera.environment = _initial_camera_environment
+	player.eva_mode = false
+	player.eva_mouse_only = false
+	player.velocity = Vector3.ZERO
+	drift = Vector3.ZERO
+	_visor.modulate.a = 0.0
+	exterior_audio.emit(false)
+
+
+func _finish_nightmare() -> void:
+	player.velocity = Vector3.ZERO
+	player.is_interacting = false
+	player.camera_position_managed = false
+	phase = Phase.INTERIOR
 
 
 func _aim_surface() -> Dictionary:
