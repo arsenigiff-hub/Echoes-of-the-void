@@ -286,31 +286,55 @@ func _test_surface_frame() -> void:
 	player.collision_mask = 0
 	player.head.rotation = Vector3.ZERO
 	player.camera.rotation = Vector3.ZERO
-	var center := _body_center()
-	for normal: Vector3 in [Vector3.LEFT, Vector3.DOWN, Vector3.FORWARD, Vector3.BACK]:
-		eva.call("_grab", center - normal, normal)
+	var position := player.global_position
+	for normal: Vector3 in [Vector3.LEFT, Vector3.DOWN, Vector3.UP, Vector3(0.001, 0, -1).normalized()]:
+		var initial_view := player.camera.global_basis
+		var forward := -initial_view.z
+		eva.call("_grab", position - normal, normal)
 		var largest_step := 0.0
 		for tick in 480:
-			var before := player.global_basis.get_rotation_quaternion()
+			var before := player.camera.global_basis.get_rotation_quaternion()
 			eva.call("_update_crawl_frame", 1.0 / 120.0)
-			largest_step = maxf(largest_step, before.angle_to(player.global_basis.get_rotation_quaternion()))
-		_check(player.global_basis.y.dot(normal) > 0.999, "body did not align with the grabbed surface")
-		_check(player.camera.global_basis.y.dot(normal) > 0.70, "camera kept a world-upright horizon on the hull")
-		_check(_body_center().distance_to(center) < 0.002, "surface alignment moved the capsule center")
-		_check(largest_step < deg_to_rad(0.8), "surface camera exceeded its angular speed limit")
-		var pull: Vector3 = eva.call("_drag_motion", Vector2(0, 20))
-		_check(pull.length() > 0.1 and absf(pull.dot(normal)) < 0.001,
-			"forward pulling stopped working when screen-up became the hull normal")
+			largest_step = maxf(largest_step, before.angle_to(player.camera.global_basis.get_rotation_quaternion()))
+			_check((-player.camera.global_basis.z).dot(forward) > 0.9999,
+				"grabbing the hull forced the player to look in another direction")
+		_check(player.global_transform.is_equal_approx(saved), "grip roll moved or rotated the player's body")
+		_check(largest_step < deg_to_rad(0.8), "surface roll exceeded its angular speed limit")
+		var up := normal.slide(forward)
+		if up.length_squared() >= 0.12:
+			_check(player.camera.global_basis.y.dot(up.normalized()) > 0.999,
+				"view did not settle to the surface chosen at grab time")
+		else:
+			_check(player.camera.global_basis.is_equal_approx(initial_view),
+				"a nearly head-on grab amplified an ambiguous normal into a camera turn")
+		var settled := player.camera.global_basis
+		player.global_position += Vector3(0.2, 0, 0)
+		for tick in 120:
+			eva.call("_update_crawl_frame", 1.0 / 60.0)
+		_check(player.camera.global_basis.is_equal_approx(settled), "moving over hull detail retargeted the held roll")
+		_check(Vector3(eva.get("_hand_normal")).is_equal_approx(normal), "held grip changed its support normal")
+		player.global_transform = saved
 		eva.call("_stop_grip")
-	var free_basis := player.global_basis
-	var free_position := player.global_position
+	var free_view := player.camera.global_basis
 	for tick in 240:
 		eva.call("_physics_process", 1.0 / 60.0)
-	_check(player.global_basis.is_equal_approx(free_basis), "letting go forced the camera back to the world horizon")
-	_check(player.global_position.distance_to(free_position) < 0.001 and eva.phase == EVA.Phase.OUTSIDE,
+	_check(player.camera.global_basis.is_equal_approx(free_view), "release automatically leveled the view")
+	_check(player.global_position.distance_to(position) < 0.001 and eva.phase == EVA.Phase.OUTSIDE,
 		"a stationary, unattached player was moved or returned automatically")
+	var motion := InputEventMouseMotion.new()
+	motion.relative = Vector2(24, 0)
+	motion.screen_relative = motion.relative
+	root.push_input(motion, true)
+	_check((-player.camera.global_basis.z).dot(free_view.x) > 0.05,
+		"free look after a roll did not turn toward screen-right")
+	var turned := player.camera.global_basis
+	motion.relative = Vector2(0, -18)
+	motion.screen_relative = motion.relative
+	root.push_input(motion, true)
+	_check((-player.camera.global_basis.z).dot(turned.y) > 0.04,
+		"free look after a roll did not turn toward screen-up")
+	_check(player.head.rotation.is_zero_approx(), "EVA mouse look was applied twice by the player controller")
 	player.collision_mask = mask
 	player.global_transform = saved
-	player.up_direction = saved.basis.y
 	player.head.rotation = head
 	player.camera.rotation = view
