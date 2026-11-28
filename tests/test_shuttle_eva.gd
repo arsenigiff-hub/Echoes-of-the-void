@@ -29,6 +29,7 @@ func _wait_for_phase(wanted: EVA.Phase) -> bool:
 
 func _aim(target: Vector3) -> void:
 	var direction := (target - player.camera.global_position).normalized()
+	direction = player.global_basis.inverse() * direction
 	player.head.rotation.y = atan2(-direction.x, -direction.z)
 	player.camera.rotation = Vector3(asin(direction.y), 0, 0)
 	player.interaction_ray.force_raycast_update()
@@ -97,6 +98,7 @@ func _run() -> void:
 		_check(outside_start.x < -4.3 and player.eva_mouse_only and hatch.collision_layer == 0,
 			"player did not move through the outer hatch into mouse-only EVA")
 		await _photo("02_outside")
+		_test_surface_frame()
 		await _test_grip()
 		var ready := await _wait_for_phase(EVA.Phase.INTERIOR)
 		_check(ready and not player.eva_mouse_only and not player.eva_mode and not player.is_interacting \
@@ -136,7 +138,9 @@ func _test_grip() -> void:
 		var eye := player.camera.global_basis
 		var start := player.global_position
 		var dx := Vector2(72, -39)
-		expected = (-eye.x * dx.x + eye.y * dx.y).slide(hit["normal"]).normalized()
+		var normal := Vector3.UP if hit["collider"] == eva.get("_platform_body") else Vector3(hit["normal"])
+		var right := eye.x.slide(normal).normalized()
+		expected = (-right * dx.x + normal.cross(right) * dx.y).normalized()
 		var motion := InputEventMouseMotion.new()
 		motion.relative = dx
 		motion.screen_relative = dx
@@ -145,7 +149,8 @@ func _test_grip() -> void:
 		await _frames(4)
 		_check((player.global_position - start).dot(expected) > 0.03,
 			"held-mouse drag did not pull the player opposite the cursor along the surface")
-		_check(player.camera.global_basis.is_equal_approx(eye), "held drag also moved camera aim")
+		_check(eye.get_rotation_quaternion().angle_to(player.camera.global_basis.get_rotation_quaternion()) < deg_to_rad(8),
+			"surface alignment snapped the camera during a short pull")
 	_click(false)
 	var released := player.global_position
 	await _frames(10)
@@ -195,17 +200,17 @@ func _test_momentum(hit: Dictionary) -> void:
 		_check(not eva.gripping and eva.drift.length() > 0.1,
 			"a complete flick between physics ticks lost release momentum")
 		eva.call("_grab", hit["position"], hit["normal"])
-		var held := player.global_position
+		var held := _body_center()
 		await _frames(5)
-		_check(player.global_position.distance_to(held) < 0.005 and eva.drift.is_zero_approx(),
+		_check((_body_center() - held).slide(eva.get("_hand_normal")).length() < 0.005 and eva.drift.is_zero_approx(),
 			"a fresh grip failed to arrest free drift")
 		motion.relative = Vector2(500, -250)
 		motion.screen_relative = motion.relative
 		root.push_input(motion, true)
 		await _frames(2)
-		held = player.global_position
+		held = _body_center()
 		await _frames(5)
-		_check(player.global_position.distance_to(held) < 0.005,
+		_check((_body_center() - held).slide(eva.get("_hand_normal")).length() < 0.005,
 			"a flick continued replaying queued travel after the mouse stopped")
 		eva.call("_notification", Node.NOTIFICATION_WM_WINDOW_FOCUS_OUT)
 		_check(not eva.gripping, "losing window focus left the hand attached")
@@ -266,3 +271,46 @@ func _test_full_hull() -> void:
 			"grabbing a distant hull section snapped player toward the hatch")
 		eva.call("_stop_grip")
 		eva.drift = Vector3.ZERO
+
+
+
+func _body_center() -> Vector3:
+	return player.global_position + player.global_basis.y * 0.9
+
+
+func _test_surface_frame() -> void:
+	var saved := player.global_transform
+	var head := player.head.rotation
+	var view := player.camera.rotation
+	var mask := player.collision_mask
+	player.collision_mask = 0
+	player.head.rotation = Vector3.ZERO
+	player.camera.rotation = Vector3.ZERO
+	var center := _body_center()
+	for normal: Vector3 in [Vector3.LEFT, Vector3.DOWN, Vector3.FORWARD, Vector3.BACK]:
+		eva.call("_grab", center - normal, normal)
+		var largest_step := 0.0
+		for tick in 480:
+			var before := player.global_basis.get_rotation_quaternion()
+			eva.call("_update_crawl_frame", 1.0 / 120.0)
+			largest_step = maxf(largest_step, before.angle_to(player.global_basis.get_rotation_quaternion()))
+		_check(player.global_basis.y.dot(normal) > 0.999, "body did not align with the grabbed surface")
+		_check(player.camera.global_basis.y.dot(normal) > 0.70, "camera kept a world-upright horizon on the hull")
+		_check(_body_center().distance_to(center) < 0.002, "surface alignment moved the capsule center")
+		_check(largest_step < deg_to_rad(0.8), "surface camera exceeded its angular speed limit")
+		var pull: Vector3 = eva.call("_drag_motion", Vector2(0, 20))
+		_check(pull.length() > 0.1 and absf(pull.dot(normal)) < 0.001,
+			"forward pulling stopped working when screen-up became the hull normal")
+		eva.call("_stop_grip")
+	var free_basis := player.global_basis
+	var free_position := player.global_position
+	for tick in 240:
+		eva.call("_physics_process", 1.0 / 60.0)
+	_check(player.global_basis.is_equal_approx(free_basis), "letting go forced the camera back to the world horizon")
+	_check(player.global_position.distance_to(free_position) < 0.001 and eva.phase == EVA.Phase.OUTSIDE,
+		"a stationary, unattached player was moved or returned automatically")
+	player.collision_mask = mask
+	player.global_transform = saved
+	player.up_direction = saved.basis.y
+	player.head.rotation = head
+	player.camera.rotation = view

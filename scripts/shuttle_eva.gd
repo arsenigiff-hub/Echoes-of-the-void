@@ -17,6 +17,9 @@ const OUTSIDE_RENDER := 1 << 14
 const GRIP_RANGE := 2.75
 const PULL_REACH := 1.14
 const MAX_DRIFT := 4.9
+const CRAWL_TURN_RATE := 3.5
+const CRAWL_MAX_TURN := 1.48353 # 85 degrees per second, independent of frame rate.
+const CRAWL_STANDOFF := 1.04
 
 var powered := false
 var phase := Phase.INTERIOR
@@ -51,6 +54,10 @@ var _pull := Vector3.ZERO
 var _hand_normal := Vector3.ZERO
 var _grip_origin := Vector3.ZERO
 var _grip_point := Vector3.ZERO
+var _crawl_target_up := Vector3.UP
+var _crawl_forward := Vector3.FORWARD
+var _crawl_pitch := -0.70
+var _crawl_collider: Object
 var drift := Vector3.ZERO
 var _gate_template: MeshInstance3D
 
@@ -358,6 +365,7 @@ func _arrive() -> void:
 	_hull_body.collision_layer = 0
 	_hint.text = "ШЛЮЗ · ВОЗВРАЩЕНИЕ"
 	var approach := _tracks().set_parallel()
+	approach.tween_property(player, "quaternion", Quaternion.IDENTITY, 0.70)
 	approach.tween_property(player, "global_position", Vector3(-4.32, 0.10, port_z), 0.83)
 	approach.tween_property(player.head, "rotation:y", _near_yaw(-PI * 0.5), 0.65)
 	approach.tween_property(player.camera, "rotation", Vector3(-0.06, 0.0, 0.0), 0.70)
@@ -381,6 +389,7 @@ func _arrive() -> void:
 	await pressure.finished
 	await _slide_inner(true)
 	player.velocity = Vector3.ZERO
+	player.up_direction = Vector3.UP
 	player.eva_mode = false
 	player.eva_mouse_only = false
 	player.is_interacting = false
@@ -448,9 +457,8 @@ func _input(event: InputEvent) -> void:
 			_pending_drag += drag
 			get_viewport().set_input_as_handled()
 			return
-		var eye := player.camera.global_basis
 		# The hand stays fixed on the hull; the body moves opposite the drag.
-		_pull += (-eye.x * drag.x + eye.y * drag.y).slide(_hand_normal) * 0.0063
+		_pull += _drag_motion(drag)
 		_pull = _pull.limit_length(0.85)
 		get_viewport().set_input_as_handled()
 
@@ -474,10 +482,12 @@ func _physics_process(delta: float) -> void:
 				_arrive()
 				return
 			if not target.is_empty():
-				_grab(target["position"], target["normal"])
+				_crawl_collider = target["collider"]
+				_grab(target["position"], Vector3.UP if _crawl_collider == _platform_body else target["normal"])
 			else:
 				_pending_drag = Vector2.ZERO
 	if gripping:
+		_update_crawl_frame(delta)
 		_apply_pull(delta)
 	else:
 		_apply_drift(delta)
@@ -514,10 +524,18 @@ func _aim_at_door() -> bool:
 func _grab(point: Vector3, normal: Vector3) -> void:
 	gripping = true
 	_hand_normal = normal.normalized()
+	_crawl_target_up = _hand_normal
+	var eye := player.camera.global_basis
+	_crawl_forward = (-eye.z).slide(_hand_normal)
+	if _crawl_forward.length_squared() < 0.12:
+		_crawl_forward = eye.y.slide(_hand_normal)
+	if _crawl_forward.length_squared() < 0.0001:
+		_crawl_forward = eye.x.cross(_hand_normal)
+	_crawl_forward = _crawl_forward.normalized()
+	_crawl_pitch = minf(player.camera.rotation.x, -0.70)
 	_grip_point = point
 	_grip_origin = player.global_position
-	var eye := player.camera.global_basis
-	_pull = (-eye.x * _pending_drag.x + eye.y * _pending_drag.y).slide(_hand_normal) * 0.0063
+	_pull = _drag_motion(_pending_drag)
 	_pending_drag = Vector2.ZERO
 	drift = Vector3.ZERO
 	_play(_mechanical, FABRIC, -19.0, 0.87)
@@ -539,6 +557,62 @@ func _stop_grip() -> void:
 	if _hand_tween != null:
 		_hand_tween.kill()
 	_hand.hide()
+	_crawl_collider = null
+
+
+func _drag_motion(drag: Vector2) -> Vector3:
+	# Once upright relative to the hull, screen-up is the surface normal.
+	# Pulling the mouse down must still advance along the hull, rather than vanish.
+	var eye := player.camera.global_basis
+	var right := eye.x.slide(_hand_normal)
+	if right.length_squared() < 0.0001:
+		right = (-eye.z).slide(_hand_normal).cross(_hand_normal)
+	right = right.normalized()
+	var forward := _hand_normal.cross(right).normalized()
+	return (-right * drag.x + forward * drag.y) * 0.0063
+
+
+func _update_crawl_frame(delta: float) -> void:
+	# Sample under the body as it rounds the hull. Rails use the platform deck's up.
+	var center := player.global_position + player.global_basis.y * 0.9
+	var sample: Dictionary = {}
+	if _crawl_collider == _hull_body:
+		var query := PhysicsRayQueryParameters3D.create(center,
+			center - _crawl_target_up * (GRIP_RANGE + 0.5), GRIP_LAYER)
+		var hit := player.get_world_3d().direct_space_state.intersect_ray(query)
+		if hit.get("collider") == _hull_body:
+			sample = hit
+			var normal: Vector3 = hit["normal"]
+			if normal.dot(center - hit["position"]) < 0.0:
+				normal = -normal
+			_crawl_target_up = normal.normalized()
+			_hand_normal = _crawl_target_up
+	# Parallel-transport the chosen crawl heading as the support normal changes.
+	_crawl_forward = _crawl_forward.slide(_crawl_target_up).normalized()
+	if _crawl_forward.is_zero_approx():
+		_crawl_forward = player.global_basis.x.cross(_crawl_target_up).normalized()
+	var target := Basis.looking_at(_crawl_forward, _crawl_target_up) * Basis(Vector3.UP, -player.head.rotation.y)
+	var turn := player.global_basis.get_rotation_quaternion().inverse() * target.get_rotation_quaternion()
+	var angle := turn.get_angle()
+	# Quaternions q and -q describe the same frame; always use the shorter arc.
+	angle = minf(angle, TAU - angle)
+	var weight := minf(1.0 - exp(-CRAWL_TURN_RATE * delta), CRAWL_MAX_TURN * delta / maxf(angle, 0.0001))
+	var next_basis := Basis(player.global_basis.get_rotation_quaternion().slerp(target.get_rotation_quaternion(), weight))
+	# Pivot about the capsule center: turning must not drag the body through the hull.
+	var next := Transform3D(next_basis, center - next_basis.y * 0.9)
+	if not player.test_move(next, Vector3.ZERO, null, 0.001, true):
+		var shift := next.origin - player.global_position
+		player.global_transform = next
+		player.up_direction = next_basis.y
+		_grip_origin += shift
+	# Settle onto broad hull surfaces, never onto the thin rail or hatch hardware.
+	if not sample.is_empty():
+		var gap := (center - Vector3(sample["position"])).dot(_crawl_target_up)
+		var correction := clampf((CRAWL_STANDOFF - gap) * 3.0 * delta, -0.75 * delta, 0.75 * delta)
+		var start := player.global_position
+		_move_around_hull(_crawl_target_up * correction)
+		_grip_origin += player.global_position - start
+	player.camera.rotation.x = lerpf(player.camera.rotation.x, _crawl_pitch, 1.0 - exp(-CRAWL_TURN_RATE * delta))
 
 
 func _apply_pull(delta: float) -> void:
