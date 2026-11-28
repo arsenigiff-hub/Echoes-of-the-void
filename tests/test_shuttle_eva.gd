@@ -86,6 +86,21 @@ func _run() -> void:
 		_check(false, "exit cycle did not reach vacuum")
 	else:
 		outside_start = player.global_position
+		var environment := player.camera.environment
+		_check(environment.ambient_light_source == Environment.AMBIENT_SOURCE_DISABLED \
+			and environment.ambient_light_energy == 0.0 \
+			and environment.reflected_light_source == Environment.REFLECTION_SOURCE_DISABLED \
+			and not environment.fog_enabled, "empty space still supplies ambient, sky reflection or lit fog")
+		_check(eva.find_children("*", "DirectionalLight3D", true, false).is_empty(), "EVA still has an invisible sun")
+		_check(not player.flashlight.visible and player.camera.get_node_or_null("EVAHelmetLight") == null,
+			"exit enabled an automatic helmet light")
+		var flashlight := InputEventKey.new()
+		flashlight.physical_keycode = KEY_F
+		flashlight.pressed = true
+		root.push_input(flashlight, true)
+		_check(player.flashlight.visible, "F cannot enable the flashlight in EVA")
+		root.push_input(flashlight, true)
+		_check(not player.flashlight.visible, "F cannot disable the flashlight in EVA")
 		_check(_ray_hits_hatch(), "open hatch leaf lost its physical collision")
 		_test_hatch_body()
 		var floor_ray := PhysicsRayQueryParameters3D.create(outside_start + Vector3.UP * 0.3,

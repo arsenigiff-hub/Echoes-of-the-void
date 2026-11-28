@@ -33,7 +33,6 @@ var _hull_body: StaticBody3D
 var _outer_body: AnimatableBody3D
 var _platform_body: StaticBody3D
 var _pressure_light: OmniLight3D
-var _helmet_light: SpotLight3D
 var _space_environment: Environment
 var _initial_camera_environment: Environment
 var _source: AudioStreamPlayer
@@ -60,10 +59,12 @@ func configure(operator: Player, dock_z: float, inner_gate_z: float, room_enviro
 	port_z = dock_z
 	inner_z = inner_gate_z
 	_space_environment = room_environment.duplicate() as Environment
-	_space_environment.ambient_light_color = Color(0.62, 0.71, 0.82)
-	_space_environment.ambient_light_energy = 0.37
-	_space_environment.fog_density = 0.004
-	_space_environment.fog_light_color = Color(0.014, 0.021, 0.031)
+	# Stars are a visible background, not an invisible source lighting the hull.
+	_space_environment.ambient_light_source = Environment.AMBIENT_SOURCE_DISABLED
+	_space_environment.ambient_light_energy = 0.0
+	_space_environment.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
+	_space_environment.fog_enabled = false
+
 
 
 func _ready() -> void:
@@ -74,14 +75,7 @@ func _ready() -> void:
 	add_child(_source)
 	_mechanical = AudioStreamPlayer.new()
 	add_child(_mechanical)
-	_helmet_light = SpotLight3D.new()
-	_helmet_light.name = "EVAHelmetLight"
-	_helmet_light.light_color = Color(0.77, 0.87, 1.0)
-	_helmet_light.light_energy = 0.72
-	_helmet_light.spot_angle = 43.0
-	_helmet_light.spot_range = 7.0
-	_helmet_light.hide()
-	player.camera.add_child(_helmet_light)
+
 
 
 func _build_exterior() -> void:
@@ -121,23 +115,12 @@ func _build_exterior() -> void:
 	_build_platform()
 	_build_hatch_collision()
 
-	var key := DirectionalLight3D.new()
-	key.name = "ExteriorColdKey"
-	key.rotation_degrees = Vector3(-41.0, -62.0, -8.0)
-	key.light_color = Color(0.73, 0.84, 1.0)
-	key.light_energy = 1.35
-	key.light_cull_mask = OUTSIDE_RENDER
-	key.shadow_enabled = true
-	add_child(key)
-	var bounce := DirectionalLight3D.new()
-	bounce.name = "PlanetBounce"
-	bounce.rotation_degrees = Vector3(9.0, 29.0, 0.0)
-	bounce.light_color = Color(0.75, 0.62, 0.47)
-	bounce.light_energy = 0.35
-	bounce.light_cull_mask = OUTSIDE_RENDER
-	add_child(bounce)
-	_key_on_safe_layer(key)
-	_key_on_safe_layer(bounce)
+	# Cabin lights cannot shine through the pressure hull onto its outside skin.
+	# The real airlock lamp is added separately and can light the open threshold.
+	for light: Light3D in get_parent().find_children("*", "Light3D", true, false):
+		if not player.is_ancestor_of(light):
+			light.light_cull_mask &= ~OUTSIDE_RENDER
+
 
 
 func _build_platform() -> void:
@@ -209,6 +192,7 @@ func _build_inner_gate() -> void:
 	_pressure_light.name = "AirlockCycleLight"
 	_pressure_light.light_color = Color(1.0, 0.34, 0.13)
 	_pressure_light.light_energy = 0.0
+	_pressure_light.shadow_enabled = true
 	_pressure_light.omni_range = 3.2
 	_pressure_light.position = Vector3(-2.93, 1.97, port_z + 0.31)
 	_key_on_safe_layer(_pressure_light)
@@ -331,7 +315,6 @@ func _depart() -> void:
 	await vent.finished
 	_hull_root.show()
 	player.camera.environment = _space_environment
-	_helmet_light.visible = not player.flashlight.visible
 	_hint.text = "ШЛЮЗ · ВНЕШНИЙ ЛЮК"
 	await _swing_outer(true)
 	_set_outer_collision(false)
@@ -369,7 +352,6 @@ func _arrive() -> void:
 	_set_outer_collision(true)
 	_hull_root.hide()
 	player.camera.environment = _initial_camera_environment
-	_helmet_light.hide()
 	_hint.text = "ШЛЮЗ · ВЫРАВНИВАНИЕ ДАВЛЕНИЯ"
 	_play(_source, VENT, -25.0, 1.06)
 	exterior_audio.emit(false)
