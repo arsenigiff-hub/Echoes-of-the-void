@@ -17,6 +17,7 @@ const OUTSIDE_RENDER := 1 << 14
 const GRIP_RANGE := 2.75
 const PULL_REACH := 1.14
 const MAX_DRIFT := 4.9
+const TETHER_SLACK := 1.0
 
 var powered := false
 var phase := Phase.INTERIOR
@@ -52,6 +53,12 @@ var _grip_origin := Vector3.ZERO
 var _grip_point := Vector3.ZERO
 var drift := Vector3.ZERO
 var _gate_template: MeshInstance3D
+var tether_attached := false
+var tether_length := 0.0
+var _tether_mesh: MeshInstance3D
+var _tether_anchor_node: Node3D
+var _tether_anchor_local := Vector3.ZERO
+var _tether_pending := false
 
 
 func configure(operator: Player, dock_z: float, inner_gate_z: float, room_environment: Environment) -> void:
@@ -89,8 +96,12 @@ func _build_exterior() -> void:
 	_hull_root = mount.find_child("AriadnaTripoHull", true, false) as Node3D
 	_gate_template = mount.find_child("InnerGateArt", true, false) as MeshInstance3D
 	_gate_template.hide()
-	# The old rescue line is no longer part of mouse-only EVA.
-	mount.find_child("TetherArt", true, false).queue_free()
+	# Reuse the authored Blender rope, hidden until the player clips it on with Q.
+	_tether_mesh = mount.find_child("TetherArt", true, false) as MeshInstance3D
+	_tether_mesh.reparent(self, false)
+	_tether_mesh.name = "OptionalTether"
+	_tether_mesh.layers = OUTSIDE_RENDER
+	_tether_mesh.hide()
 	var collar := mount.find_child("PressureTunnel", true, false) as MeshInstance3D
 	for child in mount.find_children("*", "MeshInstance3D", true, false):
 		var visual := child as MeshInstance3D
@@ -225,7 +236,7 @@ func _build_hud() -> void:
 	_hint.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	_hint.offset_left = -520
 	_hint.offset_right = 520
-	_hint.offset_top = -69
+	_hint.offset_top = -94
 	_hint.offset_bottom = -29
 	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_hint.add_theme_font_size_override("font_size", 22)
@@ -335,6 +346,7 @@ func _depart() -> void:
 
 func _arrive() -> void:
 	phase = Phase.RETURNING
+	_detach_tether()
 	_stop_grip()
 	_lock_controls()
 	_dot.hide()
@@ -403,6 +415,13 @@ func _swing_outer(open: bool) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if phase == Phase.OUTSIDE and event is InputEventKey \
+			and (event.physical_keycode == KEY_Q or event.keycode == KEY_Q):
+		if event.pressed and not event.echo \
+				and (Input.mouse_mode == Input.MOUSE_MODE_CAPTURED or DisplayServer.get_name() == "headless"):
+			_tether_pending = true
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if phase == Phase.INTERIOR:
 			if event.pressed and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and not player.is_interacting:
@@ -440,6 +459,7 @@ func _input(event: InputEvent) -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT and phase == Phase.OUTSIDE:
 		_stop_grip()
+		_tether_pending = false
 
 
 func _physics_process(delta: float) -> void:
@@ -447,6 +467,16 @@ func _physics_process(delta: float) -> void:
 		return
 	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED and DisplayServer.get_name() != "headless":
 		_stop_grip()
+		_tether_pending = false
+	if tether_attached and (not is_instance_valid(_tether_anchor_node) or not _tether_anchor_node.is_inside_tree()):
+		_detach_tether()
+	if _tether_pending:
+		_tether_pending = false
+		if tether_attached:
+			_detach_tether()
+			_play(_mechanical, CLUNK, -23.0, 1.1)
+		else:
+			_attach_tether()
 	var target: Dictionary = {} if gripping else _aim_surface()
 	var return_target := not gripping and _aim_at_door()
 	if _press_pending:
@@ -465,6 +495,7 @@ func _physics_process(delta: float) -> void:
 		_apply_drift(delta)
 	if _release_pending:
 		_stop_grip()
+	_update_tether()
 	_dot.visible = not gripping
 	_dot.color = Color(0.85, 0.89, 0.70, 0.92) if not target.is_empty() or return_target \
 		else Color(0.67, 0.73, 0.74, 0.36)
@@ -474,6 +505,10 @@ func _physics_process(delta: float) -> void:
 		_hint.text = "ЛКМ — вернуться в шлюз"
 	else:
 		_hint.text = "Зажмите ЛКМ на корпусе" if not target.is_empty() else "Наведитесь на корпус"
+	if tether_attached:
+		_hint.text += "\nQ — отцепить трос"
+	elif not target.is_empty() or gripping:
+		_hint.text += "\nQ — закрепить трос"
 
 
 func _aim_surface() -> Dictionary:
@@ -527,6 +562,7 @@ func _apply_pull(delta: float) -> void:
 	if _pull.length_squared() < 0.000001:
 		_pull = Vector3.ZERO
 		drift = drift.move_toward(Vector3.ZERO, delta * 10.0)
+		_enforce_tether()
 		return
 	var step := _pull.limit_length(MAX_DRIFT * delta)
 	# Mouse motion belongs to this tick; do not replay a flick as queued travel.
@@ -536,16 +572,92 @@ func _apply_pull(delta: float) -> void:
 	var eye_target := desired + eye_offset - _grip_point
 	if eye_target.length() > GRIP_RANGE:
 		desired = _grip_point + eye_target.limit_length(GRIP_RANGE) - eye_offset
+	desired = _limit_tether_position(desired)
 	var start := player.global_position
 	_move_around_hull(desired - start)
 	var actual := (player.global_position - start) / maxf(delta, 0.00001)
 	drift = actual.limit_length(MAX_DRIFT)
+	_enforce_tether()
 
 
 func _apply_drift(delta: float) -> void:
-	# No invisible radius or spring: the whole hull is available for handholds.
+	# Only the optional Q tether can limit drift; there is no radius from the hatch.
 	drift = drift.limit_length(MAX_DRIFT)
-	_move_around_hull(drift * delta)
+	var desired := _limit_tether_position(player.global_position + drift * delta)
+	_move_around_hull(desired - player.global_position)
+	_enforce_tether()
+
+
+func _harness_offset() -> Vector3:
+	return player.global_basis * Vector3(0, 0.92, 0)
+
+
+func _tether_point() -> Vector3:
+	return _tether_anchor_node.to_global(_tether_anchor_local)
+
+
+func _attach_tether() -> bool:
+	if phase != Phase.OUTSIDE or tether_attached:
+		return false
+	var hit := _aim_surface()
+	if hit.is_empty():
+		return false
+	_tether_anchor_node = hit["collider"] as Node3D
+	_tether_anchor_local = _tether_anchor_node.to_local(hit["position"])
+	tether_length = (player.global_position + _harness_offset()).distance_to(_tether_point()) + TETHER_SLACK
+	tether_attached = true
+	_tether_mesh.show()
+	_update_tether()
+	_play(_mechanical, CLUNK, -21.0, 0.91)
+	return true
+
+
+func _detach_tether() -> void:
+	tether_attached = false
+	tether_length = 0.0
+	_tether_pending = false
+	_tether_anchor_node = null
+	_tether_mesh.hide()
+
+
+func _limit_tether_position(desired: Vector3) -> Vector3:
+	if not tether_attached:
+		return desired
+	var pin := _tether_point()
+	var offset := _harness_offset()
+	return pin + (desired + offset - pin).limit_length(tether_length) - offset
+
+
+func _enforce_tether() -> void:
+	if not tether_attached:
+		return
+	# Resolve via the capsule's collisions, never teleport through a bulkhead.
+	for attempt in 3:
+		var correction := _limit_tether_position(player.global_position) - player.global_position
+		if correction.length_squared() < 0.0000001:
+			break
+		_move_around_hull(correction)
+	var span := player.global_position + _harness_offset() - _tether_point()
+	if span.length() >= tether_length - 0.002:
+		var outward := span.normalized()
+		# Preserve tangential/inward momentum; remove only speed stretching the line.
+		drift -= outward * maxf(0.0, drift.dot(outward))
+
+
+func _update_tether() -> void:
+	if not tether_attached:
+		return
+	var a := _tether_point()
+	var b := player.global_position + _harness_offset()
+	var span := b - a
+	if span.length_squared() < 0.000001:
+		_tether_mesh.hide()
+		return
+	_tether_mesh.show()
+	var bounds := _tether_mesh.mesh.get_aabb()
+	_tether_mesh.basis = Basis(Quaternion(Vector3.UP, span.normalized())).scaled(
+		Vector3(1.0, span.length() / bounds.size.y, 1.0))
+	_tether_mesh.position = (a + b) * 0.5 - _tether_mesh.basis * bounds.get_center()
 
 
 func _move_around_hull(motion: Vector3) -> void:

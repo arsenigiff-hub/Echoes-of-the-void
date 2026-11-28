@@ -112,10 +112,11 @@ func _run() -> void:
 		_check(outside_start.x < -4.3 and player.eva_mouse_only and hatch.collision_layer == 0,
 			"player did not move through the outer hatch into mouse-only EVA")
 		await _photo("02_outside")
+		await _test_tether()
 		await _test_grip()
 		var ready := await _wait_for_phase(EVA.Phase.INTERIOR)
 		_check(ready and not player.eva_mouse_only and not player.eva_mode and not player.is_interacting \
-			and player.global_position.x > -2.28 and hatch.collision_layer == 1,
+			and player.global_position.x > -2.28 and hatch.collision_layer == 1 and not eva.tether_attached,
 			"return did not restore the sealed, walkable airlock")
 		if ready:
 			await _photo("04_return")
@@ -168,6 +169,11 @@ func _test_grip() -> void:
 	_check((player.global_position - released).dot(expected) > 0.11,
 		"letting go after a fast pull lost the imparted inertia")
 	await _test_momentum(hit)
+	_aim(hit["position"])
+	await _frames(2)
+	_q()
+	await _frames(2)
+	_check(eva.tether_attached, "could not attach rope before testing airlock return")
 	_aim(Vector3(-3.78, 1.16, eva.port_z))
 	_click(true)
 	await _frames(4)
@@ -281,3 +287,94 @@ func _test_full_hull() -> void:
 			"grabbing a distant hull section snapped player toward the hatch")
 		eva.call("_stop_grip")
 		eva.drift = Vector3.ZERO
+
+
+func _q(echo := false) -> void:
+	var event := InputEventKey.new()
+	event.physical_keycode = KEY_Q
+	event.pressed = true
+	event.echo = echo
+	root.push_input(event, true)
+	if not echo:
+		event = InputEventKey.new()
+		event.physical_keycode = KEY_Q
+		root.push_input(event, true)
+
+
+func _test_tether() -> void:
+	var saved := player.global_position
+	var mask := player.collision_mask
+	var art := eva.get("_tether_mesh") as MeshInstance3D
+	_check(not eva.tether_attached and not art.visible, "rope was attached automatically at exit")
+	_aim(player.camera.global_position + Vector3(-8, 0.12, 0))
+	_q()
+	await _frames(3)
+	_check(not eva.tether_attached and not art.visible, "Q in empty space created an anchor")
+	_aim(Vector3(-3.95, 1.29, eva.port_z - 0.83))
+	await _frames(2)
+	var hit: Dictionary = eva.call("_aim_surface")
+	_check(not hit.is_empty(), "no surface available for Q attachment test")
+	if hit.is_empty():
+		return
+	var look := player.camera.global_basis
+	_q()
+	await _frames(3)
+	_check(eva.tether_attached and art.visible, "Q did not attach a visible rope")
+	if not eva.tether_attached:
+		return
+	var pin: Vector3 = eva.call("_tether_point")
+	var offset: Vector3 = eva.call("_harness_offset")
+	_check(pin.distance_to(hit["position"]) < 0.01, "rope anchor missed the point under the crosshair")
+	_check(absf(eva.tether_length - (saved + offset).distance_to(pin) - 1.0) < 0.01,
+		"attachment did not grant one metre of slack")
+	_check(player.global_position.distance_to(saved) < 0.001 and player.camera.global_basis.is_equal_approx(look),
+		"attachment moved the player or camera")
+	_q(true)
+	await _frames(2)
+	_check(eva.tether_attached, "keyboard autorepeat detached the rope")
+	player.collision_mask = 0
+	var outward := (saved + offset - pin).normalized()
+	var tangent := outward.cross(Vector3.UP).normalized()
+	if tangent.length_squared() < 0.5:
+		tangent = Vector3.RIGHT
+	player.global_position = pin + outward * (eva.tether_length - 0.10) - offset
+	eva.drift = outward * 4.0 + tangent
+	eva.call("_apply_drift", 0.25)
+	var span := player.global_position + offset - pin
+	_check(span.length() <= eva.tether_length + 0.003, "a fast outward drift exceeded rope length")
+	_check(absf(eva.drift.dot(span.normalized())) < 0.005, "taut rope left outward speed or caused rebound")
+	_check(eva.drift.dot(tangent) > 0.5, "rope discarded tangential momentum")
+	player.global_position = pin + outward * (eva.tether_length - 1.1) - offset
+	eva.drift = -outward * 0.5
+	var start := player.global_position
+	var expected := eva.drift
+	eva.call("_apply_drift", 0.2)
+	_check(player.global_position.distance_to(start + expected * 0.2) < 0.001 \
+		and eva.drift.is_equal_approx(expected), "slack rope pulled or braked an inward-moving player")
+	eva.drift = Vector3.ZERO
+	start = player.global_position
+	for tick in 240:
+		eva.call("_apply_drift", 1.0 / 60.0)
+	_check(player.global_position.distance_to(start) < 0.001, "slack rope moved a stationary player")
+	eva.call("_notification", Node.NOTIFICATION_WM_WINDOW_FOCUS_OUT)
+	_check(eva.tether_attached, "losing window focus removed the safety rope")
+	_aim(player.camera.global_position + Vector3(-8, 0.12, 0))
+	eva.drift = tangent * 0.7
+	_q()
+	await _frames(3)
+	_check(not eva.tether_attached and not art.visible, "Q could not detach while looking away")
+	_check(eva.drift.is_equal_approx(tangent * 0.7), "detachment reset the player's momentum")
+	eva.drift = Vector3.ZERO
+	player.global_position = saved
+	player.collision_mask = mask
+	_aim(Vector3(-3.72, 1.23, eva.port_z - 1.16))
+	await _frames(2)
+	var other: Dictionary = eva.call("_aim_surface")
+	if not other.is_empty():
+		_q()
+		await _frames(2)
+		_check(eva.tether_attached and Vector3(eva.call("_tether_point")).distance_to(other["position"]) < 0.01,
+			"rope could not be reattached to a new point")
+		eva.call("_detach_tether")
+	player.global_position = saved
+	eva.drift = Vector3.ZERO
