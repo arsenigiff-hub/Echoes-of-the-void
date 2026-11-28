@@ -6,6 +6,7 @@ signal exterior_audio(active: bool)
 enum Phase { INTERIOR, DEPARTING, OUTSIDE, RETURNING }
 
 const DOCK := preload("res://assetss/blender/eva_shuttle_dock/eva_shuttle_dock.glb")
+const PLATFORM := preload("res://assetss/blender/eva_platform/eva_platform.glb")
 const HAND := preload("res://assetss/ui/eva/grip_hand.png")
 const CLUNK := preload("res://assetss/audio/intro/clunk.wav")
 const VENT := preload("res://assetss/audio/intro/whoosh_flyby.wav")
@@ -15,8 +16,6 @@ const GRIP_LAYER := 1 << 6
 const OUTSIDE_RENDER := 1 << 14
 const GRIP_RANGE := 2.75
 const PULL_REACH := 1.14
-const TETHER_LENGTH := 6.25
-const TETHER_SLACK := 3.65
 const MAX_DRIFT := 4.9
 
 var powered := false
@@ -31,11 +30,12 @@ var _outer: Node3D
 var _wheel: Node3D
 var _inner: Array[AnimatableBody3D] = []
 var _hull_body: StaticBody3D
+var _outer_body: AnimatableBody3D
+var _platform_body: StaticBody3D
 var _pressure_light: OmniLight3D
 var _helmet_light: SpotLight3D
 var _space_environment: Environment
 var _initial_camera_environment: Environment
-var _tether: MeshInstance3D
 var _source: AudioStreamPlayer
 var _mechanical: AudioStreamPlayer
 var _hint: Label
@@ -95,10 +95,8 @@ func _build_exterior() -> void:
 	_hull_root = mount.find_child("AriadnaTripoHull", true, false) as Node3D
 	_gate_template = mount.find_child("InnerGateArt", true, false) as MeshInstance3D
 	_gate_template.hide()
-	_tether = mount.find_child("TetherArt", true, false) as MeshInstance3D
-	_tether.reparent(self, false)
-	_tether.layers = OUTSIDE_RENDER
-	_tether.hide()
+	# The old rescue line is no longer part of mouse-only EVA.
+	mount.find_child("TetherArt", true, false).queue_free()
 	var collar := mount.find_child("PressureTunnel", true, false) as MeshInstance3D
 	for child in mount.find_children("*", "MeshInstance3D", true, false):
 		var visual := child as MeshInstance3D
@@ -114,11 +112,14 @@ func _build_exterior() -> void:
 	for visual: MeshInstance3D in [_hull_root, collar]:
 		var shape := ConcavePolygonShape3D.new()
 		shape.set_faces(visual.global_transform * visual.mesh.get_faces())
+		shape.backface_collision = true
 		var collider := CollisionShape3D.new()
 		collider.shape = shape
 		_hull_body.add_child(collider)
 		visual.layers = OUTSIDE_RENDER
 	_hull_root.hide()
+	_build_platform()
+	_build_hatch_collision()
 
 	var key := DirectionalLight3D.new()
 	key.name = "ExteriorColdKey"
@@ -137,6 +138,52 @@ func _build_exterior() -> void:
 	add_child(bounce)
 	_key_on_safe_layer(key)
 	_key_on_safe_layer(bounce)
+
+
+func _build_platform() -> void:
+	var mount := PLATFORM.instantiate() as Node3D
+	mount.name = "LandingPlatform"
+	mount.position.z = port_z
+	add_child(mount)
+	_platform_body = StaticBody3D.new()
+	_platform_body.name = "PlatformCollision"
+	_platform_body.collision_layer = 1 | GRIP_LAYER
+	_platform_body.collision_mask = 0
+	add_child(_platform_body)
+	for visual: MeshInstance3D in mount.find_children("*", "MeshInstance3D", true, false):
+		visual.layers = OUTSIDE_RENDER
+		for surface in visual.mesh.get_surface_count():
+			var material := visual.get_active_material(surface) as BaseMaterial3D
+			if material != null:
+				material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		if visual.name == "PlatformStructure":
+			continue
+		var shape := ConcavePolygonShape3D.new()
+		shape.set_faces(visual.global_transform * visual.mesh.get_faces())
+		shape.backface_collision = true
+		var collider := CollisionShape3D.new()
+		collider.shape = shape
+		_platform_body.add_child(collider)
+
+
+func _build_hatch_collision() -> void:
+	# This body follows the authored hinge, including its open resting pose.
+	_outer_body = AnimatableBody3D.new()
+	_outer_body.name = "HatchLeafCollision"
+	_outer_body.sync_to_physics = false
+	_outer_body.collision_layer = 1 | GRIP_LAYER
+	_outer_body.collision_mask = 0
+	_outer_body.set_script(preload("res://scripts/shuttle_interactable.gd"))
+	_outer_body.set("action_id", "hatch")
+	_outer_body.set("prompt", "[ЛКМ] Люк")
+	_outer_body.set("hub", get_parent())
+	_outer.add_child(_outer_body)
+	for part in ["OuterLeafArt", "WheelArt"]:
+		var visual := _outer.find_child(part, true, false) as MeshInstance3D
+		var collider := CollisionShape3D.new()
+		collider.shape = visual.mesh.create_convex_shape(true, true)
+		_outer_body.add_child(collider)
+		collider.global_transform = visual.global_transform
 
 func _key_on_safe_layer(light: Light3D) -> void:
 	light.add_to_group("eva_independent_light")
@@ -234,11 +281,7 @@ func _play(audio: AudioStreamPlayer, clip: AudioStream, decibels: float, pitch :
 
 
 func _exit_pos() -> Vector3:
-	return Vector3(-5.62, 0.24, port_z - 0.54)
-
-
-func _tether_pin() -> Vector3:
-	return Vector3(-3.93, 0.69, port_z - 0.76)
+	return Vector3(-4.65, 0.035, port_z - 0.40)
 
 
 func _tracks() -> Tween:
@@ -296,15 +339,14 @@ func _depart() -> void:
 	move.tween_property(player, "global_position", Vector3(-4.15, 0.08, port_z), 1.29)
 	move.parallel().tween_property(player.camera, "rotation:x", 0.0, 1.17)
 	move.tween_property(player, "global_position", _exit_pos(), 1.04)
-	move.parallel().tween_property(player.head, "rotation:y", _near_yaw(-0.77), 1.10)
-	move.parallel().tween_property(player.camera, "rotation", Vector3(0.13, 0, -0.065), 1.0)
+	move.parallel().tween_property(player.head, "rotation:y", _near_yaw(PI * 0.5), 1.10)
+	move.parallel().tween_property(player.camera, "rotation", Vector3(-0.30, 0, 0), 1.0)
 	await move.finished
 	_hull_body.collision_layer = 1 | GRIP_LAYER
 	player.eva_mode = true
 	player.eva_mouse_only = true
 	player.is_interacting = false
 	phase = Phase.OUTSIDE
-	_tether.show()
 	_dot.show()
 
 
@@ -313,7 +355,6 @@ func _arrive() -> void:
 	_stop_grip()
 	_lock_controls()
 	_dot.hide()
-	_tether.hide()
 	_hull_body.collision_layer = 0
 	_hint.text = "ШЛЮЗ · ВОЗВРАЩЕНИЕ"
 	var approach := _tracks().set_parallel()
@@ -385,7 +426,7 @@ func _input(event: InputEvent) -> void:
 			if event.pressed and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and not player.is_interacting:
 				player.interaction_ray.force_raycast_update()
 				var target := player.interaction_ray.get_collider() as Node
-				if target != null and target.name == "EvaHatch":
+				if target != null and (target.name == "EvaHatch" or target == _outer_body):
 					get_parent().call("on_interact", "hatch", player)
 					get_viewport().set_input_as_handled()
 			return
@@ -442,7 +483,6 @@ func _physics_process(delta: float) -> void:
 		_apply_drift(delta)
 	if _release_pending:
 		_stop_grip()
-	_update_tether()
 	_dot.visible = not gripping
 	_dot.color = Color(0.85, 0.89, 0.70, 0.92) if not target.is_empty() or return_target \
 		else Color(0.67, 0.73, 0.74, 0.36)
@@ -510,8 +550,6 @@ func _apply_pull(delta: float) -> void:
 	# Mouse motion belongs to this tick; do not replay a flick as queued travel.
 	_pull = Vector3.ZERO
 	var desired := _grip_origin + (player.global_position + step - _grip_origin).limit_length(PULL_REACH)
-	var pin := _tether_pin() - Vector3.UP * 0.89
-	desired = pin + (desired - pin).limit_length(TETHER_LENGTH)
 	var eye_offset := player.camera.global_position - player.global_position
 	var eye_target := desired + eye_offset - _grip_point
 	if eye_target.length() > GRIP_RANGE:
@@ -523,23 +561,9 @@ func _apply_pull(delta: float) -> void:
 
 
 func _apply_drift(delta: float) -> void:
-	var pin := _tether_pin() - Vector3.UP * 0.89
-	var distance := player.global_position.distance_to(pin)
-	var outward := (player.global_position - pin).normalized()
-	if distance > TETHER_SLACK:
-		var stretch := distance - TETHER_SLACK
-		var radial_speed := maxf(0.0, drift.dot(outward))
-		drift -= outward * (stretch * 5.4 + radial_speed * 0.85) * delta
-	# In vacuum momentum persists; only the tether and hull change it.
+	# No invisible radius or spring: the whole hull is available for handholds.
 	drift = drift.limit_length(MAX_DRIFT)
-	var offset := player.global_position + drift * delta - pin
-	var taut := offset.length() >= TETHER_LENGTH
-	var desired := pin + offset.limit_length(TETHER_LENGTH)
-	_move_around_hull(desired - player.global_position)
-	if taut:
-		outward = (player.global_position - pin).normalized()
-		# A safety line removes outward speed without launching the player back.
-		drift -= outward * maxf(0.0, drift.dot(outward))
+	_move_around_hull(drift * delta)
 
 
 func _move_around_hull(motion: Vector3) -> void:
@@ -550,13 +574,3 @@ func _move_around_hull(motion: Vector3) -> void:
 		return
 	drift = drift.slide(hit.get_normal())
 	player.move_and_collide(hit.get_remainder().slide(hit.get_normal()))
-
-
-func _update_tether() -> void:
-	var a := _tether_pin()
-	var b := player.global_position + Vector3(0, 0.92, 0)
-	var span := b - a
-	_tether.position = (a + b) * 0.5
-	if span.length_squared() > 0.0001:
-		_tether.quaternion = Quaternion(Vector3.UP, span.normalized())
-		_tether.scale = Vector3(1.0, span.length(), 1.0)

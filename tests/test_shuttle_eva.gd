@@ -65,7 +65,9 @@ func _run() -> void:
 	_aim(Vector3(-3.78, 1.14, eva.port_z))
 	await _frames(4)
 	var hatch := shuttle.get_node("EvaHatch") as StaticBody3D
-	_check(player.interaction_ray.get_collider() == hatch, "the sealed outer aperture must have a reachable collider")
+	_check(player.interaction_ray.get_collider() in [hatch, eva.get("_outer_body")],
+		"the sealed outer aperture must have a reachable collider")
+	_check(_ray_hits_hatch(), "closed hatch leaf has no physical collision")
 	_check(not eva.request_exit(), "blackout must block the outer hatch")
 	shuttle.call("set_powered", true)
 	await _photo("01_closed")
@@ -84,7 +86,15 @@ func _run() -> void:
 		_check(false, "exit cycle did not reach vacuum")
 	else:
 		outside_start = player.global_position
-		_check(outside_start.x < -5.1 and player.eva_mouse_only and hatch.collision_layer == 0,
+		_check(_ray_hits_hatch(), "open hatch leaf lost its physical collision")
+		_test_hatch_body()
+		var floor_ray := PhysicsRayQueryParameters3D.create(outside_start + Vector3.UP * 0.3,
+			outside_start - Vector3.UP * 0.3, 1)
+		var floor_hit := player.get_world_3d().direct_space_state.intersect_ray(floor_ray)
+		_check(floor_hit.get("collider") == eva.get("_platform_body"), "exit does not finish above a solid platform")
+		await _frames(30)
+		_check(player.global_position.distance_to(outside_start) < 0.01, "player drifted off platform immediately after exit")
+		_check(outside_start.x < -4.3 and player.eva_mouse_only and hatch.collision_layer == 0,
 			"player did not move through the outer hatch into mouse-only EVA")
 		await _photo("02_outside")
 		await _test_grip()
@@ -153,20 +163,20 @@ func _test_grip() -> void:
 func _test_momentum(hit: Dictionary) -> void:
 	var saved := player.global_position
 	var mask := player.collision_mask
-	# Isolate momentum and line constraints from hull contact.
+	# Isolate free momentum from hull contact; travel must exceed the old rope radius.
 	player.collision_mask = 0
-	var pin: Vector3 = eva.call("_tether_pin") - Vector3.UP * 0.89
-	player.global_position = pin + Vector3.LEFT
+	player.global_position = outside_start
 	eva.drift = Vector3.UP
 	for tick in 30:
 		eva.call("_apply_drift", 1.0 / 60.0)
-	_check(eva.drift.is_equal_approx(Vector3.UP), "free drift lost momentum inside tether slack")
-	player.global_position = pin + Vector3.LEFT * (EVA.TETHER_LENGTH - 0.01)
+	_check(eva.drift.is_equal_approx(Vector3.UP), "free drift lost momentum")
+	player.global_position = outside_start
 	eva.drift = Vector3.LEFT * 4.0
-	eva.call("_apply_drift", 1.0 / 60.0)
-	_check(player.global_position.distance_to(pin) <= EVA.TETHER_LENGTH + 0.001,
-		"safety tether allowed travel beyond its length")
-	_check(absf(eva.drift.x) < 0.001, "taut tether retained outward speed or bounced player")
+	for tick in 300:
+		eva.call("_apply_drift", 1.0 / 60.0)
+	_check(player.global_position.distance_to(outside_start + Vector3.LEFT * 20.0) < 0.02 \
+		and eva.drift.is_equal_approx(Vector3.LEFT * 4.0), "an invisible tether still limits free travel")
+	await _test_full_hull()
 	player.collision_mask = mask
 	player.global_position = outside_start
 	eva.drift = Vector3.ZERO
@@ -201,3 +211,58 @@ func _test_momentum(hit: Dictionary) -> void:
 		_check(not eva.gripping, "losing window focus left the hand attached")
 	player.global_position = saved
 	eva.drift = Vector3.ZERO
+
+
+func _ray_hits_hatch() -> bool:
+	var leaf := (eva.get("_outer") as Node3D).find_child("OuterLeafArt", true, false) as MeshInstance3D
+	var center := leaf.global_transform * leaf.get_aabb().get_center()
+	var normal := leaf.global_basis.x.normalized()
+	var ray := PhysicsRayQueryParameters3D.create(center + normal * 0.45, center - normal * 0.45, 1)
+	return player.get_world_3d().direct_space_state.intersect_ray(ray).get("collider") == eva.get("_outer_body")
+
+
+func _test_hatch_body() -> void:
+	var saved := player.global_position
+	var leaf := (eva.get("_outer") as Node3D).find_child("OuterLeafArt", true, false) as MeshInstance3D
+	var center := leaf.global_transform * leaf.get_aabb().get_center()
+	var normal := leaf.global_basis.x.normalized()
+	player.global_position = center + normal * 0.85 - Vector3.UP * 0.9
+	var collision := player.move_and_collide(-normal * 1.3)
+	_check(collision != null and collision.get_collider() == eva.get("_outer_body"),
+		"player capsule can pass through the open hatch leaf")
+	player.global_position = saved
+
+
+func _test_full_hull() -> void:
+	var hull := eva.get("_hull_root") as MeshInstance3D
+	var faces := hull.mesh.get_faces()
+	var ends := [Vector3.INF, -Vector3.INF]
+	var normals := [Vector3.ZERO, Vector3.ZERO]
+	for i in range(0, faces.size(), 3):
+		var center := hull.global_transform * ((faces[i] + faces[i+1] + faces[i+2]) / 3.0)
+		var normal := hull.global_basis * (faces[i+1]-faces[i]).cross(faces[i+2]-faces[i]).normalized()
+		if normal.length_squared() < 0.5:
+			continue
+		for end in 2:
+			if (end == 0 and center.z < ends[end].z) or (end == 1 and center.z > ends[end].z):
+				ends[end] = center
+				normals[end] = normal
+	for end in 2:
+		eva.drift = Vector3.ZERO
+		var eye_offset := player.camera.global_position - player.global_position
+		player.global_position = ends[end] + normals[end] * 1.3 - eye_offset
+		_aim(ends[end])
+		await _frames(2)
+		var hit: Dictionary = eva.call("_aim_surface")
+		_check(not hit.is_empty(), "hull end %d cannot be grabbed away from the hatch" % end)
+		if hit.is_empty():
+			continue
+		eva.call("_grab", hit["position"], hit["normal"])
+		var start := player.global_position
+		var tangent: Vector3 = player.camera.global_basis.x.slide(hit["normal"]).normalized()
+		eva.set("_pull", tangent * 0.08)
+		eva.call("_apply_pull", 1.0 / 60.0)
+		_check(player.global_position.distance_to(start) > 0.01 and player.global_position.distance_to(start) < 0.12,
+			"grabbing a distant hull section snapped player toward the hatch")
+		eva.call("_stop_grip")
+		eva.drift = Vector3.ZERO
